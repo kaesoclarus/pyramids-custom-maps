@@ -11,6 +11,18 @@ using PyramidsMaps.Shapes;
 var v = SphinxShape.Build();
 var outPath = args.Length > 0 ? args[0] : "statue-preview.html";
 
+// --gallery <folder>: 1920×1080 renders for a mod page, then stop
+if (args.Length > 1 && args[0] == "--gallery")
+{
+    Directory.CreateDirectory(args[1]);
+    foreach (var (file, yaw, pitch) in new[] { ("01-hero", 35.0, 18.0), ("02-front", 0.0, 8.0), ("03-side", -90.0, 6.0), ("04-behind", 215.0, 22.0), ("05-above", 25.0, 58.0) })
+    {
+        File.WriteAllBytes(Path.Combine(args[1], file + ".png"), Raster.Render(v, SphinxShape.CellW, SphinxShape.CellH, yaw, pitch, 1920, 1080));
+        Console.WriteLine($"wrote {file}.png");
+    }
+    return;
+}
+
 int layers = v.Height;
 Console.WriteLine($"Statue: {v.CellCount:N0} blocks of {SphinxShape.CellW} x {SphinxShape.CellW} x {SphinxShape.CellH} m, {layers} layers ({layers * SphinxShape.CellH:0.#} m tall), {v.Overhangs} overhanging blocks");
 Console.WriteLine("(classic pyramid: 23,426 blocks, 26 layers, 65 m)");

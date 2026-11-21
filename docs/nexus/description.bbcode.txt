@@ -1,0 +1,50 @@
+[size=5][b]The Great Cat[/b][/size]
+[i]Why build a pyramid when you could build a giant stone cat?[/i]
+
+[b]Pyramids Custom Maps[/b] adds custom maps to [i]How They Built the Pyramids[/i]. The first one swaps the pyramid for a [b]giant stone cat, crouched and ready to pounce[/b]. Building her is the whole objective, from the first brick on her base to the last brick on the tip of her ear, and then the ending.
+
+[size=4][b]Features[/b][/size]
+[list]
+[*][b]A whole new build[/b]: 24,052 blocks (about as many as the pyramid) and 37.5 m tall.
+[*][b]Smoother shape[/b]: her blocks are half the size of a pyramid block, so her curves come out smooth.
+[*][b]Build her in any order[/b]: every block is open from the start. A block must touch one you've already laid (or sit on the ground layer), so there are no floating bricks. Overhangs like her chin and belly grow out from their neighbours.
+[*][b]Stack as you go[/b]: you can place a block one layer above your feet, so you build up beside your work and climb onto it.
+[*][b]Build markers[/b]: small markers show the spots next to your bricks where you can build next. F7 turns them on and off.
+[*][b]Shabti builders[/b]: put a Work Post up on the cat next to a brick crate and they build that level. A Work Post on the ground beside her base builds the bottom layer.
+[*][b]The full ending[/b]: the last brick goes on the tip of her left ear. Climb up together and crown her.
+[*][b]Map chooser in the main menu[/b]: the empty plot gets a [b]Great Cat[/b] button next to Pyramid and Grand Pyramid. Your existing worlds are never changed.
+[/list]
+
+[size=4][b]Requirements[/b][/size]
+[list]
+[*]How They Built the Pyramids, [b]game version 0.43.0[/b]. Other versions may break the mod; it warns in the log.
+[*][url=https://github.com/BepInEx/BepInEx/releases]BepInEx 5.4.23.6[/url] for Windows x64 ([i]BepInEx_win_x64_5.4.23.6.zip[/i]).
+[/list]
+
+[size=4][b]Installation[/b][/size]
+[list=1]
+[*]In Steam, right-click [i]How They Built the Pyramids[/i] and choose [i]Manage > Browse local files[/i] to open the game folder.
+[*]Extract the BepInEx zip into that folder ([i]winhttp.dll[/i] should end up next to [i]Pyramid.exe[/i]).
+[*]Extract this mod's zip into the same folder. It adds [i]BepInEx\plugins\PyramidsMaps\PyramidsMaps.dll[/i].
+[*]Start the game. On the main menu, scroll to the empty plot, pick [b]Great Cat[/b], and start a new world.
+[/list]
+To uninstall, delete the [i]BepInEx\plugins\PyramidsMaps[/i] folder. Cat worlds won't load correctly without the mod.
+
+[size=4][b]Multiplayer[/b][/size]
+Everyone who plays together needs the mod, at the same version. The host's world tells joining players it's a cat, and their game builds her too. [i]Honest note: multiplayer is built in but hasn't been tested with two players yet. Please report how it goes![/i]
+
+[size=4][b]Good to know[/b][/size]
+[list]
+[*]Stone ramps, scaffold platforms and the sledge lift aren't sold in cat worlds, since they only fit pyramid steps.
+[*]Keep brick crates off spots that still need a block, or that spot stays blocked.
+[*]Cat worlds are kept off the game's online world rankings, so a modded cat never competes with real pyramids.
+[*]Steam achievements still unlock in cat worlds.
+[/list]
+
+[size=4][b]Bug reports[/b][/size]
+Press [b]F8[/b] in game to write a placement and Shabti report to [i]BepInEx\LogOutput.log[/i]. Please attach that file and [i]%USERPROFILE%\AppData\LocalLow\PattezGames\How They Built the Pyramids\Player.log[/i].
+
+[size=4][b]Source[/b][/size]
+The mod is open source on GitHub: [url=https://github.com/kaesoclarus/pyramids-custom-maps]kaesoclarus/pyramids-custom-maps[/url]. More maps can be added there.
+
+[i]This is an unofficial fan mod. It isn't made or supported by PattezGames, and it includes none of the game's code or assets.[/i]
