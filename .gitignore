@@ -1,0 +1,18 @@
+# Build output
+bin/
+obj/
+*.user
+.vs/
+
+# The game's own code and data: never publish (PattezGames' work). Regenerate locally with tools/Decomp
+# and the plugin's scene dump if you need them.
+decompiled/
+recon/
+
+# Personal save backups
+Backups/
+
+# Generated previews and release packages (zips go on the GitHub Releases page)
+preview/
+release/*.zip
+release/stage/
