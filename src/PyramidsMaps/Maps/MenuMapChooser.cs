@@ -74,6 +74,7 @@ namespace PyramidsMaps.Maps
                     else Choose(__instance, chooser.Maps[i - 1], WorldKind.Classic);
                 });
 
+                FitListToOptions(dd, options.Count);
                 go.AddComponent<WheelScroll>();
                 Place((RectTransform)classic.transform, (RectTransform)grand.transform, (RectTransform)go.transform);
                 Choosers[__instance] = chooser;
@@ -83,6 +84,35 @@ namespace PyramidsMaps.Maps
             {
                 Plugin.Log.LogError($"Map chooser failed: {e}");
             }
+        }
+
+        /// <summary>
+        /// Makes the open list tall enough to show every map without scrolling, up to most of the screen's height
+        /// (the dropdown keeps the list on screen, opening upwards if it must). Past that it scrolls.
+        /// </summary>
+        private static void FitListToOptions(TMP_Dropdown dd, int count)
+        {
+            try
+            {
+                var template = dd.template;
+                var scroll = template != null ? template.GetComponent<ScrollRect>() : null;
+                var item = dd.itemText != null ? dd.itemText.transform.parent as RectTransform : null;
+                if (template == null || scroll == null || scroll.viewport == null || item == null) return;
+                var canvas = dd.GetComponentInParent<Canvas>()?.rootCanvas;
+                float screenH = canvas != null ? ((RectTransform)canvas.transform).rect.height : 1080f;
+
+                float itemH = item.rect.height;
+                var content = scroll.content;
+                float spacing = 0f;
+                if (content != null && content.GetComponent<VerticalLayoutGroup>() is VerticalLayoutGroup vlg) spacing = vlg.spacing;
+                float extra = template.rect.height - scroll.viewport.rect.height;   // the list's border around the items
+                float want = count * itemH + (count - 1) * spacing + extra + 4f;
+                float height = Mathf.Min(want, screenH * 0.85f);
+                if (height > template.rect.height) template.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
+                if (Plugin.DevTools.Value)
+                    Plugin.Log.LogInfo($"[dropdown] list height {template.rect.height:0} for {count} entries of {itemH:0} (screen {screenH:0}).");
+            }
+            catch (System.Exception e) { Plugin.Log.LogWarning($"Map chooser: couldn't size the list: {e.Message}"); }
         }
 
         /// <summary>
@@ -96,21 +126,86 @@ namespace PyramidsMaps.Maps
 
             private void Update()
             {
-                if (_dd == null || !_dd.IsExpanded) return;
-                var mouse = UnityEngine.InputSystem.Mouse.current;
-                if (mouse == null) return;
-                float wheel = mouse.scroll.ReadValue().y;
-                if (Mathf.Abs(wheel) < 0.01f) return;
-
+                if (_dd == null) return;
+                bool dev = Plugin.DevTools.Value;
+                if (!_dd.IsExpanded) { _described = false; return; }
                 var scroll = OpenList();
-                if (scroll == null || scroll.content == null || scroll.viewport == null) return;
+                if (dev && !_described) { _described = true; Describe(scroll); }
+                float wheel = ReadWheel(out string source);
+                if (Mathf.Abs(wheel) < 0.0001f) return;
+                if (dev) Plugin.Log.LogInfo($"[dropdown] wheel {wheel} from {source}.");
+
+                if (scroll == null || scroll.content == null || scroll.viewport == null)
+                {
+                    if (dev) Plugin.Log.LogInfo($"[dropdown] wheel {wheel}: no scroll area found (scroll {scroll != null}).");
+                    return;
+                }
                 scroll.scrollSensitivity = 0f;   // don't also scroll it the usual way, if that ever works
                 float range = scroll.content.rect.height - scroll.viewport.rect.height;
-                if (range <= 0f) return;
-                float step = _dd.template != null && _dd.itemText != null
+                float step = _dd.itemText != null
                     ? Mathf.Max(20f, ((RectTransform)_dd.itemText.transform.parent).rect.height)
                     : 40f;
-                scroll.verticalNormalizedPosition = Mathf.Clamp01(scroll.verticalNormalizedPosition + Mathf.Sign(wheel) * step / range);
+                float before = scroll.verticalNormalizedPosition;
+                if (range > 0f) scroll.verticalNormalizedPosition = Mathf.Clamp01(before + Mathf.Sign(wheel) * step / range);
+                _watch = dev ? 3 : 0;
+                if (dev) Plugin.Log.LogInfo($"[dropdown] wheel {wheel}: content {scroll.content.rect.height:0} viewport {scroll.viewport.rect.height:0} " +
+                                            $"step {step:0} position {before:0.000} -> {scroll.verticalNormalizedPosition:0.000}");
+            }
+
+            private static bool _legacyOff, _listedDevices;
+
+            /// <summary>The wheel this frame, from any mouse the input system knows, else Unity's older input.</summary>
+            private static float ReadWheel(out string source)
+            {
+                source = "";
+                if (Plugin.DevTools.Value && !_listedDevices)
+                {
+                    _listedDevices = true;
+                    var sb = new System.Text.StringBuilder($"[dropdown] input devices (scroll {UnityEngine.InputSystem.InputSystem.settings.scrollDeltaBehavior}, " +
+                                                           $"update {UnityEngine.InputSystem.InputSystem.settings.updateMode}):");
+                    foreach (var d in UnityEngine.InputSystem.InputSystem.devices) sb.Append($"\n  {d.name} ({d.GetType().Name}, enabled {d.enabled})");
+                    Plugin.Log.LogInfo(sb.ToString());
+                }
+                foreach (var d in UnityEngine.InputSystem.InputSystem.devices)
+                {
+                    if (!(d is UnityEngine.InputSystem.Mouse m)) continue;
+                    float y = m.scroll.ReadValue().y;
+                    if (Mathf.Abs(y) > 0.0001f) { source = m.name; return y; }
+                }
+                if (!_legacyOff)
+                {
+                    try
+                    {
+                        float y = Input.mouseScrollDelta.y;
+                        if (Mathf.Abs(y) > 0.0001f) { source = "old input"; return y; }
+                    }
+                    catch (System.InvalidOperationException) { _legacyOff = true; }
+                }
+                return 0f;
+            }
+
+            private bool _described;
+            private int _watch;
+
+            private void LateUpdate()
+            {
+                if (_watch <= 0 || !_dd.IsExpanded) return;
+                _watch--;
+                var scroll = OpenList();
+                if (scroll != null) Plugin.Log.LogInfo($"[dropdown] late: position {scroll.verticalNormalizedPosition:0.000}, content y {scroll.content?.anchoredPosition.y:0}");
+            }
+
+            private static void Describe(ScrollRect scroll)
+            {
+                if (scroll == null) { Plugin.Log.LogInfo("[dropdown] open, but no ScrollRect found."); return; }
+                var sb = new System.Text.StringBuilder($"[dropdown] open list '{scroll.name}': vertical {scroll.vertical}, sensitivity {scroll.scrollSensitivity}, " +
+                                                       $"movement {scroll.movementType}, content '{scroll.content?.name}', viewport '{scroll.viewport?.name}'");
+                foreach (var c in scroll.GetComponentsInChildren<Component>(true))
+                {
+                    if (c is Transform || c is CanvasRenderer || c is Graphic || c is TMP_Text) continue;
+                    sb.Append($"\n  {c.gameObject.name}: {c.GetType().FullName}");
+                }
+                Plugin.Log.LogInfo(sb.ToString());
             }
 
             private ScrollRect OpenList()
