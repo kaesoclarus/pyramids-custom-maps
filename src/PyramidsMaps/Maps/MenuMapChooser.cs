@@ -74,6 +74,7 @@ namespace PyramidsMaps.Maps
                     else Choose(__instance, chooser.Maps[i - 1], WorldKind.Classic);
                 });
 
+                go.AddComponent<WheelScroll>();
                 Place((RectTransform)classic.transform, (RectTransform)grand.transform, (RectTransform)go.transform);
                 Choosers[__instance] = chooser;
                 Plugin.Log.LogInfo($"Map chooser: added a dropdown with {chooser.Maps.Count} map(s) to the empty plot (copied from '{source.name}').");
@@ -81,6 +82,44 @@ namespace PyramidsMaps.Maps
             catch (System.Exception e)
             {
                 Plugin.Log.LogError($"Map chooser failed: {e}");
+            }
+        }
+
+        /// <summary>
+        /// Mouse-wheel scrolling for the open list. The game's dropdowns are short and its menus don't pass the
+        /// wheel to the list, so this moves the list itself: one notch scrolls about one entry.
+        /// </summary>
+        private sealed class WheelScroll : MonoBehaviour
+        {
+            private TMP_Dropdown _dd;
+            private void Awake() => _dd = GetComponent<TMP_Dropdown>();
+
+            private void Update()
+            {
+                if (_dd == null || !_dd.IsExpanded) return;
+                var mouse = UnityEngine.InputSystem.Mouse.current;
+                if (mouse == null) return;
+                float wheel = mouse.scroll.ReadValue().y;
+                if (Mathf.Abs(wheel) < 0.01f) return;
+
+                var scroll = OpenList();
+                if (scroll == null || scroll.content == null || scroll.viewport == null) return;
+                scroll.scrollSensitivity = 0f;   // don't also scroll it the usual way, if that ever works
+                float range = scroll.content.rect.height - scroll.viewport.rect.height;
+                if (range <= 0f) return;
+                float step = _dd.template != null && _dd.itemText != null
+                    ? Mathf.Max(20f, ((RectTransform)_dd.itemText.transform.parent).rect.height)
+                    : 40f;
+                scroll.verticalNormalizedPosition = Mathf.Clamp01(scroll.verticalNormalizedPosition + Mathf.Sign(wheel) * step / range);
+            }
+
+            private ScrollRect OpenList()
+            {
+                var list = Traverse.Create(_dd).Field("m_Dropdown").GetValue<GameObject>();
+                if (list != null) return list.GetComponentInChildren<ScrollRect>();
+                foreach (var s in FindObjectsByType<ScrollRect>(FindObjectsSortMode.None))
+                    if (s.gameObject.name == "Dropdown List" && s.gameObject.activeInHierarchy) return s;
+                return null;
             }
         }
 
