@@ -2,6 +2,21 @@
 
 **Published:** https://www.nexusmods.com/howtheybuiltthepyramids/mods/3 (version 0.3.0, 21 Nov 2026). Permissions: modification allowed with credit; the rest left at the Nexus defaults.
 
+## Updating to 0.4.0 (Sobek)
+
+Ready, waiting on the playtest. On the existing page, mod #3:
+
+| Field | Value |
+|---|---|
+| **Mod name** (optional rename) | Pyramids Custom Maps - The Great Cat and Sobek |
+| **Version** | 0.4.0 |
+| **Summary** | Replace the pyramid with a giant statue built brick by brick: a stone cat crouched to pounce, or Sobek, a crocodile lying in his pool with jaws open. Lay blocks in any order, with Shabti builders, build markers and the full ending. Pick a map on the main menu's empty plot. Requires BepInEx 5. |
+| **Description** | Paste the updated [`description.bbcode.txt`](description.bbcode.txt) |
+| **Media** | Add Sobek renders from [`images/sobek/`](images/sobek) (`01-hero.png` first); in-game Sobek shots once taken |
+| **File** | Upload `release/PyramidsCustomMaps-0.4.0.zip` as a new main file, version 0.4.0, and move 0.3.0 to Old versions |
+| **File description** | Both maps (one plugin DLL) and a player readme. Extract into the game folder after installing BepInEx 5.4.23.6; extract over 0.3.0 to update. |
+| **Changelog 0.4.0** | New map: Sobek, a crocodile lying in an oval pool, jaws open. Statue code made general for more maps. Multiplayer byte now says which map (0.3.0 players can still join cat worlds). |
+
 Game: **How They Built the Pyramids**. Upload at https://www.nexusmods.com/games/howtheybuiltthepyramids, then **Upload mod**.
 
 ## 1. Mod details

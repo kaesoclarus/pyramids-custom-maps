@@ -14,7 +14,7 @@ namespace PyramidsMaps
     {
         public const string Guid = "pyramidsmaps.custommaps";
         public const string Name = "Pyramids Custom Maps";
-        public const string Version = "0.3.0";
+        public const string Version = "0.4.0";
 
         /// <summary>Game build this mod was written against.</summary>
         public const string TestedGameVersion = "0.43.0";

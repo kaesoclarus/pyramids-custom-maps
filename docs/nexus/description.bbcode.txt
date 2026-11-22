@@ -1,18 +1,24 @@
-[size=5][b]The Great Cat[/b][/size]
-[i]Why build a pyramid when you could build a giant stone cat?[/i]
+[size=5][b]Pyramids Custom Maps: the Great Cat and Sobek[/b][/size]
+[i]Why build a pyramid when you could build a giant stone statue?[/i]
 
-[b]Pyramids Custom Maps[/b] adds custom maps to [i]How They Built the Pyramids[/i]. The first one swaps the pyramid for a [b]giant stone cat, crouched and ready to pounce[/b]. Building her is the whole objective, from the first brick on her base to the last brick on the tip of her ear, and then the ending.
+[b]Pyramids Custom Maps[/b] adds custom maps to [i]How They Built the Pyramids[/i]. Each one swaps the pyramid for a giant statue that you build brick by brick. Building it is the whole objective, from the first brick on the ground to the last brick at the very top, and then the ending.
+
+[size=4][b]The maps[/b][/size]
+[list]
+[*][b]The Great Cat[/b]: a stone cat, crouched and ready to pounce. 24,052 blocks (about as many as the pyramid) and 37.5 m tall. The last brick goes on the tip of her left ear.
+[*][b]Sobek[/b] [i](new in 0.4.0)[/i]: a giant crocodile lying in an oval pool, jaws open to the sky. 19,538 blocks, 21 m tall and about 130 m long. Climb into his open mouth to build the raised upper jaw; the last brick is the tip of his snout.
+[/list]
 
 [size=4][b]Features[/b][/size]
 [list]
-[*][b]A whole new build[/b]: 24,052 blocks (about as many as the pyramid) and 37.5 m tall.
-[*][b]Smoother shape[/b]: her blocks are half the size of a pyramid block, so her curves come out smooth.
-[*][b]Build her in any order[/b]: every block is open from the start. A block must touch one you've already laid (or sit on the ground layer), so there are no floating bricks. Overhangs like her chin and belly grow out from their neighbours.
+[*][b]Smoother shapes[/b]: statue blocks are half the size of a pyramid block, so the curves come out smooth.
+[*][b]Build in any order[/b]: every block is open from the start. A block must touch one you've already laid (or sit on the ground layer), so there are no floating bricks. Overhangs like the cat's chin or Sobek's upper jaw grow out from their neighbours.
 [*][b]Stack as you go[/b]: you can place a block one layer above your feet, so you build up beside your work and climb onto it.
 [*][b]Build markers[/b]: small markers show the spots next to your bricks where you can build next. F7 turns them on and off.
-[*][b]Shabti builders[/b]: put a Work Post up on the cat next to a brick crate and they build that level. A Work Post on the ground beside her base builds the bottom layer.
-[*][b]The full ending[/b]: the last brick goes on the tip of her left ear. Climb up together and crown her.
-[*][b]Map chooser in the main menu[/b]: the empty plot gets a [b]Great Cat[/b] button next to Pyramid and Grand Pyramid. Your existing worlds are never changed.
+[*][b]Shabti builders[/b]: put a Work Post up on the statue next to a brick crate and they build that level. A Work Post on the ground beside its base builds the bottom layer.
+[*][b]Sobek's pool[/b]: a shallow oval pool (0.6 m deep) dug around the build site, using the river's own water. Wade through it; machines can stand in the shallows.
+[*][b]The full ending[/b] on both maps. Climb up together and place the last brick.
+[*][b]Map chooser in the main menu[/b]: the empty plot gets [b]Great Cat[/b] and [b]Sobek[/b] buttons next to Pyramid and Grand Pyramid. Your existing worlds are never changed.
 [/list]
 
 [size=4][b]Requirements[/b][/size]
@@ -26,19 +32,20 @@
 [*]In Steam, right-click [i]How They Built the Pyramids[/i] and choose [i]Manage > Browse local files[/i] to open the game folder.
 [*]Extract the BepInEx zip into that folder ([i]winhttp.dll[/i] should end up next to [i]Pyramid.exe[/i]).
 [*]Extract this mod's zip into the same folder. It adds [i]BepInEx\plugins\PyramidsMaps\PyramidsMaps.dll[/i].
-[*]Start the game. On the main menu, scroll to the empty plot, pick [b]Great Cat[/b], and start a new world.
+[*]Start the game. On the main menu, scroll to the empty plot, pick [b]Great Cat[/b] or [b]Sobek[/b], and start a new world.
 [/list]
-To uninstall, delete the [i]BepInEx\plugins\PyramidsMaps[/i] folder. Cat worlds won't load correctly without the mod.
+[b]Updating from 0.3.0:[/b] extract over the old version. Your cat worlds keep working.
+To uninstall, delete the [i]BepInEx\plugins\PyramidsMaps[/i] folder. Statue worlds won't load correctly without the mod.
 
 [size=4][b]Multiplayer[/b][/size]
-Everyone who plays together needs the mod, at the same version. The host's world tells joining players it's a cat, and their game builds her too. [i]Honest note: multiplayer is built in but hasn't been tested with two players yet. Please report how it goes![/i]
+Everyone who plays together needs the mod, at the same version. The host's world tells joining players which statue it is, and their game builds it too. Players still on 0.3.0 can join cat worlds, but need 0.4.0 for Sobek. [i]Honest note: multiplayer is built in but hasn't been tested with two players yet. Please report how it goes![/i]
 
 [size=4][b]Good to know[/b][/size]
 [list]
-[*]Stone ramps, scaffold platforms and the sledge lift aren't sold in cat worlds, since they only fit pyramid steps.
+[*]Stone ramps, scaffold platforms and the sledge lift aren't sold in statue worlds, since they only fit pyramid steps.
 [*]Keep brick crates off spots that still need a block, or that spot stays blocked.
-[*]Cat worlds are kept off the game's online world rankings, so a modded cat never competes with real pyramids.
-[*]Steam achievements still unlock in cat worlds.
+[*]Statue worlds are kept off the game's online world rankings, so a modded statue never competes with real pyramids.
+[*]Steam achievements still unlock in statue worlds.
 [/list]
 
 [size=4][b]Bug reports[/b][/size]
