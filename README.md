@@ -61,7 +61,7 @@ Everyone who plays together needs the mod, at the same version. See [`release/RE
 - **Reach:** you can place a block one layer (1.25 m) above your feet.
 - **Markers:** small markers show where you can build next. **F7** turns them on and off.
 - **Shabti:** they build from a Work Post on the statue next to a brick crate, or from one on the ground beside its base.
-- **No pyramid aids:** stone ramps, scaffold platforms and the sledge lift are disabled on custom maps, except the Colossal Pyramid, which is the game's own pyramid made bigger.
+- **No pyramid aids:** stone ramps, scaffold platforms and the sledge lift are disabled on custom maps, except the Colossal Pyramid, which is the game's own pyramid made bigger. There the sledge lift's Height steps are scaled by 71/26 (as the game scales them by 43/26 in the Grand Pyramid), so its top level reaches the top layer (`Maps/LiftPatches.cs`).
 - **Endings:** the highest block is the last brick: the cat's left ear, Sobek's snout, Horus's crown, Khufu's tip at Giza, the obelisk on Sphinx Avenue.
 - **Sobek's pool:** an oval pool, 0.6 m deep, dug around the build site. You can wade through it, and machines can stand in the shallows.
 - **Colossal Pyramid:** its site is moved south onto a cleared plain, and the play area is opened up around it.

@@ -1,4 +1,4 @@
-PYRAMIDS CUSTOM MAPS 0.5.0 — 15 maps, and your own
+PYRAMIDS CUSTOM MAPS 0.5.1 — 15 maps, and your own
 For How They Built the Pyramids, game version 0.43.0
 ==========================================================
 
@@ -53,6 +53,7 @@ HOW BUILDING WORKS
 - Small markers show the spots next to your bricks where you can build. F7 turns them on/off.
 - Stone ramps, scaffold platforms and the sledge lift aren't sold on custom maps (they only fit the
   game's pyramid), except on the Colossal Pyramid, which is the game's own pyramid made bigger.
+  There, the lift's top Height level climbs all 71 layers (like the Grand Pyramid, where it's 43).
 - Shabti builders: put a Work Post up ON the build next to a brick crate; they build that level.
   A Work Post on the ground builds the bottom layer. Keep crates off spots that still need a block.
 - The highest block is the last brick: the cat's left ear, Sobek's snout, Khufu's tip at Giza,

@@ -62,7 +62,7 @@ Everyone who plays together needs the mod, at the same version (and the same .vo
 
 [size=4][b]Good to know[/b][/size]
 [list]
-[*]Stone ramps, scaffold platforms and the sledge lift aren't sold on custom maps, since they only fit the game's pyramid. The Colossal Pyramid is the exception: it's the game's own pyramid, made bigger.
+[*]Stone ramps, scaffold platforms and the sledge lift aren't sold on custom maps, since they only fit the game's pyramid. The Colossal Pyramid is the exception: it's the game's own pyramid, made bigger, and the sledge lift's top Height level climbs all 71 layers.
 [*]Keep brick crates off spots that still need a block, or that spot stays blocked.
 [*]The first time you pick Horus or Upside-Down Grand in a session, the menu may pause for a few seconds while it works out the shape.
 [*]Custom map worlds are kept off the game's online world rankings, so a modded map never competes with real pyramids.

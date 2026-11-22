@@ -1,6 +1,10 @@
 # Nexus Mods page: what to fill in
 
-**Published:** https://www.nexusmods.com/howtheybuiltthepyramids/mods/3, now "Pyramids Custom Maps", version 0.5.0 (22 Nov 2026; 0.4.0 and 0.3.0 archived). Permissions: modification allowed with credit; the rest left at the Nexus defaults.
+**Published:** https://www.nexusmods.com/howtheybuiltthepyramids/mods/3, now "Pyramids Custom Maps", version 0.5.1 (22 Nov 2026; 0.5.0, 0.4.0 and 0.3.0 archived).
+
+## Updating to 0.5.1 (Colossal Pyramid lift): done 22 Nov 2026
+
+File uploaded as an update of 0.5.0 (archived), with "update mod version" ticked. File description: "All 15 maps (one plugin DLL) and a player readme. Extract into the game folder after installing BepInEx 5.4.23.6 (the BepInEx 5 Pack); extract over any earlier version to update." Changelog 0.5.1: "Colossal Pyramid: the sledge lift's top Height level now climbs all 71 layers to the top (its steps are scaled 71/26, the way the game scales them 43/26 in the Grand Pyramid)." Description: one line added to the Colossal Pyramid's building-aids note. Permissions: modification allowed with credit; the rest left at the Nexus defaults.
 
 ## Updating to 0.5.0 (13 new maps, player maps): done 22 Nov 2026
 
