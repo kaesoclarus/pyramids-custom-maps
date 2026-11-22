@@ -31,17 +31,20 @@ An unofficial BepInEx mod for **How They Built the Pyramids** (game version 0.43
 
 ![The Great Cat in game, with a player between her paws for scale](docs/nexus/screens/game-01-front-scale.png)
 
-| | |
-|---|---|
-| ![Side view](docs/nexus/screens/game-02-side.png) | ![By the river](docs/nexus/screens/game-03-side-river.png) |
-| ![Wide view with the river and camp](docs/nexus/screens/game-04-wide-river.png) | ![Render of the full shape](docs/great-cat.png) |
+### The maps
 
-![Sobek in his pool (render)](docs/sobek.png)
+Renders of every finished map (each shown at its own scale; the Great Cat above is 37.5 m tall).
 
 | | |
 |---|---|
-| ![Sobek from the front, jaws open (render)](docs/nexus/images/sobek/02-front.png) | ![Sobek from the side (render)](docs/nexus/images/sobek/03-side.png) |
-| ![Sobek from behind, tail curled (render)](docs/nexus/images/sobek/04-behind.png) | ![Sobek from above, in his oval pool (render)](docs/nexus/images/sobek/05-above.png) |
+| ![Great Cat](docs/maps/cat.png)<br>**Great Cat** | ![Sobek](docs/maps/sobek.png)<br>**Sobek** |
+| ![Anubis](docs/maps/anubis.png)<br>**Anubis** | ![Horus](docs/maps/horus.png)<br>**Horus** |
+| ![Upside-Down](docs/maps/inverted.png)<br>**Upside-Down** | ![Upside-Down Grand](docs/maps/inverted-grand.png)<br>**Upside-Down Grand** |
+| ![Diamond](docs/maps/diamond.png)<br>**Diamond** | ![Step Pyramid](docs/maps/step.png)<br>**Step Pyramid** |
+| ![Bent Pyramid](docs/maps/bent.png)<br>**Bent Pyramid** | ![Nubian Field](docs/maps/nubian.png)<br>**Nubian Field** |
+| ![Ziggurat](docs/maps/ziggurat.png)<br>**Ziggurat** | ![Giza](docs/maps/giza.png)<br>**Giza** |
+| ![Colossi](docs/maps/colossi.png)<br>**Colossi** | ![Sphinx Avenue](docs/maps/avenue.png)<br>**Sphinx Avenue** |
+| ![Colossal Pyramid](docs/maps/colossal.png)<br>**Colossal Pyramid** | |
 
 ## Playing
 
@@ -112,7 +115,10 @@ To preview a model, or to start from one of the built-in shapes:
 ```powershell
 dotnet run --project tools/ShapePreview -c Release -- --shape my_map.vox preview.html
 dotnet run --project tools/ShapePreview -c Release -- --shape giza --write-vox giza.vox preview.html
+dotnet run --project tools/ShapePreview -c Release -- --shape my_map.vox --hero my_map.png
 ```
+
+`--hero` writes one 1920×1080 render, like the ones above.
 
 ## Adding a built-in map
 

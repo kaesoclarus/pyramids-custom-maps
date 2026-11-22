@@ -20,7 +20,7 @@ if (wi >= 0 && wi + 1 < argList.Count) { writeVox = argList[wi + 1]; argList.Rem
 bool pyramidBlocks = argList.Remove("--pyramid-blocks");
 args = argList.ToArray();
 var buildClock = System.Diagnostics.Stopwatch.StartNew();
-var v = shape.EndsWith(".vox") ? VoxFile.ToVoxels(VoxFile.Read(shape)) : shape == "sobek" ? SobekShape.Build() : shape == "anubis" ? AnubisShape.Build() : shape == "horus" ? HorusShape.Build() : shape == "inverted" ? InvertedShape.Build() : shape == "inverted-grand" ? InvertedShape.BuildGrand() : shape == "diamond" ? InvertedShape.BuildDiamond() : shape == "step" ? PyramidVariants.BuildStep() : shape == "bent" ? PyramidVariants.BuildBent() : shape == "nubian" ? PyramidVariants.BuildNubian() : shape == "ziggurat" ? PyramidVariants.BuildZiggurat() : shape == "giza" ? GizaShape.Build() : shape == "colossi" ? MonumentShapes.BuildColossi() : shape == "avenue" ? MonumentShapes.BuildAvenue() : SphinxShape.Build();
+var v = shape.EndsWith(".vox") ? VoxFile.ToVoxels(VoxFile.Read(shape)) : shape == "sobek" ? SobekShape.Build() : shape == "anubis" ? AnubisShape.Build() : shape == "horus" ? HorusShape.Build() : shape == "inverted" ? InvertedShape.Build() : shape == "inverted-grand" ? InvertedShape.BuildGrand() : shape == "diamond" ? InvertedShape.BuildDiamond() : shape == "step" ? PyramidVariants.BuildStep() : shape == "bent" ? PyramidVariants.BuildBent() : shape == "nubian" ? PyramidVariants.BuildNubian() : shape == "ziggurat" ? PyramidVariants.BuildZiggurat() : shape == "giza" ? GizaShape.Build() : shape == "colossi" ? MonumentShapes.BuildColossi() : shape == "avenue" ? MonumentShapes.BuildAvenue() : shape == "colossal" ? PyramidsMaps.Shapes.SteppedPyramid.Build(141) : SphinxShape.Build();
 { ulong h = 1469598103934665603UL; for (int x = -v.Radius; x <= v.Radius; x++) for (int y = 0; y < v.Layers; y++) for (int z = -v.Radius; z <= v.Radius; z++) if (v[x, y, z]) { h = (h ^ (ulong)(((x + 512) * 1024 + y) * 1024 + (z + 512))) * 1099511628211UL; }
   Console.WriteLine($"Shape built in {buildClock.ElapsedMilliseconds:N0} ms (the game does this when a world loads); fingerprint {h:X16}"); }
 if (shape == "sobek")
@@ -61,6 +61,14 @@ if (shape == "sobek")
 if (writeVox != null) { VoxFile.Write(v, writeVox); Console.WriteLine($"Wrote {writeVox}"); }
 string title = shape.EndsWith(".vox") ? Path.GetFileNameWithoutExtension(shape) + " preview" : shape == "sobek" ? "Sobek preview" : shape == "anubis" ? "Anubis preview" : shape == "horus" ? "Horus preview" : shape == "inverted" ? "Upside-down pyramid preview" : shape == "inverted-grand" ? "Upside-down Grand Pyramid preview" : shape == "diamond" ? "Diamond preview" : char.ToUpper(shape[0]) + shape.Substring(1) + " preview";
 var outPath = args.Length > 0 ? args[0] : "statue-preview.html";
+
+// --hero <file.png>: one 1920×1080 render from the front corner (the map overview images), then stop
+if (args.Length > 1 && args[0] == "--hero")
+{
+    File.WriteAllBytes(args[1], Raster.Render(v, SphinxShape.CellW, SphinxShape.CellH, 35.0, 18.0, 1920, 1080));
+    Console.WriteLine($"wrote {args[1]}");
+    return;
+}
 
 // --gallery <folder>: 1920×1080 renders for a mod page, then stop
 if (args.Length > 1 && args[0] == "--gallery")
