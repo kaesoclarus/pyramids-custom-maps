@@ -45,7 +45,7 @@ namespace PyramidsMaps.Maps
                 Vector2 step = gRect.anchoredPosition - cRect.anchoredPosition;
                 bool laidOut = grand.transform.parent != null && grand.transform.parent.GetComponent<LayoutGroup>() != null;
                 int i = 0;
-                foreach (var map in MapRegistry.All)
+                foreach (var map in MapRegistry.Visible)
                 {
                     i++;
                     var go = Object.Instantiate(grand.gameObject, grand.transform.parent);

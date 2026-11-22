@@ -37,13 +37,13 @@ namespace PyramidsMaps.Statues
         }
 
         /// <summary>On the cat, never "inside the square": the walk starts where the Work Post is.</summary>
-        public static int AbsUnlessStatue(int v) => StatueWorld.Active ? int.MaxValue : Mathf.Abs(v);
+        public static int AbsUnlessStatue(int v) => StatueWorld.IsStatue ? int.MaxValue : Mathf.Abs(v);
 
         [HarmonyPatch(typeof(ShabtiShrine), "NeedRampsLine")]
         [HarmonyPostfix]
         private static void NeedRampsLine(ref string __result)
         {
-            if (StatueWorld.Active) __result = NeedPostUp;
+            if (StatueWorld.IsStatue) __result = NeedPostUp;
         }
 
         /// <summary>The look card says "Needs Stone Ramps to climb" (a fixed string in DescribeLook).</summary>
@@ -60,6 +60,6 @@ namespace PyramidsMaps.Statues
             }
         }
 
-        public static string RampsLook() => StatueWorld.Active ? NeedPostUp : "Needs Stone Ramps to climb";
+        public static string RampsLook() => StatueWorld.IsStatue ? NeedPostUp : "Needs Stone Ramps to climb";
     }
 }

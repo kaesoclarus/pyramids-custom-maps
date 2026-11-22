@@ -227,3 +227,20 @@ Phase 2 is done when the existing world, with the pyramid, river and clay pit mo
 - **The jaws:** the gap and the teeth may need reshaping to stay reachable, or a slightly closed mouth.
 - **Water:** the river mesh may be tied to the river (a scrolling shader, or a script). A plain plane with the same material is the fallback.
 - **A long thin shape** puts sections far from the centre, so check aim performance and Shabti paths around the tail.
+
+## Colossal pyramid test (set up 2026-11-22)
+
+**Question:** could the mod offer a pyramid 10x the Grand Pyramid's blocks (about 1.06 million: base ~185 blocks = 370 m, ~232 m tall)? 10x every dimension (1.7 km base, ~102 million blocks) is out: bigger than the whole 640 m terrain. The million-block version is limited by space: south of the river there are only ~346 m of terrain, so it needs new terrain. Before that, measure what the game can handle.
+
+**The test map** (`colossal-test`, menu button only with `DevTools = true`): the game's own pyramid with a bigger base, not a statue. Base 141 (282 m), 71 layers (178 m), 477,191 blocks: about 4.5x the Grand Pyramid, the biggest that fits the current terrain.
+- The site moves to z −130; the play area widens to x ±172, z −296 … 46.4; the boundary walls come down.
+- `ColossalTest` flattens the ground under it on a terrain copy (the area rises to 28 m beyond the normal play area) and hides the obelisks and props inside it. All undone when the world ends.
+- Pyramid maps use the game's own layout and rules (layer by layer, ramps, scaffolds and lifts allowed); the statue rules stay off.
+- Sync index 4: the synced byte's top bit (0x80) now extends the map index to 0–7. 0.4.0 and older read those bytes as a normal pyramid, so these maps need everyone on the same version.
+
+**What to measure** (written to `BepInEx\LogOutput.log` as `[perf]` lines):
+1. How long the world switch takes (building a 477k-block layout).
+2. Frame rate every 10 s: empty, while building, and after the dev fill (F9 twice fills every block but the last, in chunks of 3,000 per frame).
+3. Save size (the slot's file) and, with a friend, how long joining takes.
+
+If it holds up, the full 10x needs new terrain. If it struggles, we know the ceiling.

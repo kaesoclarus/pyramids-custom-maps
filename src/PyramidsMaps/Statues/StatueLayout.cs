@@ -46,7 +46,7 @@ namespace PyramidsMaps.Statues
         private static bool BuildWhole(PyramidLayout __instance)
         {
             var map = StatueWorld.MapOfDefinition(_building);
-            if (map == null) return true;
+            if (map == null || !map.IsStatue) return true;   // a pyramid map uses the game's own layout
             Build(__instance, StatueWorld.ShapeOf(map));
             StatueLayouts.Add(__instance, Mark);
             return false;

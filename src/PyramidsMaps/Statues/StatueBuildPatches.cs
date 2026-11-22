@@ -247,7 +247,7 @@ namespace PyramidsMaps.Statues
         [HarmonyPostfix]
         private static void IsOnSale(ShopService __instance, int index, ref bool __result)
         {
-            if (!__result || !StatueWorld.Active) return;
+            if (!__result || !StatueWorld.IsStatue) return;
             var item = __instance.Catalog != null ? __instance.Catalog.Get(index) : null;
             var prefab = item != null && item.prefab != null ? item.prefab.gameObject : null;
             if (prefab == null) return;

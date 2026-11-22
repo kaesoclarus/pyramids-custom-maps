@@ -18,9 +18,14 @@ namespace PyramidsMaps.Maps
     internal static class WorldKindPatches
     {
         private static bool _stopping;
+        private static readonly System.Diagnostics.Stopwatch _switchClock = new System.Diagnostics.Stopwatch();
 
         private static readonly AccessTools.FieldRef<PyramidSite, PyramidDefinition> SiteDefinition =
             AccessTools.FieldRefAccess<PyramidSite, PyramidDefinition>("definition");
+        private static readonly AccessTools.FieldRef<PyramidSite, bool> FocusCaptured =
+            AccessTools.FieldRefAccess<PyramidSite, bool>("_focusCaptured");
+        private static readonly AccessTools.FieldRef<PyramidSite, float> ClassicFocusY =
+            AccessTools.FieldRefAccess<PyramidSite, float>("_classicFocusY");
         private static readonly AccessTools.FieldRef<PyramidSite, PyramidLayout> SiteLayout =
             AccessTools.FieldRefAccess<PyramidSite, PyramidLayout>("_layout");
 
@@ -36,6 +41,7 @@ namespace PyramidsMaps.Maps
         [HarmonyPrefix]
         private static void BeforeApplyWorldKind(PyramidState __instance, WorldKind kind)
         {
+            _switchClock.Restart();
             try
             {
                 var map = _stopping ? null : MapForThisSession(__instance, kind);
@@ -68,7 +74,12 @@ namespace PyramidsMaps.Maps
         /// statue's world sees a version mismatch and is told to update.
         /// </summary>
         private const byte StatueFlag = 0x40;
-        private static byte SyncByte(MapRegistry.MapInfo map) => (byte)(StatueFlag | ((map.SyncIndex & 0x3) << 4) | (map.ShapeVersion & 0xF));
+        /// Maps 4–7 also set the top bit (0x80): 0.4.0 and older read that as "not a statue" and show the normal
+        /// pyramid, so for those maps everyone must be on the same version (the menu only offers them with DevTools).
+        private static byte SyncByte(MapRegistry.MapInfo map) =>
+            (byte)(StatueFlag | ((map.SyncIndex & 0x3) << 4) | ((map.SyncIndex & 0x4) != 0 ? 0x80 : 0) | (map.ShapeVersion & 0xF));
+
+        private static int SyncIndexOf(byte raw) => ((raw >> 4) & 0x3) | ((raw & 0x80) != 0 ? 4 : 0);
 
         private static readonly AccessTools.FieldRef<PyramidState, FishNet.Object.Synchronizing.SyncVar<byte>> WorldKindVar =
             AccessTools.FieldRefAccess<PyramidState, FishNet.Object.Synchronizing.SyncVar<byte>>("_worldKind");
@@ -154,11 +165,61 @@ namespace PyramidsMaps.Maps
         private static void AfterSiteApplyKind(PyramidSite __instance, ref bool __result)
         {
             if (!StatueWorld.Active || StatueWorld.Definition == null) return;
-            if (SiteDefinition(__instance) == StatueWorld.Definition) return;
+            var map = StatueWorld.Map;
+            var t = __instance.transform;
+            bool moved = false;
+            if (map.SiteZ.HasValue && Mathf.Abs(t.position.z - (float)map.SiteZ.Value) > 0.01f)
+            {
+                // a map with its own site position (the game moves it back for a normal world)
+                t.position = new Vector3(t.position.x, t.position.y, (float)map.SiteZ.Value);
+                moved = true;
+            }
+            if (SiteDefinition(__instance) == StatueWorld.Definition && !moved) return;
             SiteDefinition(__instance) = StatueWorld.Definition;
             SiteLayout(__instance) = null;
+            if (!map.IsStatue)
+            {
+                // the menu camera looks at MenuFocus: lift it for a big pyramid, as the game does for the Grand one
+                var focus = t.Find("MenuFocus");
+                var def = StatueWorld.Definition;
+                if (focus != null && !FocusCaptured(__instance))
+                {
+                    // the game remembers the normal height the first time it moves the focus: record it before we do
+                    FocusCaptured(__instance) = true;
+                    ClassicFocusY(__instance) = focus.localPosition.y;
+                }
+                if (focus != null)
+                    focus.localPosition =new Vector3(focus.localPosition.x, Mathf.Round((def.baseSize + 1) / 2 * def.cellSize.y * 0.32f), focus.localPosition.z);
+            }
             Physics.SyncTransforms();
             __result = true; // makes PyramidState rebuild its progress and raise LayoutSwapped
+        }
+
+        /// <summary>After the game finished switching worlds (walls and scenery set for the kind): the map's own changes.</summary>
+        [HarmonyPatch(typeof(PyramidState), "ApplyWorldKind")]
+        [HarmonyPostfix]
+        private static void AfterApplyWorldKindScene()
+        {
+            if (!_stopping) StatueWorld.Applied();
+            if (StatueWorld.Map != null && !StatueWorld.Map.IsStatue)
+                Plugin.Log.LogInfo($"[perf] World switch to {StatueWorld.Map.Id} took {_switchClock.ElapsedMilliseconds:N0} ms (includes building the pyramid's layout).");
+        }
+
+        /// <summary>A map with its own walkable area (the normal one comes from PlayerTuning).</summary>
+        [HarmonyPatch(typeof(Pyramid.Data.PlayerTuning), nameof(Pyramid.Data.PlayerTuning.PlayAreaMin), MethodType.Getter)]
+        [HarmonyPostfix]
+        private static void PlayAreaMin(ref Vector2 __result)
+        {
+            var a = StatueWorld.Map?.PlayArea;
+            if (a.HasValue) __result = new Vector2(a.Value.minX, a.Value.minZ);
+        }
+
+        [HarmonyPatch(typeof(Pyramid.Data.PlayerTuning), nameof(Pyramid.Data.PlayerTuning.PlayAreaMax), MethodType.Getter)]
+        [HarmonyPostfix]
+        private static void PlayAreaMax(ref Vector2 __result)
+        {
+            var a = StatueWorld.Map?.PlayArea;
+            if (a.HasValue) __result = new Vector2(a.Value.maxX, a.Value.maxZ);
         }
 
         /// <summary>
@@ -178,12 +239,12 @@ namespace PyramidsMaps.Maps
 
                 // a client in someone else's world: the host's synced byte says which statue, if any
                 byte raw = RawKind(state);
-                if ((raw & 0xC0) != StatueFlag) return null;
-                var hostMap = MapRegistry.BySyncIndex((raw >> 4) & 0x3);
+                if ((raw & StatueFlag) == 0) return null;
+                var hostMap = MapRegistry.BySyncIndex(SyncIndexOf(raw));
                 int hostShape = raw & 0xF;
                 if (hostMap == null || hostShape != (hostMap.ShapeVersion & 0xF))
                 {
-                    Plugin.Log.LogError($"The host's world is a statue this mod doesn't have (map {(raw >> 4) & 0x3}, shape version {hostShape}; " +
+                    Plugin.Log.LogError($"The host's world is a statue this mod doesn't have (map {SyncIndexOf(raw)}, shape version {hostShape}; " +
                                         $"{(hostMap != null ? $"this mod's {hostMap.Id} is version {hostMap.ShapeVersion}" : "no such map here")}). " +
                                         "Both players need the same version of Pyramids Custom Maps.");
                     return null;

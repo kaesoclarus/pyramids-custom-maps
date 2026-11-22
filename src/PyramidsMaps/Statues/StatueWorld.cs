@@ -21,7 +21,10 @@ namespace PyramidsMaps.Statues
 
         public static bool Active => Map != null;
 
-        /// <summary>Per map, built once: the shape, its column heights and its definition.</summary>
+        /// <summary>A statue map is active (not a resized pyramid): the statue-only rules apply.</summary>
+        public static bool IsStatue => Map != null && Map.IsStatue;
+
+        /// <summary>Per map, built once: the shape and its column heights (statues only), and the definition.</summary>
         private sealed class MapData
         {
             public Voxels Shape;
@@ -35,11 +38,16 @@ namespace PyramidsMaps.Statues
         {
             if (!Data.TryGetValue(map.Id, out var d))
             {
-                var v = map.Build();
-                d = new MapData { Shape = v, ColumnTop = new int[v.Size, v.Size] };
-                for (int cx = -v.Radius; cx <= v.Radius; cx++)
-                    for (int cz = -v.Radius; cz <= v.Radius; cz++)
-                        d.ColumnTop[cx + v.Radius, cz + v.Radius] = v.ColumnTop(cx, cz);
+                d = new MapData();
+                if (map.IsStatue)
+                {
+                    var v = map.Build();
+                    d.Shape = v;
+                    d.ColumnTop = new int[v.Size, v.Size];
+                    for (int cx = -v.Radius; cx <= v.Radius; cx++)
+                        for (int cz = -v.Radius; cz <= v.Radius; cz++)
+                            d.ColumnTop[cx + v.Radius, cz + v.Radius] = v.ColumnTop(cx, cz);
+                }
                 Data[map.Id] = d;
             }
             return d;
@@ -48,7 +56,7 @@ namespace PyramidsMaps.Statues
         /// <summary>The active statue's blocks (null when no statue map is active).</summary>
         public static Voxels Shape => Active ? DataOf(Map).Shape : null;
 
-        /// <summary>A map's blocks.</summary>
+        /// <summary>A map's blocks (null for a pyramid map).</summary>
         public static Voxels ShapeOf(MapRegistry.MapInfo map) => DataOf(map).Shape;
 
         /// <summary>Top block of the active statue's column + 1 (0 = no blocks there, or no statue).</summary>
@@ -56,15 +64,16 @@ namespace PyramidsMaps.Statues
         {
             if (!Active) return 0;
             var d = DataOf(Map);
+            if (d.Shape == null) return 0;
             int r = d.Shape.Radius;
             if (x < -r || x > r || z < -r || z > r) return 0;
             return d.ColumnTop[x + r, z + r];
         }
 
-        /// <summary>The active statue's PyramidDefinition; the layout patch recognises it by reference.</summary>
+        /// <summary>The active map's PyramidDefinition; the layout patch recognises it by reference.</summary>
         public static PyramidDefinition Definition => Active ? DataOf(Map).Definition : null;
 
-        /// <summary>The statue map a PyramidDefinition was made for, or null.</summary>
+        /// <summary>The map a PyramidDefinition was made for, or null.</summary>
         public static MapRegistry.MapInfo MapOfDefinition(PyramidDefinition def)
         {
             if (def == null) return null;
@@ -73,10 +82,18 @@ namespace PyramidsMaps.Statues
             return null;
         }
 
-        /// <summary>Statue bricks / classic pyramid bricks.</summary>
+        /// <summary>The map's bricks / classic pyramid bricks.</summary>
         public static float Scale { get; private set; } = 1f;
 
         private static readonly List<Action> Undo = new List<Action>();
+
+        /// <summary>Blocks in a pyramid of this base: the sum of the odd squares up to it.</summary>
+        private static int PyramidCells(int baseSize)
+        {
+            int n = 0;
+            for (int s = baseSize; s > 0; s -= 2) n += s * s;
+            return n;
+        }
 
         public static void Activate(MapRegistry.MapInfo map, PyramidDefinition classic, int classicCells)
         {
@@ -86,15 +103,23 @@ namespace PyramidsMaps.Statues
             if (classic == null) { Plugin.Log.LogError($"{map.Id}: no classic PyramidDefinition to copy."); return; }
 
             var data = DataOf(map);
-            int cells = data.Shape.CellCount;
+            int cells = map.IsStatue ? data.Shape.CellCount : PyramidCells(map.PyramidBase);
+            int layers = map.IsStatue ? data.Shape.Height : (map.PyramidBase + 1) / 2;
             Scale = classicCells > 0 ? (float)cells / classicCells : 1f;
             Map = map;   // set first: the definition and the gates below read the active map
-            if (data.Definition == null) data.Definition = MakeDefinition(classic, cells, data.Shape.Height);
+            if (data.Definition == null) data.Definition = MakeDefinition(classic, cells, layers);
 
             ScaleBrickGates();
-            AdjustPlaceRule();
+            if (map.IsStatue) AdjustPlaceRule();
             try { map.OnActivate?.Invoke(); } catch (Exception e) { Plugin.Log.LogError($"{map.Id}: switching on failed: {e}"); }
-            Plugin.Log.LogInfo($"Statue world on ({map.Id}): {cells:N0} blocks, {data.Shape.Height} layers, brick gates x{Scale:0.###}.");
+            Plugin.Log.LogInfo($"Custom map on ({map.Id}): {cells:N0} blocks, {layers} layers, brick gates x{Scale:0.###}.");
+        }
+
+        /// <summary>After the game finished switching to the world: the map's scene changes.</summary>
+        public static void Applied()
+        {
+            if (!Active) return;
+            try { Map.OnApplied?.Invoke(); } catch (Exception e) { Plugin.Log.LogError($"{Map.Id}: setting up the scene failed: {e}"); }
         }
 
         public static void Deactivate()
@@ -108,7 +133,7 @@ namespace PyramidsMaps.Statues
             }
             Undo.Clear();
             Map = null;
-            Plugin.Log.LogInfo($"Statue world off ({map.Id}): brick gates restored.");
+            Plugin.Log.LogInfo($"Custom map off ({map.Id}): brick gates restored.");
         }
 
         // ---------- definition ----------
@@ -116,11 +141,15 @@ namespace PyramidsMaps.Statues
         private static PyramidDefinition MakeDefinition(PyramidDefinition classic, int cells, int layers)
         {
             var d = UnityEngine.Object.Instantiate(classic);
-            d.name = "PyramidDefinition" + char.ToUpperInvariant(Map.Id[0]) + Map.Id.Substring(1);
+            d.name = "PyramidDefinition" + string.Concat(Array.ConvertAll(Map.Id.Split('-'), p => char.ToUpperInvariant(p[0]) + p.Substring(1)));
             d.hideFlags = HideFlags.DontUnloadUnusedAsset;
-            // The statue's blocks: half a pyramid block each way, for smooth curves
-            d.cellSize = new Vector3((float)Map.CellW, (float)Map.CellH, (float)Map.CellW);
-            d.baseSize = Shape.Size;
+            if (Map.IsStatue)
+            {
+                // The statue's blocks: half a pyramid block each way, for smooth curves
+                d.cellSize = new Vector3((float)Map.CellW, (float)Map.CellH, (float)Map.CellW);
+                d.baseSize = Shape.Size;
+            }
+            else d.baseSize = Map.PyramidBase;   // a pyramid map: the game's own blocks, a bigger base
             float s = Scale;
 
             // Milestones: same rhythm, scaled to the statue, strictly rising and below the total
@@ -194,7 +223,7 @@ namespace PyramidsMaps.Statues
                 if (mon.unlockAtBricks > 0) { ScaleGate(mon, mon.unlockAtBricks, v => mon.unlockAtBricks = v); others++; }
             foreach (var entry in FindTeamUpgradeEntries())
                 if (entry.levelUnlockAtBricks != null && entry.levelUnlockAtBricks.Length > 0) { ScaleArray(entry.levelUnlockAtBricks); levels++; }
-            foreach (var t in Resources.FindObjectsOfTypeAll<ShabtiTuning>())
+            foreach (var t in Map.IsStatue ? Resources.FindObjectsOfTypeAll<ShabtiTuning>() : new ShabtiTuning[0])
             {
                 // no Stone Ramps on a statue: the bubble says what to do instead
                 string original = t.bubbleNeedRamps;

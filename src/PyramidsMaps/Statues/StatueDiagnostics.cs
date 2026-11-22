@@ -37,23 +37,58 @@ namespace PyramidsMaps.Statues
                 else { _lastF9 = Time.unscaledTime; Plugin.Log.LogWarning("DevTools: press F9 again within 2 s to fill the statue (all but the final brick)."); }
             }
 
+            // On a test map: frame rate every 10 s, for measuring what the game can handle
+            if (StatueWorld.Map != null && StatueWorld.Map.DevOnly)
+            {
+                _frames++;
+                _worst = Mathf.Max(_worst, Time.unscaledDeltaTime);
+                if (Time.unscaledTime - _since >= 10f)
+                {
+                    float span = Time.unscaledTime - _since;
+                    var py = FindAnyObjectByType<PyramidState>();
+                    Plugin.Log.LogInfo($"[perf] {_frames / span:0.0} fps average, worst frame {_worst * 1000f:0} ms over {span:0} s; " +
+                                       $"{(py != null ? py.Progress.TotalPlaced : 0):N0} of {(py != null ? py.Layout.TotalCells : 0):N0} blocks placed.");
+                    _since = Time.unscaledTime; _frames = 0; _worst = 0f;
+                }
+            }
+
             if (!kb.f8Key.wasPressedThisFrame) return;
             try { Plugin.Log.LogInfo(Describe()); }
             catch (System.Exception e) { Plugin.Log.LogError($"F8 diagnostic failed: {e}"); }
         }
 
         private float _lastF9 = -10f;
+        private float _since, _worst;
+        private int _frames;
 
-        private static void DevFillAllButLast()
+        private void DevFillAllButLast()
         {
             var py = FindAnyObjectByType<PyramidState>();
-            if (py == null || !StatueLayout.IsStatue(py.Layout)) { Plugin.Log.LogWarning("DevTools: not a statue world."); return; }
+            if (py == null || !StatueWorld.Active) { Plugin.Log.LogWarning("DevTools: not a custom map world."); return; }
             if (!py.IsServerInitialized) { Plugin.Log.LogWarning("DevTools: only the host can fill."); return; }
+            StartCoroutine(FillInChunks(py));
+        }
+
+        /// <summary>Blocks per fill call: each call is one network message, so big maps fill over many frames.</summary>
+        private const int FillChunk = 3000;
+
+        private static System.Collections.IEnumerator FillInChunks(PyramidState py)
+        {
             var cells = new System.Collections.Generic.List<int>();
             for (int i = 0; i < py.Layout.TotalCells; i++)
                 if (!py.Progress.IsFilled(i) && !py.IsCapstone(i)) cells.Add(i);
-            py.ServerFillCells(cells, -1);
-            Plugin.Log.LogWarning($"DevTools: filled {cells.Count} blocks; the final brick (cell {py.CapstoneCell}, {py.CellWorldCenter(py.CapstoneCell)}) is left.");
+            var clock = System.Diagnostics.Stopwatch.StartNew();
+            var chunk = new System.Collections.Generic.List<int>(FillChunk);
+            for (int at = 0; at < cells.Count; at += FillChunk)
+            {
+                chunk.Clear();
+                for (int k = at; k < Mathf.Min(cells.Count, at + FillChunk); k++) chunk.Add(cells[k]);
+                py.ServerFillCells(chunk, -1);
+                if ((at / FillChunk) % 20 == 0) Plugin.Log.LogInfo($"DevTools: filled {Mathf.Min(cells.Count, at + FillChunk):N0} of {cells.Count:N0} ...");
+                yield return null;
+            }
+            Plugin.Log.LogWarning($"DevTools: filled {cells.Count:N0} blocks in {clock.ElapsedMilliseconds / 1000f:0.0} s; the final brick " +
+                                  $"(cell {py.CapstoneCell}, {py.CellWorldCenter(py.CapstoneCell)}) is left.");
         }
 
         private static string Describe()
