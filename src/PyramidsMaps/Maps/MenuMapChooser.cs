@@ -117,9 +117,9 @@ namespace PyramidsMaps.Maps
             float left = Mathf.Min(classic.anchoredPosition.x, grand.anchoredPosition.x) - w * 0.5f;
             float total = Mathf.Abs(grand.anchoredPosition.x - classic.anchoredPosition.x) + w;
             float y = classic.anchoredPosition.y;
-            // widths: button, button, dropdown = 1 : 1 : 1.5
-            float unit = (total - 2 * gap) / 3.5f;
-            float[] widths = { unit, unit, unit * 1.5f };
+            // widths: button, button, dropdown = 1 : 1 : 1.25
+            float unit = (total - 2 * gap) / 3.25f;
+            float[] widths = { unit, unit, unit * 1.25f };
             var rects = new[] { classic, grand, dropdown };
 
             dropdown.anchorMin = classic.anchorMin;
@@ -141,6 +141,18 @@ namespace PyramidsMaps.Maps
                     text.fontSizeMin = Mathf.Max(8f, text.fontSize * 0.5f);
                 }
             }
+        }
+
+        /// <summary>DevTools (F6 on the main menu): pick the next custom map, wrapping to none.</summary>
+        internal static void ChooseNext()
+        {
+            var showcase = Object.FindAnyObjectByType<SlotShowcase>();
+            if (showcase == null) return;
+            var maps = new List<MapRegistry.MapInfo>(MapRegistry.Visible);
+            int i = maps.IndexOf(MapRegistry.ForNewWorlds);
+            var next = i + 1 < maps.Count ? maps[i + 1] : null;
+            Choose(showcase, next, WorldKind.Classic);
+            Plugin.Log.LogInfo($"DevTools: menu map is now {next?.Id ?? "the normal pyramid"}.");
         }
 
         private static void Choose(SlotShowcase showcase, MapRegistry.MapInfo map, WorldKind kind)

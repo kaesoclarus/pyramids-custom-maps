@@ -22,6 +22,26 @@ namespace PyramidsMaps.Statues
             var kb = Keyboard.current;
             if (kb == null) return;
 
+            // DevTools: log what UI each left click lands on (for finding what blocks a menu control)
+            var mouse = Mouse.current;
+            if (Plugin.DevTools.Value && mouse != null && mouse.leftButton.wasPressedThisFrame && UnityEngine.EventSystems.EventSystem.current != null)
+            {
+                var data = new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current) { position = mouse.position.ReadValue() };
+                var hits = new System.Collections.Generic.List<UnityEngine.EventSystems.RaycastResult>();
+                UnityEngine.EventSystems.EventSystem.current.RaycastAll(data, hits);
+                var sb2 = new StringBuilder($"[ui-click] at {data.position}: {hits.Count} hit(s)");
+                for (int i = 0; i < hits.Count && i < 6; i++)
+                {
+                    var h = hits[i];
+                    var cv = h.gameObject.GetComponentInParent<Canvas>();
+                    sb2.Append($"\n  {i}: {Path(h.gameObject.transform)} (canvas '{cv?.name}' mode {cv?.renderMode} layer {cv?.sortingLayerName} order {cv?.sortingOrder}, raycaster {h.module?.GetType().Name})");
+                }
+                Plugin.Log.LogInfo(sb2.ToString());
+            }
+
+            // F6 (DevTools, main menu): next custom map in the empty plot
+            if (Plugin.DevTools.Value && kb.f6Key.wasPressedThisFrame) PyramidsMaps.Maps.MenuMapChooser.ChooseNext();
+
             // F7: markers on/off (remembered in the config)
             if (kb.f7Key.wasPressedThisFrame)
             {
@@ -153,6 +173,13 @@ namespace PyramidsMaps.Statues
                               $"planeCoordOk={planeOk} tol={tol:0.00} builderLevel={py.BuilderLevel}");
             }
             return sb.ToString();
+        }
+
+        private static string Path(Transform t)
+        {
+            var s = t.name;
+            for (int i = 0; i < 4 && t.parent != null; i++) { t = t.parent; s = t.name + "/" + s; }
+            return s;
         }
 
         private static string Cell(PyramidLayout layout, int cell) =>

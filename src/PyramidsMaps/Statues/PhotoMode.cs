@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using HarmonyLib;
 using Pyramid.CameraRig;
 using Pyramid.UI;
 using UnityEngine;
@@ -49,13 +50,23 @@ namespace PyramidsMaps.Statues
 
         private const float Speed = 8f, FastSpeed = 30f, LookSensitivity = 0.08f;
 
+        /// <summary>
+        /// The first-person hands: the game hides them through GameCamera.ViewModelHidden, which the camera script
+        /// sets each frame. The free camera turns that script off, so keep the switch on ourselves.
+        /// </summary>
+        private static void HideHands(bool hide)
+        {
+            try { Traverse.Create(typeof(GameCamera)).Property("ViewModelHidden").SetValue(hide); }
+            catch (System.Exception e) { Plugin.Log.LogWarning($"Photo mode: could not hide the hands: {e.Message}"); }
+        }
+
         private void Update()
         {
             var kb = Keyboard.current;
             if (kb == null) return;
 
             if (kb.f11Key.wasPressedThisFrame) ToggleFree();
-            if (_free) Fly(kb);
+            if (_free) { Fly(kb); HideHands(true); }
             if (kb.f10Key.wasPressedThisFrame) StartCoroutine(Shot());
         }
 
@@ -79,6 +90,7 @@ namespace PyramidsMaps.Statues
             else
             {
                 if (_gameCam != null) _gameCam.enabled = true;
+                HideHands(false);
                 HudVisibility.DevSet(_hudWasHidden);
                 ShowClutter();
                 Plugin.Log.LogInfo("Free camera off.");
