@@ -14,7 +14,7 @@ string shape = "cat";
 int si = argList.IndexOf("--shape");
 if (si >= 0 && si + 1 < argList.Count) { shape = argList[si + 1].ToLowerInvariant(); argList.RemoveRange(si, 2); }
 args = argList.ToArray();
-var v = shape == "sobek" ? SobekShape.Build() : SphinxShape.Build();
+var v = shape == "sobek" ? SobekShape.Build() : shape == "anubis" ? AnubisShape.Build() : SphinxShape.Build();
 if (shape == "sobek")
 {
     var pool = SobekShape.PoolCells(v, out int pr);
@@ -50,7 +50,7 @@ if (shape == "sobek")
         if (pool[a, b]) { cells++; minZ = Math.Min(minZ, b - pr); maxZ = Math.Max(maxZ, b - pr); maxX = Math.Max(maxX, Math.Abs(a - pr)); }
     Console.WriteLine($"Pool: {cells:N0} m², world z {minZ - 44:0} … {maxZ - 44:0}, x ±{maxX:0}");
 }
-string title = shape == "sobek" ? "Sobek preview" : "Cat statue preview";
+string title = shape == "sobek" ? "Sobek preview" : shape == "anubis" ? "Anubis preview" : "Cat statue preview";
 var outPath = args.Length > 0 ? args[0] : "statue-preview.html";
 
 // --gallery <folder>: 1920×1080 renders for a mod page, then stop

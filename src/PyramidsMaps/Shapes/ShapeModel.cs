@@ -42,6 +42,29 @@ namespace PyramidsMaps.Shapes
             });
         }
 
+        /// <summary>An axis-aligned box: centre and half-sizes.</summary>
+        public void Box(double cx, double cy, double cz, double hx, double hy, double hz)
+        {
+            Bound(cx, cz, Math.Max(hx, hz));
+            _parts.Add((x, y, z) => Math.Max(Math.Abs(x - cx) - hx, Math.Max(Math.Abs(y - cy) - hy, Math.Abs(z - cz) - hz)));
+        }
+
+        /// <summary>
+        /// A ramp (sampled into blocks it becomes a staircase): half-width hw around x = cx, rising from the
+        /// ground at z = zFoot to <paramref name="height"/> at z = zTop.
+        /// </summary>
+        public void Ramp(double cx, double hw, double zFoot, double zTop, double height)
+        {
+            double zMin = Math.Min(zFoot, zTop), zMax = Math.Max(zFoot, zTop);
+            Bound(cx, (zMin + zMax) / 2, Math.Max(hw, (zMax - zMin) / 2));
+            _parts.Add((x, y, z) =>
+            {
+                if (Math.Abs(x - cx) > hw || z < zMin || z > zMax || y < 0) return 1;
+                double top = height * (zFoot - z) / (zFoot - zTop);
+                return y <= top ? -1 : 1;
+            });
+        }
+
         /// <summary>A capsule from A to B whose radius goes from ra to rb.</summary>
         public void Capsule(double ax, double ay, double az, double bx, double by, double bz, double ra, double rb)
         {

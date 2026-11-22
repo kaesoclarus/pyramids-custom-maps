@@ -61,6 +61,17 @@ namespace PyramidsMaps.Maps
                 OnActivate = Statues.SobekPool.Show,
                 OnDeactivate = Statues.SobekPool.Hide,
             },
+            new MapInfo
+            {
+                Id = "anubis",
+                SyncIndex = 2,
+                Title = "Anubis",
+                Body = "A giant jackal keeping watch from his shrine, ears high: 11,588 blocks you can lay in any order. (Pyramids Custom Maps mod)",
+                StatueName = "Anubis",
+                ShapeVersion = AnubisShape.Version,
+                CellW = AnubisShape.CellW, CellH = AnubisShape.CellH,
+                Build = AnubisShape.Build,
+            },
         };
 
         public static MapInfo Find(string id)
