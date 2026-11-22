@@ -149,6 +149,50 @@ namespace PyramidsMaps.Maps
             },
             new MapInfo
             {
+                Id = "step",
+                SyncCode = 8,
+                Title = "Step Pyramid",
+                Body = "Djoser's Step Pyramid, the first pyramid ever: six tiers rising 60 m on a 122 m base. 38,921 blocks, any order. (Pyramids Custom Maps mod)",
+                StatueName = "the pyramid",
+                ShapeVersion = PyramidVariants.StepVersion,
+                CellW = PyramidVariants.CellW, CellH = PyramidVariants.CellH,
+                Build = PyramidVariants.BuildStep,
+            },
+            new MapInfo
+            {
+                Id = "bent",
+                SyncCode = 9,
+                Title = "Bent Pyramid",
+                Body = "The Bent Pyramid: steep at the bottom, gentler above, after its builders changed their minds halfway up. 38,235 blocks, any order. (Pyramids Custom Maps mod)",
+                StatueName = "the pyramid",
+                ShapeVersion = PyramidVariants.BentVersion,
+                CellW = PyramidVariants.CellW, CellH = PyramidVariants.CellH,
+                Build = PyramidVariants.BuildBent,
+            },
+            new MapInfo
+            {
+                Id = "nubian",
+                SyncCode = 10,
+                Title = "Nubian Field",
+                Body = "A royal cemetery of a dozen steep Nubian pyramids, like those at Meroe. Finish on the tallest. 7,684 blocks, any order. (Pyramids Custom Maps mod)",
+                StatueName = "the pyramids",
+                ShapeVersion = PyramidVariants.NubianVersion,
+                CellW = PyramidVariants.CellW, CellH = PyramidVariants.CellH,
+                Build = PyramidVariants.BuildNubian,
+            },
+            new MapInfo
+            {
+                Id = "ziggurat",
+                SyncCode = 11,
+                Title = "Ziggurat",
+                Body = "A Mesopotamian ziggurat: three terraces, a grand stairway and a shrine on top, 45 m high. 11,943 blocks, any order. (Pyramids Custom Maps mod)",
+                StatueName = "the ziggurat",
+                ShapeVersion = PyramidVariants.ZigguratVersion,
+                CellW = PyramidVariants.CellW, CellH = PyramidVariants.CellH,
+                Build = PyramidVariants.BuildZiggurat,
+            },
+            new MapInfo
+            {
                 // A performance test, not a release: the game's own pyramid at about 4.5x the Grand Pyramid's blocks
                 // (base 141 = 282 m, 71 layers = 178 m, 477,191 blocks), moved south so it fits the terrain.
                 Id = "colossal-test",

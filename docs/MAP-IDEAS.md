@@ -11,6 +11,10 @@ Ideas for future maps. Each one replaces the pyramid with something else to buil
 | **Upside-Down** pyramid | In progress (shape done 2026-11-22) | The classic pyramid's own 23,426 blocks balanced on its tip, plus a capstone on the plaza on top | Every layer overhangs. Ground under the overhang stays usable (only the 14 m square around the tip counts as the statue) |
 | **Upside-Down Grand** | In progress (shape done 2026-11-22) | The Grand Pyramid's own 105,995 blocks on its tip, plus a capstone: a 170 m plaza 107.5 m up | Its plaza reaches a little past the normal play area, so the play area widens and the boundary walls come down (`MapEdges`) |
 | **Diamond** | In progress (shape done 2026-11-22) | An upside-down pyramid with a pyramid on its plaza: an octahedron on its point, 44,251 blocks, 127.5 m | The last free multiplayer map index (7); the top point is the last brick |
+| **Step Pyramid** (Djoser) | In progress (2026-11-22) | Six 10 m tiers on a 122 × 110 m base, 38,921 blocks | Straight tier walls: needs the step-left-open building |
+| **Bent Pyramid** | In progress (2026-11-22) | 51° below, about 43° above, 38,235 blocks | The slope change uses 1, 1, 2 blocks in per layer |
+| **Nubian Field** | In progress (2026-11-22) | A dozen steep (about 68°) small pyramids, 7,684 blocks | Separate pieces in one map; the tallest is the last brick |
+| **Ziggurat** | In progress (2026-11-22) | Three terraces, central and side stairways, shrine, 45 m, 11,943 blocks | Stairways built into the shape |
 | **Scarab** | Idea | A beetle holding up a sun disc | The disc is a thin overhang held up by the legs, so it tests the no-floating-bricks rule hardest |
 
 ## Other ideas from the first brainstorm
