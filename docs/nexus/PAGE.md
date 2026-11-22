@@ -1,8 +1,10 @@
 # Nexus Mods page: what to fill in
 
-**Published:** https://www.nexusmods.com/howtheybuiltthepyramids/mods/3, now "Pyramids Custom Maps - The Great Cat and Sobek", version 0.4.0 (22 Nov 2026; 0.3.0 was 21 Nov, now archived). Permissions: modification allowed with credit; the rest left at the Nexus defaults.
+**Published:** https://www.nexusmods.com/howtheybuiltthepyramids/mods/3, now "Pyramids Custom Maps", version 0.5.0 (22 Nov 2026; 0.4.0 and 0.3.0 archived). Permissions: modification allowed with credit; the rest left at the Nexus defaults.
 
-## Updating to 0.5.0 (13 new maps, player maps)
+## Updating to 0.5.0 (13 new maps, player maps): done 22 Nov 2026
+
+Name, version, summary, description, file (as an update of 0.4.0, which was archived), changelog and the 3 in-game Sobek shots. Note: the media editor can show an empty gallery while it loads; wait before changing anything there.
 
 | Field | Value |
 |---|---|
