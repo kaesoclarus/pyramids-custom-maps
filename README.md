@@ -76,12 +76,28 @@ dotnet build src/PyramidsMaps -c Release -p:GamePath="D:\SteamLibrary\steamapps\
 | `tools/Decomp` | Decompiles the game's assembly locally, for reading its code (the output is not part of this repo) |
 | `PLAN.md` | Design notes and history |
 
-## Adding a map
+## Making your own map (no coding)
 
-1. Model its statue in `src/PyramidsMaps/Shapes` (see `SobekShape.cs`), and preview it with `tools/ShapePreview --shape <name>`.
-2. Add one entry to `src/PyramidsMaps/Maps/MapRegistry.cs`, with a new sync index.
+Build a model in [MagicaVoxel](https://ephtracy.github.io/) and save it as a `.vox` file in `BepInEx\plugins\PyramidsMaps\maps`. After a restart it appears in the main menu's **Custom map** dropdown. That folder's `README.txt` (written on first run) has the details:
 
-It then gets a button on the main menu's empty plot.
+- **Blocks:** each voxel is one block, 1 × 1 × 1.25 m, or the game's 2 × 2 × 2.5 m pyramid block with `blocks=pyramid` in an optional `<name>.txt` next to it. The same file can set a `title` and `description`.
+- **Orientation:** MagicaVoxel's front faces the river. The model is centred on the build site, standing on the ground.
+- **Build check:** when the game starts, the mod checks that every block can be built by hand and logs any that can't to `BepInEx\LogOutput.log`.
+- **Sharing:** everyone in a multiplayer game needs the same file. Worlds remember the exact file they started with.
+
+To preview a model, or to start from one of the built-in shapes:
+
+```powershell
+dotnet run --project tools/ShapePreview -c Release -- --shape my_map.vox preview.html
+dotnet run --project tools/ShapePreview -c Release -- --shape giza --write-vox giza.vox preview.html
+```
+
+## Adding a built-in map
+
+1. Model its shape in `src/PyramidsMaps/Shapes` (see `SobekShape.cs` for a statue, `PyramidVariants.cs` for block-by-block shapes), and preview it with `tools/ShapePreview --shape <name>`.
+2. Add one entry to `src/PyramidsMaps/Maps/MapRegistry.cs` with an unused sync code (0–31; player maps use 32–63). Give it a new code whenever its shape changes.
+
+It then appears in the main menu's **Custom map** dropdown.
 
 ## Debug keys
 

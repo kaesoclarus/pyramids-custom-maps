@@ -13,9 +13,14 @@ var argList = new List<string>(args);
 string shape = "cat";
 int si = argList.IndexOf("--shape");
 if (si >= 0 && si + 1 < argList.Count) { shape = argList[si + 1].ToLowerInvariant(); argList.RemoveRange(si, 2); }
+// --write-vox <file>: also save the shape as a MagicaVoxel model; --pyramid-blocks: reach check with 2 m blocks
+string writeVox = null;
+int wi = argList.IndexOf("--write-vox");
+if (wi >= 0 && wi + 1 < argList.Count) { writeVox = argList[wi + 1]; argList.RemoveRange(wi, 2); }
+bool pyramidBlocks = argList.Remove("--pyramid-blocks");
 args = argList.ToArray();
 var buildClock = System.Diagnostics.Stopwatch.StartNew();
-var v = shape == "sobek" ? SobekShape.Build() : shape == "anubis" ? AnubisShape.Build() : shape == "horus" ? HorusShape.Build() : shape == "inverted" ? InvertedShape.Build() : shape == "inverted-grand" ? InvertedShape.BuildGrand() : shape == "diamond" ? InvertedShape.BuildDiamond() : shape == "step" ? PyramidVariants.BuildStep() : shape == "bent" ? PyramidVariants.BuildBent() : shape == "nubian" ? PyramidVariants.BuildNubian() : shape == "ziggurat" ? PyramidVariants.BuildZiggurat() : shape == "giza" ? GizaShape.Build() : shape == "colossi" ? MonumentShapes.BuildColossi() : shape == "avenue" ? MonumentShapes.BuildAvenue() : SphinxShape.Build();
+var v = shape.EndsWith(".vox") ? VoxFile.ToVoxels(VoxFile.Read(shape)) : shape == "sobek" ? SobekShape.Build() : shape == "anubis" ? AnubisShape.Build() : shape == "horus" ? HorusShape.Build() : shape == "inverted" ? InvertedShape.Build() : shape == "inverted-grand" ? InvertedShape.BuildGrand() : shape == "diamond" ? InvertedShape.BuildDiamond() : shape == "step" ? PyramidVariants.BuildStep() : shape == "bent" ? PyramidVariants.BuildBent() : shape == "nubian" ? PyramidVariants.BuildNubian() : shape == "ziggurat" ? PyramidVariants.BuildZiggurat() : shape == "giza" ? GizaShape.Build() : shape == "colossi" ? MonumentShapes.BuildColossi() : shape == "avenue" ? MonumentShapes.BuildAvenue() : SphinxShape.Build();
 { ulong h = 1469598103934665603UL; for (int x = -v.Radius; x <= v.Radius; x++) for (int y = 0; y < v.Layers; y++) for (int z = -v.Radius; z <= v.Radius; z++) if (v[x, y, z]) { h = (h ^ (ulong)(((x + 512) * 1024 + y) * 1024 + (z + 512))) * 1099511628211UL; }
   Console.WriteLine($"Shape built in {buildClock.ElapsedMilliseconds:N0} ms (the game does this when a world loads); fingerprint {h:X16}"); }
 if (shape == "sobek")
@@ -53,7 +58,8 @@ if (shape == "sobek")
         if (pool[a, b]) { cells++; minZ = Math.Min(minZ, b - pr); maxZ = Math.Max(maxZ, b - pr); maxX = Math.Max(maxX, Math.Abs(a - pr)); }
     Console.WriteLine($"Pool: {cells:N0} m², world z {minZ - 44:0} … {maxZ - 44:0}, x ±{maxX:0}");
 }
-string title = shape == "sobek" ? "Sobek preview" : shape == "anubis" ? "Anubis preview" : shape == "horus" ? "Horus preview" : shape == "inverted" ? "Upside-down pyramid preview" : shape == "inverted-grand" ? "Upside-down Grand Pyramid preview" : shape == "diamond" ? "Diamond preview" : char.ToUpper(shape[0]) + shape.Substring(1) + " preview";
+if (writeVox != null) { VoxFile.Write(v, writeVox); Console.WriteLine($"Wrote {writeVox}"); }
+string title = shape.EndsWith(".vox") ? Path.GetFileNameWithoutExtension(shape) + " preview" : shape == "sobek" ? "Sobek preview" : shape == "anubis" ? "Anubis preview" : shape == "horus" ? "Horus preview" : shape == "inverted" ? "Upside-down pyramid preview" : shape == "inverted-grand" ? "Upside-down Grand Pyramid preview" : shape == "diamond" ? "Diamond preview" : char.ToUpper(shape[0]) + shape.Substring(1) + " preview";
 var outPath = args.Length > 0 ? args[0] : "statue-preview.html";
 
 // --gallery <folder>: 1920×1080 renders for a mod page, then stop
@@ -79,7 +85,7 @@ Console.WriteLine($"Statue: {v.CellCount:N0} blocks of {SphinxShape.CellW} x {Sp
 Console.WriteLine("(classic pyramid: 23,426 blocks, 26 layers, 65 m)");
 {
     Reach.MaxRise = 1.3; Reach.ReachCells = 6;   // cat worlds allow one 1.25 m layer above your feet
-    if (shape.StartsWith("inverted") || shape is "diamond" or "step" or "bent" or "nubian" or "ziggurat") { Reach.ReachCells = 3; Reach.ClimbLayers = 1; }   // 2 m blocks: 6 m reach is 3 blocks, a 2.5 m step is one layer
+    if (pyramidBlocks || shape.StartsWith("inverted") || shape is "diamond" or "step" or "bent" or "nubian" or "ziggurat") { Reach.ReachCells = 3; Reach.ClimbLayers = 1; }   // 2 m blocks: 6 m reach is 3 blocks, a 2.5 m step is one layer
     foreach (var (label, keep) in new[] { ("lay everything at once", false), ("leaving a step open to climb", true) })
     {
         var left = Reach.GreedyAnyOrder(v, keep, out int waves);

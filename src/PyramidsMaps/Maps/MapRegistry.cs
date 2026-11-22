@@ -58,7 +58,19 @@ namespace PyramidsMaps.Maps
             public bool IsStatue => Build != null;
         }
 
-        public static readonly IReadOnlyList<MapInfo> All = new[]
+        /// <summary>Every map: the built-in ones, then the player-made ones from the maps folder (loaded once).</summary>
+        public static IReadOnlyList<MapInfo> All => _all ?? (_all = Combine());
+
+        private static List<MapInfo> _all;
+
+        private static List<MapInfo> Combine()
+        {
+            var list = new List<MapInfo>(BuiltIn);
+            list.AddRange(UserMaps.Load());
+            return list;
+        }
+
+        private static readonly MapInfo[] BuiltIn = new[]
         {
             new MapInfo
             {
