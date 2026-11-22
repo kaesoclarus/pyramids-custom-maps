@@ -9,12 +9,33 @@ namespace PyramidsMaps.Shapes
     /// </summary>
     public sealed class ShapeModel
     {
-        private readonly List<Func<double, double, double, double>> _parts = new List<Func<double, double, double, double>>();
+        /// <summary>One solid: a test that is ≤ 0 inside it, and a box around it, so points far away skip the test.</summary>
+        private sealed class Part
+        {
+            public double X0, Y0, Z0, X1, Y1, Z1;
+            public Func<double, double, double, double> Test;
+        }
+
+        private readonly List<Part> _parts = new List<Part>();
         public double MinX = double.MaxValue, MaxX = double.MinValue, MinZ = double.MaxValue, MaxZ = double.MinValue;
+        /// <summary>The highest any part reaches (metres).</summary>
+        public double MaxY = double.MinValue;
+
+        private const double BoxSlack = 1e-6;
+
+        private void Add(double x0, double y0, double z0, double x1, double y1, double z1, Func<double, double, double, double> test)
+        {
+            MaxY = Math.Max(MaxY, y1);
+            _parts.Add(new Part { X0 = x0 - BoxSlack, Y0 = y0 - BoxSlack, Z0 = z0 - BoxSlack, X1 = x1 + BoxSlack, Y1 = y1 + BoxSlack, Z1 = z1 + BoxSlack, Test = test });
+        }
 
         public bool Inside(double x, double y, double z)
         {
-            foreach (var p in _parts) if (p(x, y, z) <= 0) return true;
+            foreach (var p in _parts)
+            {
+                if (x < p.X0 || x > p.X1 || y < p.Y0 || y > p.Y1 || z < p.Z0 || z > p.Z1) continue;
+                if (p.Test(x, y, z) <= 0) return true;
+            }
             return false;
         }
 
@@ -35,7 +56,7 @@ namespace PyramidsMaps.Shapes
         public void Ellipsoid(double cx, double cy, double cz, double rx, double ry, double rz)
         {
             Bound(cx, cz, Math.Max(rx, rz));
-            _parts.Add((x, y, z) =>
+            Add(cx - rx, cy - ry, cz - rz, cx + rx, cy + ry, cz + rz, (x, y, z) =>
             {
                 double dx = (x - cx) / rx, dy = (y - cy) / ry, dz = (z - cz) / rz;
                 return dx * dx + dy * dy + dz * dz - 1;
@@ -46,7 +67,7 @@ namespace PyramidsMaps.Shapes
         public void Box(double cx, double cy, double cz, double hx, double hy, double hz)
         {
             Bound(cx, cz, Math.Max(hx, hz));
-            _parts.Add((x, y, z) => Math.Max(Math.Abs(x - cx) - hx, Math.Max(Math.Abs(y - cy) - hy, Math.Abs(z - cz) - hz)));
+            Add(cx - hx, cy - hy, cz - hz, cx + hx, cy + hy, cz + hz, (x, y, z) => Math.Max(Math.Abs(x - cx) - hx, Math.Max(Math.Abs(y - cy) - hy, Math.Abs(z - cz) - hz)));
         }
 
         /// <summary>
@@ -57,7 +78,7 @@ namespace PyramidsMaps.Shapes
         {
             double zMin = Math.Min(zFoot, zTop), zMax = Math.Max(zFoot, zTop);
             Bound(cx, (zMin + zMax) / 2, Math.Max(hw, (zMax - zMin) / 2));
-            _parts.Add((x, y, z) =>
+            Add(cx - hw, 0, zMin, cx + hw, Math.Max(0, height), zMax, (x, y, z) =>
             {
                 if (Math.Abs(x - cx) > hw || z < zMin || z > zMax || y < 0) return 1;
                 double top = height * (zFoot - z) / (zFoot - zTop);
@@ -69,7 +90,8 @@ namespace PyramidsMaps.Shapes
         public void Capsule(double ax, double ay, double az, double bx, double by, double bz, double ra, double rb)
         {
             Bound(ax, az, ra); Bound(bx, bz, rb);
-            _parts.Add((x, y, z) =>
+            double cr = Math.Max(ra, rb);
+            Add(Math.Min(ax, bx) - cr, Math.Min(ay, by) - cr, Math.Min(az, bz) - cr, Math.Max(ax, bx) + cr, Math.Max(ay, by) + cr, Math.Max(az, bz) + cr, (x, y, z) =>
             {
                 double vx = bx - ax, vy = by - ay, vz = bz - az;
                 double len2 = vx * vx + vy * vy + vz * vz;
@@ -96,7 +118,8 @@ namespace PyramidsMaps.Shapes
             if (sl < 1e-9) { sx = 1; sz = 0; sl = 1; }
             sx /= sl; sz /= sl;
             double nx = -sz * uy, ny = sz * ux - sx * uz, nz = sx * uy;
-            _parts.Add((x, y, z) =>
+            double fr = Math.Max(Math.Max(wa, wb), Math.Max(ha, hb));
+            Add(Math.Min(ax, bx) - fr, Math.Min(ay, by) - fr, Math.Min(az, bz) - fr, Math.Max(ax, bx) + fr, Math.Max(ay, by) + fr, Math.Max(az, bz) + fr, (x, y, z) =>
             {
                 double px = x - ax, py = y - ay, pz = z - az;
                 double along = px * ux + py * uy + pz * uz;
@@ -115,7 +138,8 @@ namespace PyramidsMaps.Shapes
         {
             Bound(ax, az, r);
             double flat = r / thick;
-            _parts.Add((x, y, z) =>
+            double er = r + 0.15;
+            Add(Math.Min(ax, bx) - er, Math.Min(ay, by) - er, Math.Min(az, bz) - er, Math.Max(ax, bx) + er, Math.Max(ay, by) + er, Math.Max(az, bz) + er, (x, y, z) =>
             {
                 double vx = bx - ax, vy = by - ay, vz = bz - az;
                 double len2 = vx * vx + vy * vy + vz * vz;
@@ -138,6 +162,8 @@ namespace PyramidsMaps.Shapes
                     if (mx0 < MinX - 1 || mx0 > MaxX + 1 || mz0 < MinZ - 1 || mz0 > MaxZ + 1) continue;
                     for (int y = firstLayer; y < v.Layers; y++)
                     {
+                        // every sample of this layer and above is over the model's top: nothing more in this column
+                        if ((y - firstLayer + 0.5 - 0.33) * cellH / scale > MaxY + BoxSlack) break;
                         int inside = 0;
                         for (int i = -1; i <= 1; i++)
                             for (int j = -1; j <= 1; j++)

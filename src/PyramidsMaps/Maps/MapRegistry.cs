@@ -72,6 +72,18 @@ namespace PyramidsMaps.Maps
                 CellW = AnubisShape.CellW, CellH = AnubisShape.CellH,
                 Build = AnubisShape.Build,
             },
+            new MapInfo
+            {
+                Id = "horus",
+                // The last free index: the synced byte has room for 4 maps (0–3). A fifth map needs a new layout.
+                SyncIndex = 3,
+                Title = "Horus",
+                Body = "A giant falcon with outstretched wings, wearing the double crown: 47,679 blocks, 100 m tall, any order. (Pyramids Custom Maps mod)",
+                StatueName = "Horus",
+                ShapeVersion = HorusShape.Version,
+                CellW = HorusShape.CellW, CellH = HorusShape.CellH,
+                Build = HorusShape.Build,
+            },
         };
 
         public static MapInfo Find(string id)

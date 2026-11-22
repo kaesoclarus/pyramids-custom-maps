@@ -110,15 +110,24 @@ namespace PyramidsMaps.Shapes
         /// layer 0). Repeatedly lays every block a player can reach on the structure built so far.
         /// Returns the blocks that never get laid (empty = the whole shape can be built by hand).
         /// </summary>
-        public static List<(int x, int y, int z)> GreedyAnyOrder(Voxels target, out int waves)
+        public static List<(int x, int y, int z)> GreedyAnyOrder(Voxels target, out int waves) => GreedyAnyOrder(target, false, out waves);
+
+        /// <summary>
+        /// As above; with <paramref name="keepSteps"/> a spot once stood on stays usable, as when a player leaves a
+        /// step open to climb on and fills it in later from above (the placement rules allow laying below your
+        /// feet). The plain version lays everything it can at once and can bury its own way up.
+        /// </summary>
+        public static List<(int x, int y, int z)> GreedyAnyOrder(Voxels target, bool keepSteps, out int waves)
         {
             int R = target.Radius, H = target.Height;
             var built = new Voxels(R, target.Layers);
             int remaining = target.CellCount;
+            var everStood = new HashSet<(int, int, int)>();
             waves = 0;
             while (remaining > 0)
             {
-                var spots = StandingSpots(built, R, H);
+                var spots = StandingSpots(built, R, H, keepSteps ? everStood : null);
+                if (keepSteps) { everStood.UnionWith(spots); spots = everStood; }
                 var top = new Dictionary<(int, int), List<int>>();
                 foreach (var (x, z, y) in spots)
                 {
@@ -171,7 +180,7 @@ namespace PyramidsMaps.Shapes
         }
 
         /// <summary>Every spot a player can walk/climb to on the blocks built so far (x, z, feet level).</summary>
-        private static HashSet<(int, int, int)> StandingSpots(Voxels built, int R, int H)
+        private static HashSet<(int, int, int)> StandingSpots(Voxels built, int R, int H, HashSet<(int, int, int)> kept = null)
         {
             var reach = new HashSet<(int, int, int)>();
             var queue = new Queue<(int x, int z, int y)>();
@@ -179,6 +188,8 @@ namespace PyramidsMaps.Shapes
                 foreach (int z in new[] { -R - 1, R + 1 }) { reach.Add((x, z, 0)); queue.Enqueue((x, z, 0)); }
             for (int z = -R; z <= R; z++)
                 foreach (int x in new[] { -R - 1, R + 1 }) { reach.Add((x, z, 0)); queue.Enqueue((x, z, 0)); }
+            // steps kept open: the player left them clear, so they can still be stood on and climbed from
+            if (kept != null) foreach (var s in kept) if (reach.Add(s)) queue.Enqueue(s);
 
             bool Spot(int x, int z, int y)
             {
@@ -202,6 +213,7 @@ namespace PyramidsMaps.Shapes
                         {
                             bool clear = true;
                             for (int k = y; k < ny + HeadroomLayers && clear; k++) if (built[x, k, z]) clear = false;
+                            if (!clear && kept != null && kept.Contains((x, z, y))) clear = true;   // a kept step is still open
                             if (!clear) continue;
                         }
                         if (reach.Add((nx, nz, ny))) queue.Enqueue((nx, nz, ny));
