@@ -48,7 +48,7 @@ Renders of every finished map (each shown at its own scale; the Great Cat above 
 
 ## Playing
 
-1. Install [BepInEx 5.4.23.6 for Windows x64](https://github.com/BepInEx/BepInEx/releases) into the game folder.
+1. Install BepInEx 5.4.23.6 for Windows x64 into the game folder: the [BepInEx 5 Pack](https://www.nexusmods.com/howtheybuiltthepyramids/mods/4) on Nexus.
 2. Download the latest zip from [Nexus Mods](https://www.nexusmods.com/howtheybuiltthepyramids/mods/3) or this repo's **Releases** page, and extract it into the game folder.
 3. On the main menu, scroll to the empty plot, pick a map from the **Custom map** dropdown next to Pyramid and Grand Pyramid, and start a new world.
 

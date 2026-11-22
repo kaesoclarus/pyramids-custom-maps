@@ -44,13 +44,13 @@ Build a model in [url=https://ephtracy.github.io/]MagicaVoxel[/url], drop the .v
 [size=4][b]Requirements[/b][/size]
 [list]
 [*]How They Built the Pyramids, [b]game version 0.43.0[/b]. Other versions may break the mod; it warns in the log.
-[*][url=https://github.com/BepInEx/BepInEx/releases]BepInEx 5.4.23.6[/url] for Windows x64 ([i]BepInEx_win_x64_5.4.23.6.zip[/i]).
+[*][url=https://www.nexusmods.com/howtheybuiltthepyramids/mods/4]BepInEx 5 Pack[/url] (BepInEx 5.4.23.6 for Windows x64).
 [/list]
 
 [size=4][b]Installation[/b][/size]
 [list=1]
 [*]In Steam, right-click [i]How They Built the Pyramids[/i] and choose [i]Manage > Browse local files[/i] to open the game folder.
-[*]Extract the BepInEx zip into that folder ([i]winhttp.dll[/i] should end up next to [i]Pyramid.exe[/i]).
+[*]Extract the [url=https://www.nexusmods.com/howtheybuiltthepyramids/mods/4]BepInEx 5 Pack[/url] zip into that folder ([i]winhttp.dll[/i] should end up next to [i]Pyramid.exe[/i]).
 [*]Extract this mod's zip into the same folder. It adds [i]BepInEx\plugins\PyramidsMaps\PyramidsMaps.dll[/i].
 [*]Start the game. On the main menu, scroll to the empty plot, pick a map from the [b]Custom map[/b] dropdown, and start a new world.
 [/list]

@@ -26,8 +26,8 @@ PYRAMIDS AND MONUMENTS (all new in 0.5.0)
 - COLOSSAL PYRAMID: the pyramid at about 4.5 times the Grand Pyramid, 178 m tall. 477,191 blocks.
 
 INSTALL (everyone who plays together needs this, same version)
-1. Download BepInEx 5.4.23.6 for Windows x64 (BepInEx_win_x64_5.4.23.6.zip) from the official page:
-   https://github.com/BepInEx/BepInEx/releases
+1. Download the BepInEx 5 Pack (BepInEx 5.4.23.6 for Windows x64) from Nexus:
+   https://www.nexusmods.com/howtheybuiltthepyramids/mods/4
 2. Find the game folder: in Steam, right-click How They Built the Pyramids > Manage > Browse local files.
 3. Extract the BepInEx zip into that folder (winhttp.dll ends up next to Pyramid.exe).
 4. Extract THIS zip into the same folder (it adds BepInEx\plugins\PyramidsMaps\PyramidsMaps.dll).

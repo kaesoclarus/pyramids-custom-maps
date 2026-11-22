@@ -72,8 +72,7 @@ To take more shots in game: F11 is a free camera (arrow keys move, PageUp/PageDo
 
 ## 4. Requirements
 
-- **Off-site requirement:** BepInEx 5.4.23.6, https://github.com/BepInEx/BepInEx/releases. Note: *"Windows x64 build: BepInEx_win_x64_5.4.23.6.zip"*.
-- If someone later uploads BepInEx to this game's Nexus section, link that instead.
+- **Nexus requirement:** BepInEx 5 Pack (https://www.nexusmods.com/howtheybuiltthepyramids/mods/4), BepInEx 5.4.23.6 for Windows x64. Note: *"Mod loader. Extract into the game folder next to Pyramid.exe before installing this mod."* (Replaced the original off-site GitHub link on 22 Nov 2026.)
 
 ## 5. Permissions and credits
 
