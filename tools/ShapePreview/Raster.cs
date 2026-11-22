@@ -9,6 +9,30 @@ using PyramidsMaps.Shapes;
 /// </summary>
 static class Raster
 {
+    /// <summary>Optional pool drawn as water: where it is (x, z in metres), and the water level.</summary>
+    public static Func<double, double, bool> PoolAt;
+    public static double PoolLevel;
+
+    static (byte r, byte g, byte b) Shade(Voxels v, double cw, double ch, V o, V d, V sun, int row, int rows)
+    {
+        var dry = ShadeDry(v, cw, ch, o, d, sun, row, rows);
+        if (PoolAt == null || d.Y >= 0 || o.Y <= PoolLevel) return dry;
+        double tw = (PoolLevel - o.Y) / d.Y;
+        var w = Add(o, Mul(d, tw));
+        if (!PoolAt(w.X, w.Z)) return dry;
+        // the surface is in front of whatever the dry ray hit, unless a block pokes out of the water between
+        if (Trace(v, cw, ch, o, d, out var hit, out _, out _, out _, out _) && Dot(Add(hit, Mul(o, -1)), d) < tw) return dry;
+        bool shade = Trace(v, cw, ch, new V(w.X, PoolLevel + 0.01, w.Z), sun, out _, out _, out _, out _, out _);
+        double f = shade ? 0.78 : 1.0;
+        int near = 0;                                      // pale shallow rim near the pool's edge
+        foreach (var (ox, oz) in new[] { (1.6, 0.0), (-1.6, 0.0), (0.0, 1.6), (0.0, -1.6), (1.1, 1.1), (-1.1, 1.1), (1.1, -1.1), (-1.1, -1.1) })
+            if (!PoolAt(w.X + ox, w.Z + oz)) near++;
+        double edge = Math.Min(1, near / 3.0);
+        double wr = (64 + 90 * edge) * f, wg = (128 + 60 * edge) * f, wb = (142 + 30 * edge) * f;
+        const double clear = 0.28;                        // how much of the bottom shows through
+        return (Clamp(wr * (1 - clear) + dry.r * clear), Clamp(wg * (1 - clear) + dry.g * clear), Clamp(wb * (1 - clear) + dry.b * clear));
+    }
+
     public static byte[] Render(Voxels v, double cw, double ch, double yawDeg, double pitchDeg, int width, int height)
     {
         int R = v.Radius, H = Math.Max(1, v.Height);
@@ -63,7 +87,7 @@ static class Raster
         return Png(px, width, height);
     }
 
-    static (byte r, byte g, byte b) Shade(Voxels v, double cw, double ch, V o, V d, V sun, int row, int rows)
+    static (byte r, byte g, byte b) ShadeDry(Voxels v, double cw, double ch, V o, V d, V sun, int row, int rows)
     {
         // background: soft sky gradient; ground plane at y = 0 catches shadows
         double t0 = row / (double)rows;

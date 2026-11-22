@@ -8,7 +8,49 @@ using System.IO;
 using System.Text;
 using PyramidsMaps.Shapes;
 
-var v = SphinxShape.Build();
+// --shape cat|sobek picks the statue (default cat)
+var argList = new List<string>(args);
+string shape = "cat";
+int si = argList.IndexOf("--shape");
+if (si >= 0 && si + 1 < argList.Count) { shape = argList[si + 1].ToLowerInvariant(); argList.RemoveRange(si, 2); }
+args = argList.ToArray();
+var v = shape == "sobek" ? SobekShape.Build() : SphinxShape.Build();
+if (shape == "sobek")
+{
+    var pool = SobekShape.PoolCells(v, out int pr);
+    // how close his footprint comes to the pool's edge (cells with any block, any layer)
+    {
+        double closest = double.MaxValue; int outside = 0;
+        for (int x = -v.Radius; x <= v.Radius; x++) for (int z = -v.Radius; z <= v.Radius; z++)
+        {
+            if (v.ColumnTop(x, z) == 0) continue;
+            if (!pool[x + pr, z + pr]) { outside++; continue; }
+            for (int r = 1; r < 40 && r < closest; r++)
+            {
+                bool hit = false;
+                for (int a = 0; a < 32 && !hit; a++)
+                {
+                    int px = x + pr + (int)Math.Round(r * Math.Cos(a * Math.PI / 16)), pz = z + pr + (int)Math.Round(r * Math.Sin(a * Math.PI / 16));
+                    if (px < 0 || pz < 0 || px >= pool.GetLength(0) || pz >= pool.GetLength(1) || !pool[px, pz]) hit = true;
+                }
+                if (hit) { closest = Math.Min(closest, r); break; }
+            }
+        }
+        Console.WriteLine($"Pool edge: {(outside > 0 ? $"{outside} of his columns are OUTSIDE the pool" : "he's fully inside")}, closest water margin {closest:0} m");
+    }
+    Raster.PoolLevel = SobekShape.PoolLevel;
+    Raster.PoolAt = (x, z) =>
+    {
+        int ix = (int)Math.Round(x / SobekShape.CellW) + pr, iz = (int)Math.Round(z / SobekShape.CellW) + pr;
+        return ix >= 0 && iz >= 0 && ix < pool.GetLength(0) && iz < pool.GetLength(1) && pool[ix, iz];
+    };
+    // where the pool reaches, in world z (site centre at −44; play area z −124 … 46.4, x ±81)
+    double minZ = double.MaxValue, maxZ = double.MinValue, maxX = 0; int cells = 0;
+    for (int a = 0; a < pool.GetLength(0); a++) for (int b = 0; b < pool.GetLength(1); b++)
+        if (pool[a, b]) { cells++; minZ = Math.Min(minZ, b - pr); maxZ = Math.Max(maxZ, b - pr); maxX = Math.Max(maxX, Math.Abs(a - pr)); }
+    Console.WriteLine($"Pool: {cells:N0} m², world z {minZ - 44:0} … {maxZ - 44:0}, x ±{maxX:0}");
+}
+string title = shape == "sobek" ? "Sobek preview" : "Cat statue preview";
 var outPath = args.Length > 0 ? args[0] : "statue-preview.html";
 
 // --gallery <folder>: 1920×1080 renders for a mod page, then stop
@@ -68,14 +110,14 @@ foreach (var (name, file, yaw, pitch, w, h) in views)
     body.Append($"<figure><figcaption>{name}</figcaption><img alt=\"{name}\" src=\"data:image/png;base64,{Convert.ToBase64String(png)}\"></figure>");
 }
 body.Append("</div>");
-File.WriteAllText(outPath, Page.Replace("__STATS__", stats).Replace("__BODY__", body.ToString()));
+File.WriteAllText(outPath, Page.Replace("__TITLE__", title).Replace("__STATS__", stats).Replace("__BODY__", body.ToString()));
 Console.WriteLine($"Preview written to {Path.GetFullPath(outPath)} and {stem}-*.png");
 
 partial class Program
 {
     const string Page = @"<!doctype html>
 <html lang=""en""><head><meta charset=""utf-8""><meta name=""viewport"" content=""width=device-width, initial-scale=1"">
-<title>Cat Statue Preview</title>
+<title>__TITLE__</title>
 <style>
 :root{--bg:#f4efe6;--fg:#2b2620;--muted:#6f655a;--panel:#fffaf2;--line:#d9cfbf}
 @media (prefers-color-scheme:dark){:root{--bg:#1d1a16;--fg:#efe7da;--muted:#a99d8c;--panel:#26221d;--line:#3a342c}}
@@ -88,7 +130,7 @@ figure.narrow{max-width:560px}
 figcaption{color:var(--muted);font-size:13px;margin-bottom:6px}
 img{width:100%;height:auto;display:block;border-radius:6px}
 </style></head><body><main>
-<h1>Cat statue preview</h1><p class=""sub"">__STATS__ Â· she faces the river</p>
+<h1>__TITLE__</h1><p class=""sub"">__STATS__</p>
 __BODY__
 </main></body></html>";
 }

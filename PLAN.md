@@ -190,26 +190,28 @@ Phase 2 is done when the existing world, with the pyramid, river and clay pit mo
 
 ## Second map: Sobek (planned 2026-11-21)
 
-**Goal:** a crocodile coming out of the water, jaws open, built brick by brick like the Great Cat. It should push past what the cat did in three ways: water, a big overhang (the upper jaw), and a long, low, curving body.
+**Goal:** a crocodile lying in a pool, jaws open, built brick by brick like the Great Cat. It should push past what the cat did in three ways: water, a big overhang (the upper jaw), and a long, low, curving body.
 
 ### The design
-- **Pose:** the front half (head and front legs) rises out of a pool, the head lifted and the jaws open about 25°. The body lies low behind it, and the tail curves round on land in an S.
+- **Pose:** he lies in a pool, gaping: the lower jaw rests in the water and the head is tipped back with the upper jaw raised about 34°. The body lies low, legs splayed, and the tail curls round behind him in an S.
 - **Details that make it read as a crocodile:** raised eyes and nostrils on top of the head, rows of ridge bumps (scutes) down the back and tail, teeth along both jaws, and splayed legs with the elbows out.
-- **Size:** about 100 m nose to tail, with the tail's curve fitting it inside the same 129 × 129 m grid as the cat. It's low: about 10 m along the back, with the open upper jaw reaching about 16 m. Rough guess 15,000–20,000 blocks (the cat has 24,052). Cells stay 1 × 1.25 m.
+- **Size (first renders):** 19,538 blocks, 17 layers (21 m tall), about 130 m nose to tail on a 161 × 161 m grid, modelled then scaled by 1.3. Cells stay 1 × 1.25 m. Every block passes the reach check.
 - **The climb is the jaws:** the body is easy, but to finish the upper jaw players stand in the mouth on the lower jaw and build upward and out. The gap between the jaws must be tall enough to walk in, and every tooth and the jaw tip must pass the 1.25 m reach rule.
 - **The last brick:** the tip of the snout, or one eye. To decide when we see renders.
 
-### The water
-- **Recommended: a pool at the build site.** Clone the river's own water mesh and material (`Environment/River`) and lay it as a shallow pool around the croc's front end. The real river, the clay pit, the trader quay and the water wheels stay where they are and keep working.
-- **The alternative:** stretch the croc north so its head reaches the real river (the bank is at z 46.4, 90 m from the site's centre). That means it runs over the clay pit, mold yard and shop area, which then have to move. Much more work and more to break.
-- To check in game: whether the cloned water has a collider or affects movement, how it looks at ground level, and that Shabti and machine placement treat the pool as off limits.
+### The water (decided 2026-11-21: his whole body lies in an oval pool at the build site)
+- **An oval pool, 92 × 144 m** (`SobekShape.InPool` / `PoolCells`): centred 7 m behind the site centre, about 10,400 m², world z −123 to 21 and x ±46. That's inside the play area (z −124) and short of the mold yard (z 32). His whole body is in it, at least 4 m from the shore (the closest point is the end of the tail curl). Water level 0.9 m, so the bottom layer of blocks is half in the water.
+- **Rejected options:** a pool just around his front end; a pond that follows his outline; the full 168 m oval, which doesn't fit the classic map (it would need the Grand map's bigger play area, z −199 … 46, with the site at z −100).
+- **How:** build a flat oval mesh and give it the river's own water material (`Environment/River`). The real river, the clay pit, the trader quay and the water wheels stay where they are and keep working. Remove the mesh when the world closes.
+- **Shabti Work Posts:** the ground beside his base is now water. Either allow Work Posts in the shallow water, or only on him. To decide once we see how the water behaves in game.
+- **To check in game:** whether the water material needs anything the river mesh has (a scrolling shader or a script), how wading looks and feels, and which machines may stand in the pool.
 
 ### Engineering
 1. **Make the cat code general (no change in behaviour).** Most of `Sphinx/` isn't cat-specific: layout, any-order building, markers, footprint, Shabti and the ending work for any voxel shape. Move them behind a small map definition (id, title, text, shape version, `Build()`, last brick, extras such as the pool). The cat's id stays `sphinx` so existing worlds keep loading. Test the cat again after this step.
 2. **Multiplayer sync byte:** today it's `0x40 | shape version`, which only says "cat". New layout: `0x40 | map index << 4 | version`. The cat stays map 0, so its byte is still 0x45 and 0.3.0 players can still join cat worlds. A 0.3.0 client joining a Sobek world sees a version mismatch and is told to update.
 3. **`Shapes/SobekShape.cs`:** model it with smooth solids like the cat (ellipsoids and capsules, the tail as a chain of tapering capsules along a curve, jaws as wedges with a cut-out between them). Render it with `tools/ShapePreview`, run the reach check, and iterate on the look with you before it goes in game.
 4. **Footprint and keep-out:** the cat used a rectangle around her body. The curved tail would make a rectangle block off a lot of empty ground, so use the per-cell footprint for the keep-out instead.
-5. **The pool:** clone, place and remove on world close, plus a keep-out for machines.
+5. **The pool:** an oval mesh with the river's water material, removed on world close, plus rules for which machines may stand in it.
 6. **Release 0.4.0:** both maps on the main menu, updated README, Nexus page and screenshots.
 
 ### Phases
@@ -218,7 +220,7 @@ Phase 2 is done when the existing world, with the pyramid, river and clay pit mo
 | A | Shape and renders | You like the renders, and every block passes the reach check |
 | B | General map code | The cat plays exactly as before |
 | C | Sobek in game | You can build it by hand, Shabti work, and the ending fires |
-| D | The pool | It looks right and nothing can be built in it |
+| D | The pool | It looks right in game, and machines follow the pool rules |
 | E | Release 0.4.0 | Published on GitHub and Nexus |
 
 ### Risks

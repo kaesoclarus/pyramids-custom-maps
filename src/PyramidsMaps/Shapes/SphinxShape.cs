@@ -35,29 +35,11 @@ namespace PyramidsMaps.Shapes
             var v = new Voxels(Radius, MaxLayers);
 
             // The cat: a block is solid when a third or more of it lies inside the model (27 samples)
-            for (int x = -Radius; x <= Radius; x++)
-                for (int z = -Radius; z <= Radius; z++)
-                {
-                    if (!NearCat(cat, x * CellW / Scale, z * CellW / Scale)) continue;
-                    for (int y = BaseLayers; y < MaxLayers; y++)
-                    {
-                        int inside = 0;
-                        for (int i = -1; i <= 1; i++)
-                            for (int j = -1; j <= 1; j++)
-                                for (int k = -1; k <= 1; k++)
-                                {
-                                    double mx = (x + i * 0.33) * CellW / Scale;
-                                    double my = (y - BaseLayers + 0.5 + j * 0.33) * CellH / Scale;
-                                    double mz = (z + k * 0.33) * CellW / Scale;
-                                    if (cat.Inside(mx, my, mz)) inside++;
-                                }
-                        if (inside >= 9) v[x, y, z] = true;
-                    }
-                }
+            cat.Sample(v, CellW, CellH, Scale, BaseLayers);
 
             // The base: one oval slab under her, BaseMargin beyond her outline
             // Tidy up: single blocks sticking out with at most one neighbour (sampling noise)
-            Prune(v);
+            ShapeModel.Prune(v);
 
             double cx = (cat.MinX + cat.MaxX) / 2 * Scale, cz = (cat.MinZ + cat.MaxZ) / 2 * Scale;
             double ax = (cat.MaxX - cat.MinX) / 2 * Scale + BaseMargin, az = (cat.MaxZ - cat.MinZ) / 2 * Scale + BaseMargin;
@@ -84,21 +66,6 @@ namespace PyramidsMaps.Shapes
         private static int Cell(double m) => (int)Math.Round(m * Scale / CellW);
         private static int Layer(double m) => BaseLayers + (int)Math.Floor(m * Scale / CellH);
 
-        private static void Prune(Voxels v)
-        {
-            var remove = new List<(int, int, int)>();
-            for (int x = -v.Radius; x <= v.Radius; x++)
-                for (int y = 0; y < v.Layers; y++)
-                    for (int z = -v.Radius; z <= v.Radius; z++)
-                    {
-                        if (!v[x, y, z]) continue;
-                        int n = (v[x + 1, y, z] ? 1 : 0) + (v[x - 1, y, z] ? 1 : 0) + (v[x, y + 1, z] ? 1 : 0) +
-                                (v[x, y - 1, z] ? 1 : 0) + (v[x, y, z + 1] ? 1 : 0) + (v[x, y, z - 1] ? 1 : 0);
-                        if (n <= 1) remove.Add((x, y, z));
-                    }
-            foreach (var (x, y, z) in remove) v[x, y, z] = false;
-        }
-
         /// <summary>Removes the frontmost <paramref name="depth"/> blocks of the row (x, y).</summary>
         private static void CarveFront(Voxels v, int x, int y, int depth)
         {
@@ -106,14 +73,11 @@ namespace PyramidsMaps.Shapes
                 if (v[x, y, z]) { v[x, y, z] = false; depth--; }
         }
 
-        private static bool NearCat(Model cat, double x, double z) =>
-            x >= cat.MinX - 1 && x <= cat.MaxX + 1 && z >= cat.MinZ - 1 && z <= cat.MaxZ + 1;
-
         // ---------- the cat (metres; y up from the base, z forward, x to her left) ----------
 
-        private static Model Cat()
+        private static ShapeModel Cat()
         {
-            var c = new Model();
+            var c = new ShapeModel();
 
             // Hindquarters: rump raised, thighs bunched, feet flat under her ready to spring
             c.Ellipsoid(0, 17.5, -22, 7, 6.5, 8.5);                         // rump
@@ -170,65 +134,6 @@ namespace PyramidsMaps.Shapes
                 c.Capsule(ax, ay, az, bx, by, bz, ra, rb);
             }
             return c;
-        }
-
-        /// <summary>A union of simple solids with a running bounding box.</summary>
-        private sealed class Model
-        {
-            private readonly List<Func<double, double, double, double>> _parts = new List<Func<double, double, double, double>>();
-            public double MinX = double.MaxValue, MaxX = double.MinValue, MinZ = double.MaxValue, MaxZ = double.MinValue;
-
-            public bool Inside(double x, double y, double z)
-            {
-                foreach (var p in _parts) if (p(x, y, z) <= 0) return true;
-                return false;
-            }
-
-            private void Bound(double x, double z, double r)
-            {
-                MinX = Math.Min(MinX, x - r); MaxX = Math.Max(MaxX, x + r);
-                MinZ = Math.Min(MinZ, z - r); MaxZ = Math.Max(MaxZ, z + r);
-            }
-
-            public void Ellipsoid(double cx, double cy, double cz, double rx, double ry, double rz)
-            {
-                Bound(cx, cz, Math.Max(rx, rz));
-                _parts.Add((x, y, z) =>
-                {
-                    double dx = (x - cx) / rx, dy = (y - cy) / ry, dz = (z - cz) / rz;
-                    return dx * dx + dy * dy + dz * dz - 1;
-                });
-            }
-
-            /// <summary>A capsule from A to B whose radius goes from ra to rb.</summary>
-            public void Capsule(double ax, double ay, double az, double bx, double by, double bz, double ra, double rb)
-            {
-                Bound(ax, az, ra); Bound(bx, bz, rb);
-                _parts.Add((x, y, z) =>
-                {
-                    double vx = bx - ax, vy = by - ay, vz = bz - az;
-                    double len2 = vx * vx + vy * vy + vz * vz;
-                    double t = len2 > 0 ? ((x - ax) * vx + (y - ay) * vy + (z - az) * vz) / len2 : 0;
-                    t = Math.Max(0, Math.Min(1, t));
-                    double px = ax + t * vx - x, py = ay + t * vy - y, pz = az + t * vz - z;
-                    return Math.Sqrt(px * px + py * py + pz * pz) - (ra + (rb - ra) * t);
-                });
-            }
-
-            /// <summary>An ear: a cone from a wide base at A to a point at B, flattened front-to-back.</summary>
-            public void Ear(double ax, double ay, double az, double bx, double by, double bz, double r, double thick)
-            {
-                Bound(ax, az, r);
-                double flat = r / thick;
-                _parts.Add((x, y, z) =>
-                {
-                    double vx = bx - ax, vy = by - ay, vz = bz - az;
-                    double len2 = vx * vx + vy * vy + vz * vz;
-                    double t = Math.Max(0, Math.Min(1, ((x - ax) * vx + (y - ay) * vy + (z - az) * vz) / len2));
-                    double px = ax + t * vx - x, py = ay + t * vy - y, pz = (az + t * vz - z) * flat;
-                    return Math.Sqrt(px * px + py * py + pz * pz) - r * (1 - t) - 0.15;
-                });
-            }
         }
     }
 }
