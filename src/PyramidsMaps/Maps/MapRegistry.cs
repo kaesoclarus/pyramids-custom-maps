@@ -193,6 +193,17 @@ namespace PyramidsMaps.Maps
             },
             new MapInfo
             {
+                Id = "giza",
+                SyncCode = 12,
+                Title = "Giza",
+                Body = "The Giza plateau: Khufu, Khafre and Menkaure, and the Great Sphinx keeping watch. Build them in any order; Khufu's tip is the last brick. 63,213 blocks. (Pyramids Custom Maps mod)",
+                StatueName = "the monuments",
+                ShapeVersion = GizaShape.Version,
+                CellW = GizaShape.CellW, CellH = GizaShape.CellH,
+                Build = GizaShape.Build,
+            },
+            new MapInfo
+            {
                 // A performance test, not a release: the game's own pyramid at about 4.5x the Grand Pyramid's blocks
                 // (base 141 = 282 m, 71 layers = 178 m, 477,191 blocks), moved south so it fits the terrain.
                 Id = "colossal-test",

@@ -15,6 +15,7 @@ Ideas for future maps. Each one replaces the pyramid with something else to buil
 | **Bent Pyramid** | In progress (2026-11-22) | 51° below, about 43° above, 38,235 blocks | The slope change uses 1, 1, 2 blocks in per layer |
 | **Nubian Field** | In progress (2026-11-22) | A dozen steep (about 68°) small pyramids, 7,684 blocks | Separate pieces in one map; the tallest is the last brick |
 | **Ziggurat** | In progress (2026-11-22) | Three terraces, central and side stairways, shrine, 45 m, 11,943 blocks | Stairways built into the shape |
+| **Giza** | In progress (2026-11-22) | Khufu, Khafre and Menkaure on a diagonal, the Great Sphinx in front of Khafre, 63,213 blocks | Four separate monuments in one map; statue blocks so the Sphinx has detail |
 | **Scarab** | Idea | A beetle holding up a sun disc | The disc is a thin overhang held up by the legs, so it tests the no-floating-bricks rule hardest |
 
 ## Other ideas from the first brainstorm
