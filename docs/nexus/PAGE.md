@@ -16,10 +16,13 @@ Game: **How They Built the Pyramids**. Upload at https://www.nexusmods.com/games
 
 ## 2. Media
 
-The images are in [`images/`](images): 1920×1080 renders of the cat.
-- **Primary image (thumbnail):** `01-hero.png`
-- **Gallery:** `02-front.png`, `03-side.png`, `04-behind.png`, `05-above.png`
-- **Worth adding:** a couple of real in-game screenshots (players building, the finished cat by the river). Nexus users like seeing the actual game.
+**In-game screenshots** are in [`screens/`](screens), edited: the build beacon painted out, the first-person hands cropped off.
+- **Primary image (thumbnail):** `screens/game-01-front-scale.png`, the finished cat from the front with a player between her paws for scale.
+- **Gallery:** `game-02-side.png`, `game-03-side-river.png`, `game-04-wide-river.png`.
+
+**Renders** of the shape are in [`images/`](images) (1920×1080). Good as extra gallery images: `01-hero.png`, `02-front.png`, `03-side.png`, `04-behind.png`, `05-above.png`.
+
+To take more shots in game: F11 is a free camera (arrow keys move, PageUp/PageDown up and down, Shift faster; it hides the HUD, the hands and the build beacons), and F10 saves a clean screenshot to `BepInEx\plugins\PyramidsMaps\screenshots`.
 
 ## 3. Files
 

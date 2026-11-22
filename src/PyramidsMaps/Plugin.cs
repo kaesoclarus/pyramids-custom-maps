@@ -57,6 +57,7 @@ namespace PyramidsMaps
             }
             Log.LogInfo($"Patch groups applied: {ok}" + (failed > 0 ? $", FAILED: {failed}" : "") + ".");
             gameObject.AddComponent<Sphinx.CatDiagnostics>();
+            gameObject.AddComponent<Sphinx.CatPhoto>();
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 

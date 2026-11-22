@@ -75,6 +75,8 @@ It then gets a button on the main menu's empty plot.
 |---|---|
 | **F8** | Writes a placement and Shabti report to `BepInEx\LogOutput.log` |
 | **F9** twice | Host only, with `DevTools = true` in the config: fills every block except the final one. Use it in throwaway worlds only. |
+| **F11** | Free camera for screenshots: arrow keys move, PageUp/PageDown up and down, Shift faster, mouse looks. Hides the HUD, the first-person hands and the build beacons. |
+| **F10** | Saves a clean screenshot (no HUD) to `BepInEx\plugins\PyramidsMaps\screenshots` |
 
 The game's own F1 dev panel needs the `-devpanel` launch option.
 
