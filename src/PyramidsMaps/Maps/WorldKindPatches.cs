@@ -68,18 +68,37 @@ namespace PyramidsMaps.Maps
 
         /// <summary>
         /// The world kind reaches clients as one synced byte (0 = pyramid, 1 = Grand; the game reads anything but
-        /// 1 as a pyramid). For a statue world the host sends 0x40 | map index &lt;&lt; 4 | shape version: modded
-        /// clients build that statue, unmodded clients fall back to the pyramid. The cat is map 0, so her byte is
-        /// 0x40 | 5 as in 0.3.0 (which read the low 6 bits as her version); a 0.3.0 player joining another
-        /// statue's world sees a version mismatch and is told to update.
+        /// 1 as a pyramid, so unmodded clients fall back to the pyramid). For a custom map the host sends:
+        ///  - the cat and Sobek (codes 0 and 1, released in 0.3.0 / 0.4.0): 0x40 | code &lt;&lt; 4 | shape version,
+        ///    as those versions expect, so their players still recognise them;
+        ///  - every other map: 0xC0 | code (codes 2–63). 0.4.0 and older read that as a normal pyramid, so those
+        ///    maps need everyone on the same version. The code changes whenever the shape does.
         /// </summary>
-        private const byte StatueFlag = 0x40;
-        /// Maps 4–7 also set the top bit (0x80): 0.4.0 and older read that as "not a statue" and show the normal
-        /// pyramid, so for those maps everyone must be on the same version (the menu only offers them with DevTools).
-        private static byte SyncByte(MapRegistry.MapInfo map) =>
-            (byte)(StatueFlag | ((map.SyncIndex & 0x3) << 4) | ((map.SyncIndex & 0x4) != 0 ? 0x80 : 0) | (map.ShapeVersion & 0xF));
+        private const byte StatueFlag = 0x40, NewLayout = 0x80;
 
-        private static int SyncIndexOf(byte raw) => ((raw >> 4) & 0x3) | ((raw & 0x80) != 0 ? 4 : 0);
+        private static byte SyncByte(MapRegistry.MapInfo map) =>
+            map.SyncCode <= 1
+                ? (byte)(StatueFlag | (map.SyncCode << 4) | (map.ShapeVersion & 0xF))
+                : (byte)(StatueFlag | NewLayout | (map.SyncCode & 0x3F));
+
+        /// <summary>The map the host's byte names, or null; <paramref name="problem"/> says why not, when it's a custom map we can't match.</summary>
+        private static MapRegistry.MapInfo MapOfSyncByte(byte raw, out string problem)
+        {
+            problem = null;
+            if ((raw & StatueFlag) == 0) return null;
+            if ((raw & NewLayout) != 0)
+            {
+                int code = raw & 0x3F;
+                var m = MapRegistry.BySyncCode(code);
+                if (m == null || code <= 1) problem = $"map code {code}, which this version of the mod doesn't have";
+                return problem == null ? m : null;
+            }
+            int legacy = (raw >> 4) & 0x3, version = raw & 0xF;
+            var map = MapRegistry.BySyncCode(legacy);
+            if (map == null || legacy > 1) problem = $"map {legacy} (old layout), which this version of the mod doesn't have";
+            else if ((map.ShapeVersion & 0xF) != version) problem = $"{map.Id} shape version {version}; this mod's is {map.ShapeVersion}";
+            return problem == null ? map : null;
+        }
 
         private static readonly AccessTools.FieldRef<PyramidState, FishNet.Object.Synchronizing.SyncVar<byte>> WorldKindVar =
             AccessTools.FieldRefAccess<PyramidState, FishNet.Object.Synchronizing.SyncVar<byte>>("_worldKind");
@@ -239,16 +258,14 @@ namespace PyramidsMaps.Maps
 
                 // a client in someone else's world: the host's synced byte says which statue, if any
                 byte raw = RawKind(state);
-                if ((raw & StatueFlag) == 0) return null;
-                var hostMap = MapRegistry.BySyncIndex(SyncIndexOf(raw));
-                int hostShape = raw & 0xF;
-                if (hostMap == null || hostShape != (hostMap.ShapeVersion & 0xF))
+                var hostMap = MapOfSyncByte(raw, out string problem);
+                if (problem != null)
                 {
-                    Plugin.Log.LogError($"The host's world is a statue this mod doesn't have (map {SyncIndexOf(raw)}, shape version {hostShape}; " +
-                                        $"{(hostMap != null ? $"this mod's {hostMap.Id} is version {hostMap.ShapeVersion}" : "no such map here")}). " +
+                    Plugin.Log.LogError($"The host's world is a custom map this mod can't match ({problem}). " +
                                         "Both players need the same version of Pyramids Custom Maps.");
                     return null;
                 }
+                if (hostMap == null) return null;
                 Plugin.Log.LogInfo($"Joined a {hostMap.Id} world: building its layout.");
                 return hostMap;
             }

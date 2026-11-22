@@ -16,9 +16,11 @@ namespace PyramidsMaps.Maps
             /// <summary>Stable id, stored in each world's marker file and in the NewWorldMap setting. Never change it.</summary>
             public string Id;
             /// <summary>
-            /// Stable number 0–3, sent to joining players in the synced world-kind byte. Never change or reuse it.
+            /// Number 0–63 sent to joining players in the synced world-kind byte, so they build the same map. Never
+            /// reuse one. 0 and 1 (the cat and Sobek, released in 0.3.0/0.4.0) use the old byte layout, which also
+            /// carries the shape version; every other map must get a NEW code whenever its ShapeVersion changes.
             /// </summary>
-            public int SyncIndex;
+            public int SyncCode;
             /// <summary>Button label on the empty plot.</summary>
             public string Title;
             /// <summary>Description shown on the empty plot when it's chosen.</summary>
@@ -61,7 +63,7 @@ namespace PyramidsMaps.Maps
             new MapInfo
             {
                 Id = "sphinx",
-                SyncIndex = 0,
+                SyncCode = 0,
                 Title = "Great Cat",
                 Body = "A giant stone cat, crouched to pounce: 24,052 blocks you can lay in any order. (Pyramids Custom Maps mod)",
                 StatueName = "the cat",
@@ -72,7 +74,7 @@ namespace PyramidsMaps.Maps
             new MapInfo
             {
                 Id = "sobek",
-                SyncIndex = 1,
+                SyncCode = 1,
                 Title = "Sobek",
                 Body = "A giant crocodile lying in his pool, jaws open to the sky: 19,538 blocks you can lay in any order. (Pyramids Custom Maps mod)",
                 StatueName = "Sobek",
@@ -85,7 +87,7 @@ namespace PyramidsMaps.Maps
             new MapInfo
             {
                 Id = "anubis",
-                SyncIndex = 2,
+                SyncCode = 2,
                 Title = "Anubis",
                 Body = "A giant jackal keeping watch from his shrine, ears high: 11,588 blocks you can lay in any order. (Pyramids Custom Maps mod)",
                 StatueName = "Anubis",
@@ -96,8 +98,7 @@ namespace PyramidsMaps.Maps
             new MapInfo
             {
                 Id = "horus",
-                // The last free index: the synced byte has room for 4 maps (0–3). A fifth map needs a new layout.
-                SyncIndex = 3,
+                SyncCode = 3,
                 Title = "Horus",
                 Body = "A giant falcon with outstretched wings, wearing the double crown: 47,679 blocks, 100 m tall, any order. (Pyramids Custom Maps mod)",
                 StatueName = "Horus",
@@ -108,7 +109,7 @@ namespace PyramidsMaps.Maps
             new MapInfo
             {
                 Id = "inverted",
-                SyncIndex = 5,
+                SyncCode = 5,
                 Title = "Upside-Down",
                 Body = "The classic pyramid's own blocks, upside down on its tip: build up to a plaza 65 m in the air and crown it. 23,427 blocks, any order. (Pyramids Custom Maps mod)",
                 StatueName = "the pyramid",
@@ -122,7 +123,7 @@ namespace PyramidsMaps.Maps
                 // The Grand Pyramid upside down: its 170 m plaza reaches a little past the normal play area
                 // (x ±85 against ±81, back edge z −129 against −124), so the play area widens and the walls come down.
                 Id = "inverted-grand",
-                SyncIndex = 6,
+                SyncCode = 6,
                 Title = "Upside-Down Grand",
                 Body = "The Grand Pyramid's own blocks, upside down on its tip: build up to a 170 m plaza 107 m in the air. 105,996 blocks, any order. (Pyramids Custom Maps mod)",
                 StatueName = "the pyramid",
@@ -137,8 +138,7 @@ namespace PyramidsMaps.Maps
             new MapInfo
             {
                 Id = "diamond",
-                // The last free index: the synced byte has room for 8 maps (0–7). A ninth needs a new layout.
-                SyncIndex = 7,
+                SyncCode = 7,
                 Title = "Diamond",
                 Body = "An upside-down pyramid with a pyramid standing on its plaza: a 127 m diamond balanced on its point. 44,251 blocks, any order. (Pyramids Custom Maps mod)",
                 StatueName = "the diamond",
@@ -152,7 +152,7 @@ namespace PyramidsMaps.Maps
                 // A performance test, not a release: the game's own pyramid at about 4.5x the Grand Pyramid's blocks
                 // (base 141 = 282 m, 71 layers = 178 m, 477,191 blocks), moved south so it fits the terrain.
                 Id = "colossal-test",
-                SyncIndex = 4,
+                SyncCode = 4,
                 Title = "Colossal (test)",
                 Body = "TEST: a pyramid about 4.5x the Grand Pyramid (477,191 blocks, 178 m tall), to measure what the game can handle. DevTools only.",
                 StatueName = "the pyramid",
@@ -180,9 +180,21 @@ namespace PyramidsMaps.Maps
             return null;
         }
 
-        public static MapInfo BySyncIndex(int index)
+        /// <summary>Logs an error for any map code used twice or out of range (called once at startup).</summary>
+        public static void CheckCodes()
         {
-            foreach (var m in All) if (m.SyncIndex == index) return m;
+            var seen = new Dictionary<int, string>();
+            foreach (var m in All)
+            {
+                if (m.SyncCode < 0 || m.SyncCode > 63) Plugin.Log.LogError($"Map {m.Id}: sync code {m.SyncCode} is outside 0–63.");
+                else if (seen.TryGetValue(m.SyncCode, out var other)) Plugin.Log.LogError($"Maps {other} and {m.Id} share sync code {m.SyncCode}: multiplayer would mix them up.");
+                else seen[m.SyncCode] = m.Id;
+            }
+        }
+
+        public static MapInfo BySyncCode(int code)
+        {
+            foreach (var m in All) if (m.SyncCode == code) return m;
             return null;
         }
 

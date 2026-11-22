@@ -56,6 +56,7 @@ namespace PyramidsMaps
                 catch (Exception e) { failed++; Log.LogError($"Patch group {type.Name} failed to apply: {e.InnerException?.Message ?? e.Message}"); }
             }
             Log.LogInfo($"Patch groups applied: {ok}" + (failed > 0 ? $", FAILED: {failed}" : "") + ".");
+            Maps.MapRegistry.CheckCodes();
             gameObject.AddComponent<Statues.StatueDiagnostics>();
             gameObject.AddComponent<Statues.PhotoMode>();
             SceneManager.sceneLoaded += OnSceneLoaded;
