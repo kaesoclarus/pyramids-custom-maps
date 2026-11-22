@@ -8,6 +8,8 @@ The first map is **the Great Cat**: instead of a pyramid, you build a giant ston
 - Her blocks are half the size of a pyramid block, so her curves come out smooth.
 - Building her is the whole objective, ending included.
 
+**Download:** [Nexus Mods](https://www.nexusmods.com/howtheybuiltthepyramids/mods/3) or this repo's [Releases](https://github.com/kaesoclarus/pyramids-custom-maps/releases).
+
 ![The Great Cat in game, with a player between her paws for scale](docs/nexus/screens/game-01-front-scale.png)
 
 | | |
@@ -18,7 +20,7 @@ The first map is **the Great Cat**: instead of a pyramid, you build a giant ston
 ## Playing
 
 1. Install [BepInEx 5.4.23.6 for Windows x64](https://github.com/BepInEx/BepInEx/releases) into the game folder.
-2. Download the latest zip from this repo's **Releases** page and extract it into the game folder.
+2. Download the latest zip from [Nexus Mods](https://www.nexusmods.com/howtheybuiltthepyramids/mods/3) or this repo's **Releases** page, and extract it into the game folder.
 3. On the main menu, scroll to the empty plot, pick **Great Cat**, and start a new world.
 
 Everyone who plays together needs the mod, at the same version. See [`release/README.txt`](release/README.txt) for the full player guide.

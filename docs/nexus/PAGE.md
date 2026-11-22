@@ -1,5 +1,7 @@
 # Nexus Mods page: what to fill in
 
+**Published:** https://www.nexusmods.com/howtheybuiltthepyramids/mods/3 (version 0.3.0, 21 Nov 2026). Permissions: modification allowed with credit; the rest left at the Nexus defaults.
+
 Game: **How They Built the Pyramids**. Upload at https://www.nexusmods.com/games/howtheybuiltthepyramids, then **Upload mod**.
 
 ## 1. Mod details
