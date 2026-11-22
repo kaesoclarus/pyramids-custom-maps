@@ -66,6 +66,12 @@ if (args.Length > 1 && args[0] == "--gallery")
 }
 
 int layers = v.Height;
+{
+    // the last brick: the game finishes on the final cell of the top layer
+    int top = layers - 1, n = 0; double sx = 0, sz = 0;
+    for (int x = -v.Radius; x <= v.Radius; x++) for (int z = -v.Radius; z <= v.Radius; z++) if (v[x, top, z]) { n++; sx += x; sz += z; }
+    Console.WriteLine($"Top layer {top}: {n} blocks around x {sx / Math.Max(1, n):0.#}, z {sz / Math.Max(1, n):0.#} (site cells; +z is the front)");
+}
 Console.WriteLine($"Statue: {v.CellCount:N0} blocks of {SphinxShape.CellW} x {SphinxShape.CellW} x {SphinxShape.CellH} m, {layers} layers ({layers * SphinxShape.CellH:0.#} m tall), {v.Overhangs} overhanging blocks");
 Console.WriteLine("(classic pyramid: 23,426 blocks, 26 layers, 65 m)");
 {

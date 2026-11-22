@@ -48,6 +48,17 @@ namespace PyramidsMaps.Maps
                 CellW = SphinxShape.CellW, CellH = SphinxShape.CellH,
                 Build = SphinxShape.Build,
             },
+            new MapInfo
+            {
+                Id = "sobek",
+                SyncIndex = 1,
+                Title = "Sobek",
+                Body = "A giant crocodile lying in his pool, jaws open to the sky: 19,538 blocks you can lay in any order. (Pyramids Custom Maps mod)",
+                StatueName = "Sobek",
+                ShapeVersion = SobekShape.Version,
+                CellW = SobekShape.CellW, CellH = SobekShape.CellH,
+                Build = SobekShape.Build,
+            },
         };
 
         public static MapInfo Find(string id)
