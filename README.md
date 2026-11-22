@@ -8,7 +8,12 @@ The first map is **the Great Cat**: instead of a pyramid, you build a giant ston
 - Her blocks are half the size of a pyramid block, so her curves come out smooth.
 - Building her is the whole objective, ending included.
 
-![The Great Cat](docs/great-cat.png)
+![The Great Cat in game, with a player between her paws for scale](docs/nexus/screens/game-01-front-scale.png)
+
+| | |
+|---|---|
+| ![Side view](docs/nexus/screens/game-02-side.png) | ![By the river](docs/nexus/screens/game-03-side-river.png) |
+| ![Wide view with the river and camp](docs/nexus/screens/game-04-wide-river.png) | ![Render of the full shape](docs/great-cat.png) |
 
 ## Playing
 
