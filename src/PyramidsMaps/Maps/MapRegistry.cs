@@ -204,6 +204,28 @@ namespace PyramidsMaps.Maps
             },
             new MapInfo
             {
+                Id = "colossi",
+                SyncCode = 13,
+                Title = "Colossi",
+                Body = "The Colossi of Memnon: two pharaohs seated on their thrones, 38 m tall. The sun disc on the right one is the last brick. 10,776 blocks, any order. (Pyramids Custom Maps mod)",
+                StatueName = "the colossi",
+                ShapeVersion = MonumentShapes.ColossiVersion,
+                CellW = MonumentShapes.CellW, CellH = MonumentShapes.CellH,
+                Build = MonumentShapes.BuildColossi,
+            },
+            new MapInfo
+            {
+                Id = "avenue",
+                SyncCode = 14,
+                Title = "Sphinx Avenue",
+                Body = "A processional road lined with twelve sphinxes, leading to a 37 m obelisk whose tip is the last brick. 4,346 blocks, any order. (Pyramids Custom Maps mod)",
+                StatueName = "the avenue",
+                ShapeVersion = MonumentShapes.AvenueVersion,
+                CellW = MonumentShapes.CellW, CellH = MonumentShapes.CellH,
+                Build = MonumentShapes.BuildAvenue,
+            },
+            new MapInfo
+            {
                 // A performance test, not a release: the game's own pyramid at about 4.5x the Grand Pyramid's blocks
                 // (base 141 = 282 m, 71 layers = 178 m, 477,191 blocks), moved south so it fits the terrain.
                 Id = "colossal-test",

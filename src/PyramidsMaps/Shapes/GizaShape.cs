@@ -54,7 +54,7 @@ namespace PyramidsMaps.Shapes
         /// The Great Sphinx (metres, before scaling): a lion lying with its front paws stretched out, and a pharaoh's
         /// head wearing the nemes headdress, its side flaps falling to the shoulders. On a low base.
         /// </summary>
-        private static ShapeModel SphinxModel()
+        internal static ShapeModel SphinxModel()
         {
             var c = new ShapeModel();
             c.Box(0, 0.4, 1, 6.6, 0.4, 23.5);                                   // base
