@@ -25,7 +25,7 @@ namespace PyramidsMaps.Statues
             int cx = Mathf.RoundToInt(local.x / cs.x), cz = Mathf.RoundToInt(local.z / cs.z);
             if (margin <= 0f)
             {
-                __result = StatueWorld.ColumnTop(cx, cz) > 0;
+                __result = StatueWorld.BlocksGround(cx, cz);
                 return false;
             }
             int r = Mathf.CeilToInt(margin / Mathf.Min(cs.x, cs.z));
@@ -33,7 +33,7 @@ namespace PyramidsMaps.Statues
             for (int dx = -r; dx <= r && !__result; dx++)
                 for (int dz = -r; dz <= r && !__result; dz++)
                 {
-                    if (StatueWorld.ColumnTop(cx + dx, cz + dz) <= 0) continue;
+                    if (!StatueWorld.BlocksGround(cx + dx, cz + dz)) continue;
                     // distance from the point to that column's square
                     float ex = Mathf.Max(0f, Mathf.Abs(local.x - (cx + dx) * cs.x) - 0.5f * cs.x);
                     float ez = Mathf.Max(0f, Mathf.Abs(local.z - (cz + dz) * cs.z) - 0.5f * cs.z);
@@ -85,7 +85,7 @@ namespace PyramidsMaps.Statues
             float ez = s * size.x * 0.5f + c * size.z * 0.5f + margin;
             for (float x = local.x - ex; x <= local.x + ex + 0.01f; x += 0.5f)
                 for (float z = local.z - ez; z <= local.z + ez + 0.01f; z += 0.5f)
-                    if (StatueWorld.ColumnTop(Mathf.RoundToInt(x / cs.x), Mathf.RoundToInt(z / cs.z)) > 0) return true;
+                    if (StatueWorld.BlocksGround(Mathf.RoundToInt(x / cs.x), Mathf.RoundToInt(z / cs.z))) return true;
             return false;
         }
 
@@ -101,7 +101,7 @@ namespace PyramidsMaps.Statues
             int minX = int.MaxValue, maxX = int.MinValue, minZ = int.MaxValue, maxZ = int.MinValue;
             for (int x = -v.Radius; x <= v.Radius; x++)
                 for (int z = -v.Radius; z <= v.Radius; z++)
-                    if (StatueWorld.ColumnTop(x, z) > 0)
+                    if (StatueWorld.BlocksGround(x, z))
                     {
                         minX = Mathf.Min(minX, x); maxX = Mathf.Max(maxX, x);
                         minZ = Mathf.Min(minZ, z); maxZ = Mathf.Max(maxZ, z);

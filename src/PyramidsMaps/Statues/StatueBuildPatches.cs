@@ -238,7 +238,7 @@ namespace PyramidsMaps.Statues
             __result = false;
             for (float x = local.x - ex; x <= local.x + ex + 0.01f && !__result; x += 0.5f)
                 for (float z = local.z - ez; z <= local.z + ez + 0.01f && !__result; z += 0.5f)
-                    if (StatueWorld.ColumnTop(Mathf.RoundToInt(x / cs.x), Mathf.RoundToInt(z / cs.z)) > 0) __result = true;
+                    if (StatueWorld.BlocksGround(Mathf.RoundToInt(x / cs.x), Mathf.RoundToInt(z / cs.z))) __result = true;
             return false;
         }
 

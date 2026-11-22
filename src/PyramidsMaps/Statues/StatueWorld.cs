@@ -29,6 +29,8 @@ namespace PyramidsMaps.Statues
         {
             public Voxels Shape;
             public int[,] ColumnTop;
+            /// <summary>Lowest block of each column (−1 = none).</summary>
+            public int[,] ColumnBottom;
             public PyramidDefinition Definition;
         }
 
@@ -44,9 +46,15 @@ namespace PyramidsMaps.Statues
                     var v = map.Build();
                     d.Shape = v;
                     d.ColumnTop = new int[v.Size, v.Size];
+                    d.ColumnBottom = new int[v.Size, v.Size];
                     for (int cx = -v.Radius; cx <= v.Radius; cx++)
                         for (int cz = -v.Radius; cz <= v.Radius; cz++)
+                        {
                             d.ColumnTop[cx + v.Radius, cz + v.Radius] = v.ColumnTop(cx, cz);
+                            int bottom = -1;
+                            for (int y = 0; y < v.Layers && bottom < 0; y++) if (v[cx, y, cz]) bottom = y;
+                            d.ColumnBottom[cx + v.Radius, cz + v.Radius] = bottom;
+                        }
                 }
                 Data[map.Id] = d;
             }
@@ -68,6 +76,21 @@ namespace PyramidsMaps.Statues
             int r = d.Shape.Radius;
             if (x < -r || x > r || z < -r || z > r) return 0;
             return d.ColumnTop[x + r, z + r];
+        }
+
+        /// <summary>
+        /// Does the active statue take up the ground at this column (for keeping machines and routes off it)?
+        /// Any column with blocks does, unless the map sets a ground clearance and this column's underside is
+        /// at least that high (e.g. under the upside-down pyramid's overhang).
+        /// </summary>
+        public static bool BlocksGround(int x, int z)
+        {
+            if (ColumnTop(x, z) <= 0) return false;
+            var clear = Map.GroundClearance;
+            if (!clear.HasValue) return true;
+            var d = DataOf(Map);
+            int r = d.Shape.Radius;
+            return d.ColumnBottom[x + r, z + r] * Map.CellH < clear.Value;
         }
 
         /// <summary>The active map's PyramidDefinition; the layout patch recognises it by reference.</summary>

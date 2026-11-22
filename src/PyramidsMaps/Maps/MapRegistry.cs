@@ -47,6 +47,11 @@ namespace PyramidsMaps.Maps
             public (float minX, float minZ, float maxX, float maxZ)? PlayArea;
             /// <summary>Only offered on the menu with DevTools on (test maps).</summary>
             public bool DevOnly;
+            /// <summary>
+            /// Optional: ground under the statue stays free for machines and routes where its underside is at least
+            /// this high (metres). Unset: every column with blocks takes up the ground.
+            /// </summary>
+            public double? GroundClearance;
 
             public bool IsStatue => Build != null;
         }
@@ -99,6 +104,18 @@ namespace PyramidsMaps.Maps
                 ShapeVersion = HorusShape.Version,
                 CellW = HorusShape.CellW, CellH = HorusShape.CellH,
                 Build = HorusShape.Build,
+            },
+            new MapInfo
+            {
+                Id = "inverted",
+                SyncIndex = 5,
+                Title = "Upside-Down",
+                Body = "The classic pyramid's own blocks, upside down on its tip: build up to a plaza 65 m in the air and crown it. 23,427 blocks, any order. (Pyramids Custom Maps mod)",
+                StatueName = "the pyramid",
+                ShapeVersion = InvertedShape.Version,
+                CellW = InvertedShape.CellW, CellH = InvertedShape.CellH,
+                Build = InvertedShape.Build,
+                GroundClearance = InvertedShape.GroundClearance,
             },
             new MapInfo
             {
