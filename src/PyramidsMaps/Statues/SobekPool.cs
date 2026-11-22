@@ -7,18 +7,17 @@ namespace PyramidsMaps.Statues
 {
     /// <summary>
     /// Sobek's oval pool: a basin dug into a copy of the terrain (the game's own terrain asset is never edited)
-    /// and a sheet of the river's own water in it. Under Sobek the ground stays level, so his bricks rest on it;
+    /// and a sheet of the river's own water in it. The floor is level with the ground he stands on, 0.6 m under the water;
     /// a low bank rises at the shore so the water's edge tucks into the ground. Shown while a Sobek world is
     /// active (including the main-menu preview), and fully undone when it ends.
     /// </summary>
     internal static class SobekPool
     {
-        /// <summary>Water surface, and the basin floor away from Sobek, in metres above the site.</summary>
-        private const float WaterY = 0.6f, FloorY = -0.7f;
+        /// <summary>Water surface and the basin floor, in metres above the site. The floor is level with the ground
+        /// Sobek stands on, so it's one even depth under the water.</summary>
+        private const float WaterY = 0.6f, FloorY = 0f;
         /// <summary>The bank: how high it rises at the shore, how far in it slopes down, how far out it spreads.</summary>
         private const float BankY = 0.75f, BankIn = 6f, BankOut = 4f;
-        /// <summary>Ground kept level this far around Sobek, then sloping down to the floor over FootBlend.</summary>
-        private const float FootKeep = 1f, FootBlend = 3f;
 
         private static GameObject _water;
         private static Terrain _terrain;
@@ -108,9 +107,6 @@ namespace PyramidsMaps.Statues
             _copy = UnityEngine.Object.Instantiate(_original);
             _copy.name = _original.name + "_Sobek";
 
-            var shape = StatueWorld.ShapeOf(Maps.MapRegistry.Find("sobek"));
-            var foot = FootDistance(shape, Mathf.CeilToInt(FootKeep + FootBlend) + 1);
-            int pad = foot.GetLength(0) / 2;
 
             int res = _copy.heightmapResolution;
             var size = _copy.size;
@@ -140,15 +136,6 @@ namespace PyramidsMaps.Statues
                     else if (d > -BankOut) offset = Mathf.Lerp(BankY, 0f, Smooth(-d / BankOut));
                     else continue;
 
-                    // keep the ground level under Sobek
-                    if (offset < 0f)
-                    {
-                        int cx = Mathf.RoundToInt(local.x / (float)SobekShape.CellW), cz = Mathf.RoundToInt(local.z / (float)SobekShape.CellW);
-                        float f = cx + pad >= 0 && cz + pad >= 0 && cx + pad < foot.GetLength(0) && cz + pad < foot.GetLength(1) ? foot[cx + pad, cz + pad] : float.MaxValue;
-                        if (f <= FootKeep) offset = 0f;
-                        else if (f < FootKeep + FootBlend) offset = Mathf.Lerp(0f, offset, Smooth((f - FootKeep) / FootBlend));
-                    }
-
                     float worldY = tpos.y + heights[j, i] * size.y + offset;
                     // the site is level at its own height; shift relative to it
                     heights[j, i] = Mathf.Clamp01((worldY - tpos.y) / size.y);
@@ -157,7 +144,7 @@ namespace PyramidsMaps.Statues
             _copy.SetHeights(x0, z0, heights);
             _terrain.terrainData = _copy;
             if (_terrain.TryGetComponent<TerrainCollider>(out var col)) col.terrainData = _copy;
-            Plugin.Log.LogInfo($"Sobek pool: dug the basin ({changed:N0} terrain samples, floor {FloorY} m, bank {BankY} m).");
+            Plugin.Log.LogInfo($"Sobek pool: shaped the basin ({changed:N0} terrain samples, floor {FloorY} m, bank {BankY} m).");
         }
 
         private static void RestoreTerrain()
@@ -201,30 +188,6 @@ namespace PyramidsMaps.Statues
         {
             t = Mathf.Clamp01(t);
             return t * t * (3f - 2f * t);
-        }
-
-        /// <summary>
-        /// Distance (metres) from each cell to Sobek's nearest footprint column, up to <paramref name="max"/>;
-        /// index [x + pad, z + pad] with pad = radius + max.
-        /// </summary>
-        private static float[,] FootDistance(Voxels v, int max)
-        {
-            int pad = v.Radius + max, n = 2 * pad + 1;
-            var d = new float[n, n];
-            for (int a = 0; a < n; a++) for (int b = 0; b < n; b++) d[a, b] = float.MaxValue;
-            for (int x = -v.Radius; x <= v.Radius; x++)
-                for (int z = -v.Radius; z <= v.Radius; z++)
-                {
-                    if (v.ColumnTop(x, z) == 0) continue;
-                    for (int dx = -max; dx <= max; dx++)
-                        for (int dz = -max; dz <= max; dz++)
-                        {
-                            float dist = Mathf.Sqrt(dx * dx + dz * dz) * (float)SobekShape.CellW;
-                            ref float cell = ref d[x + dx + pad, z + dz + pad];
-                            if (dist < cell) cell = dist;
-                        }
-                }
-            return d;
         }
     }
 }
