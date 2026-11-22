@@ -2,6 +2,19 @@
 
 **Published:** https://www.nexusmods.com/howtheybuiltthepyramids/mods/3, now "Pyramids Custom Maps - The Great Cat and Sobek", version 0.4.0 (22 Nov 2026; 0.3.0 was 21 Nov, now archived). Permissions: modification allowed with credit; the rest left at the Nexus defaults.
 
+## Updating to 0.5.0 (13 new maps, player maps)
+
+| Field | Value |
+|---|---|
+| **Mod name** (rename) | Pyramids Custom Maps |
+| **Version** | 0.5.0 |
+| **Summary** | Build something other than the pyramid: giant statues (a cat, Sobek, Anubis, Horus), upside-down pyramids, Giza, the Step and Bent pyramids, a ziggurat, a colossal pyramid and more. 15 maps, built in any order, with Shabti, build markers and the full ending. Add your own from MagicaVoxel. Requires BepInEx 5. |
+| **Description** | Paste the updated [`description.bbcode.txt`](description.bbcode.txt) |
+| **Media** | Add in-game Sobek shots from [`screens/`](screens) (`sobek-01-camp.png`, `sobek-02-side.png`, `sobek-03-side-close.png`) |
+| **File** | Upload `release/PyramidsCustomMaps-0.5.0.zip` as a new main file, version 0.5.0, and move 0.4.0 to Old versions |
+| **File description** | All 15 maps (one plugin DLL) and a player readme. Extract into the game folder after installing BepInEx 5.4.23.6; extract over 0.3.0 or 0.4.0 to update. |
+| **Changelog 0.5.0** | 13 new maps: Anubis, Horus, Upside-Down, Upside-Down Grand, Diamond, Step Pyramid, Bent Pyramid, Nubian Field, Ziggurat, Giza, Colossi, Sphinx Avenue, Colossal Pyramid. Player-made maps from MagicaVoxel .vox files. The main menu's map buttons became one Custom map dropdown. Free camera hides the first-person hands. Shapes build 3-8x faster. |
+
 ## Updating to 0.4.0 (Sobek): done 22 Nov 2026
 
 Done without a playtest (the page and readme say Sobek hasn't had a full playthrough yet). What was changed on mod #3:

@@ -238,18 +238,19 @@ namespace PyramidsMaps.Maps
             },
             new MapInfo
             {
-                // A performance test, not a release: the game's own pyramid at about 4.5x the Grand Pyramid's blocks
-                // (base 141 = 282 m, 71 layers = 178 m, 477,191 blocks), moved south so it fits the terrain.
+                // The game's own pyramid at about 4.5x the Grand Pyramid's blocks (base 141 = 282 m, 71 layers = 178 m,
+                // 477,191 blocks), moved south so it fits the terrain. Began as a performance test (hence the id, kept
+                // so worlds made with it still load): 60 fps finished, an 85 KB save.
                 Id = "colossal-test",
                 SyncCode = 4,
-                Title = "Colossal (test)",
-                Body = "TEST: a pyramid about 4.5x the Grand Pyramid (477,191 blocks, 178 m tall), to measure what the game can handle. DevTools only.",
+                Title = "Colossal Pyramid",
+                Body = "The pyramid at about 4.5 times the Grand Pyramid: 477,191 blocks, 178 m tall, on a plain cleared south of the river. A very long build. (Pyramids Custom Maps mod)",
                 StatueName = "the pyramid",
                 ShapeVersion = 1,
                 PyramidBase = 141,
                 SiteZ = -130,
                 PlayArea = (-172f, -296f, 172f, 46.4f),
-                DevOnly = true,
+
                 OnApplied = Statues.ColossalTest.Show,
                 OnDeactivate = Statues.ColossalTest.Hide,
             },

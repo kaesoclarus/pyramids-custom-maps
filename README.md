@@ -1,11 +1,31 @@
 # Pyramids Custom Maps
 
-An unofficial BepInEx mod for **How They Built the Pyramids** (game version 0.43.0) that adds custom maps. Instead of a pyramid, you build a giant statue brick by brick, and building it is the whole objective, ending included. Statue blocks are half the size of a pyramid block, so the curves come out smooth.
+An unofficial BepInEx mod for **How They Built the Pyramids** (game version 0.43.0) that adds custom maps. Instead of the usual pyramid, you build a giant statue, a famous monument or a strange pyramid, brick by brick, and building it is the whole objective, ending included. Every block is open from the start, so you build in any order. You can also make your own maps in MagicaVoxel.
+
+**Statues** (blocks half the size of a pyramid block, so the curves come out smooth):
 
 | Map | What it is | Size |
 |---|---|---|
-| **The Great Cat** | A stone cat crouched to pounce | 24,052 blocks, 37.5 m tall |
-| **Sobek** (new in 0.4.0) | A crocodile lying in an oval pool, jaws open to the sky | 19,538 blocks, 21 m tall, about 130 m long |
+| **Great Cat** | A stone cat crouched to pounce | 24,052 blocks, 37.5 m tall |
+| **Sobek** | A crocodile lying in an oval pool, jaws open to the sky | 19,538 blocks, 21 m tall, about 130 m long |
+| **Anubis** (new in 0.5.0) | A jackal keeping watch from his shrine, ears high | 11,588 blocks |
+| **Horus** (new) | A falcon with outstretched wings, wearing the double crown | 47,679 blocks, 100 m tall |
+
+**Pyramids and monuments** (new in 0.5.0):
+
+| Map | What it is | Size |
+|---|---|---|
+| **Upside-Down** | The classic pyramid's blocks, balanced on its tip; crown the plaza 65 m up | 23,427 blocks |
+| **Upside-Down Grand** | The Grand Pyramid, upside down; a 170 m plaza 107 m in the air | 105,996 blocks |
+| **Diamond** | An upside-down pyramid with a pyramid on its plaza, 127 m tall | 44,251 blocks |
+| **Step Pyramid** | Djoser's six tiers, 60 m on a 122 m base | 38,921 blocks |
+| **Bent Pyramid** | Steep below, gentler above | 38,235 blocks |
+| **Nubian Field** | A dozen steep Nubian pyramids, like those at Meroe | 7,684 blocks |
+| **Ziggurat** | Three terraces, a grand stairway and a shrine, 45 m high | 11,943 blocks |
+| **Giza** | Khufu, Khafre and Menkaure, and the Great Sphinx | 63,213 blocks |
+| **Colossi** | The Colossi of Memnon, two seated pharaohs 38 m tall | 10,776 blocks |
+| **Sphinx Avenue** | Twelve sphinxes lining a road to a 37 m obelisk | 4,346 blocks |
+| **Colossal Pyramid** | The pyramid at about 4.5 times the Grand Pyramid, 178 m tall | 477,191 blocks |
 
 **Download:** [Nexus Mods](https://www.nexusmods.com/howtheybuiltthepyramids/mods/3) or this repo's [Releases](https://github.com/kaesoclarus/pyramids-custom-maps/releases).
 
@@ -27,7 +47,7 @@ An unofficial BepInEx mod for **How They Built the Pyramids** (game version 0.43
 
 1. Install [BepInEx 5.4.23.6 for Windows x64](https://github.com/BepInEx/BepInEx/releases) into the game folder.
 2. Download the latest zip from [Nexus Mods](https://www.nexusmods.com/howtheybuiltthepyramids/mods/3) or this repo's **Releases** page, and extract it into the game folder.
-3. On the main menu, scroll to the empty plot, pick **Great Cat** or **Sobek**, and start a new world.
+3. On the main menu, scroll to the empty plot, pick a map from the **Custom map** dropdown next to Pyramid and Grand Pyramid, and start a new world.
 
 Everyone who plays together needs the mod, at the same version. See [`release/README.txt`](release/README.txt) for the full player guide.
 
@@ -38,9 +58,11 @@ Everyone who plays together needs the mod, at the same version. See [`release/RE
 - **Reach:** you can place a block one layer (1.25 m) above your feet.
 - **Markers:** small markers show where you can build next. **F7** turns them on and off.
 - **Shabti:** they build from a Work Post on the statue next to a brick crate, or from one on the ground beside its base.
-- **No pyramid aids:** stone ramps, scaffold platforms and the sledge lift are disabled in statue worlds.
-- **Endings:** the cat's last brick is the tip of her left ear; Sobek's is the tip of his raised snout.
+- **No pyramid aids:** stone ramps, scaffold platforms and the sledge lift are disabled on custom maps, except the Colossal Pyramid, which is the game's own pyramid made bigger.
+- **Endings:** the highest block is the last brick: the cat's left ear, Sobek's snout, Horus's crown, Khufu's tip at Giza, the obelisk on Sphinx Avenue.
 - **Sobek's pool:** an oval pool, 0.6 m deep, dug around the build site. You can wade through it, and machines can stand in the shallows.
+- **Colossal Pyramid:** its site is moved south onto a cleared plain, and the play area is opened up around it.
+- **Big maps:** the first time you pick Horus or Upside-Down Grand on the menu in a session, the game may pause for a few seconds while it works out the shape.
 - **Rankings:** statue worlds stay off the game's online world rankings.
 
 ## Building from source
@@ -71,7 +93,7 @@ dotnet build src/PyramidsMaps -c Release -p:GamePath="D:\SteamLibrary\steamapps\
 | `src/PyramidsMaps` | The BepInEx plugin |
 | `src/PyramidsMaps/Shapes` | The statues, modelled as smooth solids and sampled into blocks; reachability checks |
 | `src/PyramidsMaps/Statues` | Statue worlds (any map): layout, any-order building, rendering, Shabti, footprint, diagnostics, photo mode |
-| `src/PyramidsMaps/Maps` | Map selection: menu buttons (`MapRegistry`), per-world markers, world-kind sync for multiplayer |
+| `src/PyramidsMaps/Maps` | Map selection: the list of maps (`MapRegistry`), the menu dropdown, player maps, per-world markers, world-kind sync for multiplayer |
 | `tools/ShapePreview` | Renders previews of the shape (ray-traced PNGs) and checks every block can be built by hand |
 | `tools/Decomp` | Decompiles the game's assembly locally, for reading its code (the output is not part of this repo) |
 | `PLAN.md` | Design notes and history |

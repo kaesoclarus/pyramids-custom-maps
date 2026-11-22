@@ -5,7 +5,7 @@ Ideas for future maps. Each one replaces the pyramid with something else to buil
 | Map | Status | What it is | What's new or hard about it |
 |---|---|---|---|
 | **The Great Cat** | Released, 0.3.0 | A giant cat crouched to pounce | — |
-| **Sobek** (crocodile) | Released, 0.4.0 (not yet playtested), see [`PLAN.md`](../PLAN.md#second-map-sobek-planned-2026-11-21) | A crocodile coming out of the water, jaws open | A water pool, open jaws (a big overhang), a long low body with a curved tail |
+| **Sobek** (crocodile) | Released, 0.4.0 (in-game fill tested; not yet built by hand), see [`PLAN.md`](../PLAN.md#second-map-sobek-planned-2026-11-21) | A crocodile coming out of the water, jaws open | A water pool, open jaws (a big overhang), a long low body with a curved tail |
 | **Anubis** (jackal) | In progress (shape done 2026-11-22) | A jackal lying on a shrine chest, ears up | A tall box chest can't be climbed with the 1.25 m reach, so it has a stairway up the front |
 | **Horus** (falcon) | In progress (shape done 2026-11-22) | A falcon with outstretched wings and the double crown, 100 m tall, 47,679 blocks | Huge thin wings, and tall: needs the reach check's "step left open" mode. The last free multiplayer map index (3) |
 | **Upside-Down** pyramid | In progress (shape done 2026-11-22) | The classic pyramid's own 23,426 blocks balanced on its tip, plus a capstone on the plaza on top | Every layer overhangs. Ground under the overhang stays usable (only the 14 m square around the tip counts as the statue) |

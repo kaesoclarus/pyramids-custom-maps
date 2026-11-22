@@ -1,24 +1,44 @@
-[size=5][b]Pyramids Custom Maps: the Great Cat and Sobek[/b][/size]
-[i]Why build a pyramid when you could build a giant stone statue?[/i]
+[size=5][b]Pyramids Custom Maps: 15 maps, and your own[/b][/size]
+[i]Why build a pyramid when you could build a giant stone statue, an upside-down pyramid, or all of Giza?[/i]
 
-[b]Pyramids Custom Maps[/b] adds custom maps to [i]How They Built the Pyramids[/i]. Each one swaps the pyramid for a giant statue that you build brick by brick. Building it is the whole objective, from the first brick on the ground to the last brick at the very top, and then the ending.
+[b]Pyramids Custom Maps[/b] adds custom maps to [i]How They Built the Pyramids[/i]. Each one swaps the usual pyramid for something else that you build brick by brick. Building it is the whole objective, from the first brick on the ground to the last brick at the very top, and then the ending.
 
-[size=4][b]The maps[/b][/size]
+[size=4][b]Statues[/b][/size]
+Statue blocks are half the size of a pyramid block, so the curves come out smooth.
 [list]
-[*][b]The Great Cat[/b]: a stone cat, crouched and ready to pounce. 24,052 blocks (about as many as the pyramid) and 37.5 m tall. The last brick goes on the tip of her left ear.
-[*][b]Sobek[/b] [i](new in 0.4.0)[/i]: a giant crocodile lying in an oval pool, jaws open to the sky. 19,538 blocks, 21 m tall and about 130 m long. Climb into his open mouth to build the raised upper jaw; the last brick is the tip of his snout. [i]Honest note: Sobek is new and hasn't had a full playthrough yet. If a spot can't be built or something looks off, please report it![/i]
+[*][b]Great Cat[/b]: a stone cat, crouched and ready to pounce. 24,052 blocks and 37.5 m tall. The last brick goes on the tip of her left ear.
+[*][b]Sobek[/b]: a giant crocodile lying in an oval pool, jaws open to the sky. 19,538 blocks, 21 m tall and about 130 m long. Climb into his open mouth to build the raised upper jaw.
+[*][b]Anubis[/b] [i](new in 0.5.0)[/i]: a jackal keeping watch from his shrine, ears high. 11,588 blocks.
+[*][b]Horus[/b] [i](new)[/i]: a falcon with outstretched wings, wearing the double crown. 47,679 blocks, 100 m tall.
 [/list]
+
+[size=4][b]Pyramids and monuments[/b] [i](all new in 0.5.0)[/i][/size]
+[list]
+[*][b]Upside-Down[/b]: the classic pyramid balanced on its tip. Build up to the plaza 65 m in the air and crown it. 23,427 blocks.
+[*][b]Upside-Down Grand[/b]: the Grand Pyramid on its tip, with a 170 m plaza 107 m up. 105,996 blocks.
+[*][b]Diamond[/b]: an upside-down pyramid with a pyramid standing on its plaza, 127 m tall. 44,251 blocks.
+[*][b]Step Pyramid[/b]: Djoser's six tiers, 60 m on a 122 m base. 38,921 blocks.
+[*][b]Bent Pyramid[/b]: steep at the bottom, gentler above. 38,235 blocks.
+[*][b]Nubian Field[/b]: a dozen steep Nubian pyramids, like those at Meroe. 7,684 blocks.
+[*][b]Ziggurat[/b]: three terraces, a grand stairway and a shrine on top, 45 m high. 11,943 blocks.
+[*][b]Giza[/b]: Khufu, Khafre and Menkaure, with the Great Sphinx keeping watch. 63,213 blocks.
+[*][b]Colossi[/b]: the Colossi of Memnon, two pharaohs seated on their thrones, 38 m tall. 10,776 blocks.
+[*][b]Sphinx Avenue[/b]: twelve sphinxes lining a road to a 37 m obelisk. 4,346 blocks.
+[*][b]Colossal Pyramid[/b]: the pyramid at about 4.5 times the Grand Pyramid. 477,191 blocks, 178 m tall, on a plain cleared south of the river. A finished one still runs smoothly and saves small.
+[/list]
+
+[size=4][b]Make your own map[/b][/size]
+Build a model in [url=https://ephtracy.github.io/]MagicaVoxel[/url], drop the .vox file in [i]BepInEx\plugins\PyramidsMaps\maps[/i], and it appears in the menu. Each voxel is one block. An optional text file sets its title, description and block size. When the game starts, the mod checks that every block can be built by hand and logs any that can't.
 
 [size=4][b]Features[/b][/size]
 [list]
-[*][b]Smoother shapes[/b]: statue blocks are half the size of a pyramid block, so the curves come out smooth.
-[*][b]Build in any order[/b]: every block is open from the start. A block must touch one you've already laid (or sit on the ground layer), so there are no floating bricks. Overhangs like the cat's chin or Sobek's upper jaw grow out from their neighbours.
-[*][b]Stack as you go[/b]: you can place a block one layer above your feet, so you build up beside your work and climb onto it.
+[*][b]Build in any order[/b]: every block is open from the start. A block must touch one you've already laid (or sit on the ground layer), so there are no floating bricks. Overhangs grow out from their neighbours.
+[*][b]Stack as you go[/b]: you can place a block about one layer above your feet, so you build up beside your work and climb onto it.
 [*][b]Build markers[/b]: small markers show the spots next to your bricks where you can build next. F7 turns them on and off.
-[*][b]Shabti builders[/b]: put a Work Post up on the statue next to a brick crate and they build that level. A Work Post on the ground beside its base builds the bottom layer.
-[*][b]Sobek's pool[/b]: a shallow oval pool (0.6 m deep) dug around the build site, using the river's own water. Wade through it; machines can stand in the shallows.
-[*][b]The full ending[/b] on both maps. Climb up together and place the last brick.
-[*][b]Map chooser in the main menu[/b]: the empty plot gets [b]Great Cat[/b] and [b]Sobek[/b] buttons next to Pyramid and Grand Pyramid. Your existing worlds are never changed.
+[*][b]Shabti builders[/b]: put a Work Post up on the build next to a brick crate and they build that level. A Work Post on the ground builds the bottom layer.
+[*][b]The full ending[/b] on every map. The highest block is the last brick: climb up together and place it.
+[*][b]Map chooser in the main menu[/b]: the empty plot gets a [b]Custom map[/b] dropdown next to Pyramid and Grand Pyramid. Your existing worlds are never changed.
+[*][b]Photo mode[/b]: F11 is a free camera without the HUD or hands, and F10 saves a clean screenshot.
 [/list]
 
 [size=4][b]Requirements[/b][/size]
@@ -32,26 +52,28 @@
 [*]In Steam, right-click [i]How They Built the Pyramids[/i] and choose [i]Manage > Browse local files[/i] to open the game folder.
 [*]Extract the BepInEx zip into that folder ([i]winhttp.dll[/i] should end up next to [i]Pyramid.exe[/i]).
 [*]Extract this mod's zip into the same folder. It adds [i]BepInEx\plugins\PyramidsMaps\PyramidsMaps.dll[/i].
-[*]Start the game. On the main menu, scroll to the empty plot, pick [b]Great Cat[/b] or [b]Sobek[/b], and start a new world.
+[*]Start the game. On the main menu, scroll to the empty plot, pick a map from the [b]Custom map[/b] dropdown, and start a new world.
 [/list]
-[b]Updating from 0.3.0:[/b] extract over the old version. Your cat worlds keep working.
-To uninstall, delete the [i]BepInEx\plugins\PyramidsMaps[/i] folder. Statue worlds won't load correctly without the mod.
+[b]Updating from 0.3.0 or 0.4.0:[/b] extract over the old version. Your worlds keep working.
+To uninstall, delete the [i]BepInEx\plugins\PyramidsMaps[/i] folder. Custom map worlds won't load correctly without the mod.
 
 [size=4][b]Multiplayer[/b][/size]
-Everyone who plays together needs the mod, at the same version. The host's world tells joining players which statue it is, and their game builds it too. Players still on 0.3.0 can join cat worlds, but need 0.4.0 for Sobek. [i]Honest note: multiplayer is built in but hasn't been tested with two players yet. Please report how it goes![/i]
+Everyone who plays together needs the mod, at the same version (and the same .vox file for player maps). The host's world tells joining players which map it is, and their game builds it too. [i]Honest note: multiplayer is built in but hasn't been tested with two players yet. Please report how it goes![/i]
 
 [size=4][b]Good to know[/b][/size]
 [list]
-[*]Stone ramps, scaffold platforms and the sledge lift aren't sold in statue worlds, since they only fit pyramid steps.
+[*]Stone ramps, scaffold platforms and the sledge lift aren't sold on custom maps, since they only fit the game's pyramid. The Colossal Pyramid is the exception: it's the game's own pyramid, made bigger.
 [*]Keep brick crates off spots that still need a block, or that spot stays blocked.
-[*]Statue worlds are kept off the game's online world rankings, so a modded statue never competes with real pyramids.
-[*]Steam achievements still unlock in statue worlds.
+[*]The first time you pick Horus or Upside-Down Grand in a session, the menu may pause for a few seconds while it works out the shape.
+[*]Custom map worlds are kept off the game's online world rankings, so a modded map never competes with real pyramids.
+[*]Steam achievements still unlock on custom maps.
+[*][i]Honest note: every map has been checked by the mod's own build simulation and filled in game with a test tool, but the new ones (and Sobek) haven't been built entirely by hand yet. If a spot can't be built, please report it![/i]
 [/list]
 
 [size=4][b]Bug reports[/b][/size]
 Press [b]F8[/b] in game to write a placement and Shabti report to [i]BepInEx\LogOutput.log[/i]. Please attach that file and [i]%USERPROFILE%\AppData\LocalLow\PattezGames\How They Built the Pyramids\Player.log[/i].
 
 [size=4][b]Source[/b][/size]
-The mod is open source on GitHub: [url=https://github.com/kaesoclarus/pyramids-custom-maps]kaesoclarus/pyramids-custom-maps[/url]. More maps can be added there.
+The mod is open source on GitHub: [url=https://github.com/kaesoclarus/pyramids-custom-maps]kaesoclarus/pyramids-custom-maps[/url].
 
 [i]This is an unofficial fan mod. It isn't made or supported by PattezGames, and it includes none of the game's code or assets.[/i]
