@@ -4,7 +4,7 @@
 
 ## Updating to 0.5.0 (13 new maps, player maps): done 22 Nov 2026
 
-Name, version, summary, description, file (as an update of 0.4.0, which was archived), changelog and the 3 in-game Sobek shots. Note: the media editor can show an empty gallery while it loads; wait before changing anything there.
+Name, version, summary, description, file (as an update of 0.4.0, which was archived) and changelog. Gallery since then: the in-game cat shot with a player for scale (`screens/game-01-front-scale.png`, the thumbnail), then one render per map from [`../maps/`](../maps) (16 images); the other in-game shots and extra Sobek renders were removed. Note: the media editor can show an empty gallery while it loads; wait before changing anything there.
 
 | Field | Value |
 |---|---|
