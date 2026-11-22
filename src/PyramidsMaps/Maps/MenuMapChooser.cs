@@ -9,9 +9,11 @@ using UnityEngine.UI;
 namespace PyramidsMaps.Maps
 {
     /// <summary>
-    /// Main menu, empty plot: the game offers Pyramid and Grand Pyramid buttons. This adds one button per custom
-    /// map (copies of the Grand button, laid out after it). Choosing a custom map starts new worlds with it;
-    /// choosing Pyramid or Grand goes back to the game's own. The choice is kept in the NewWorldMap setting.
+    /// Main menu, empty plot: the game offers Pyramid and Grand Pyramid buttons. This adds a "Custom map" dropdown
+    /// next to them listing every custom map (a copy of one of the game's own dropdowns, so it looks and sounds
+    /// like the rest of the menu, and scrolls however many maps there are). Picking a map starts new worlds with
+    /// it; picking Pyramid or Grand, or the dropdown's first entry, goes back to the game's own. The choice is kept
+    /// in the NewWorldMap setting.
     /// </summary>
     [HarmonyPatch(typeof(SlotShowcase))]
     internal static class MenuMapChooser
@@ -22,8 +24,16 @@ namespace PyramidsMaps.Maps
         private static readonly AccessTools.FieldRef<SlotShowcase, Color> OffTintRef = AccessTools.FieldRefAccess<SlotShowcase, Color>("kindOffTint");
         private static readonly AccessTools.FieldRef<SlotShowcase, string> ShownKeyRef = AccessTools.FieldRefAccess<SlotShowcase, string>("_shownKey");
 
-        private static readonly Dictionary<SlotShowcase, List<(MapRegistry.MapInfo map, Button button)>> Buttons =
-            new Dictionary<SlotShowcase, List<(MapRegistry.MapInfo, Button)>>();
+        /// <summary>The first entry: no custom map (the game's own Pyramid / Grand buttons apply).</summary>
+        private const string NoneLabel = "Custom map...";
+
+        private sealed class Chooser
+        {
+            public TMP_Dropdown Dropdown;
+            public readonly List<MapRegistry.MapInfo> Maps = new List<MapRegistry.MapInfo>();   // index + 1 = dropdown option
+        }
+
+        private static readonly Dictionary<SlotShowcase, Chooser> Choosers = new Dictionary<SlotShowcase, Chooser>();
 
         [HarmonyPatch("Awake")]
         [HarmonyPostfix]
@@ -33,34 +43,40 @@ namespace PyramidsMaps.Maps
             {
                 var classic = ClassicRef(__instance);
                 var grand = GrandRef(__instance);
-                if (classic == null || grand == null) { Plugin.Log.LogWarning("Map chooser: the empty plot has no Pyramid/Grand buttons; not adding map buttons."); return; }
+                if (classic == null || grand == null) { Plugin.Log.LogWarning("Map chooser: the empty plot has no Pyramid/Grand buttons; not adding the map list."); return; }
 
                 // Pyramid / Grand: back to the game's own map
                 classic.onClick.AddListener(() => Choose(__instance, null, WorldKind.Classic));
                 grand.onClick.AddListener(() => Choose(__instance, null, WorldKind.Grand));
 
-                var list = new List<(MapRegistry.MapInfo, Button)>();
-                var gRect = (RectTransform)grand.transform;
-                var cRect = (RectTransform)classic.transform;
-                Vector2 step = gRect.anchoredPosition - cRect.anchoredPosition;
-                bool laidOut = grand.transform.parent != null && grand.transform.parent.GetComponent<LayoutGroup>() != null;
-                int i = 0;
+                var source = FindTemplateDropdown();
+                if (source == null) { Plugin.Log.LogWarning("Map chooser: no dropdown in the game to copy; not adding the map list."); return; }
+
+                var go = Object.Instantiate(source.gameObject, grand.transform.parent, false);
+                go.name = "CustomMapDropdown";
+                go.SetActive(true);
+                var dd = go.GetComponent<TMP_Dropdown>();
+                dd.onValueChanged = new TMP_Dropdown.DropdownEvent();   // drop the copied game listeners
+
+                var chooser = new Chooser { Dropdown = dd };
+                var options = new List<TMP_Dropdown.OptionData> { new TMP_Dropdown.OptionData(NoneLabel) };
                 foreach (var map in MapRegistry.Visible)
                 {
-                    i++;
-                    var go = Object.Instantiate(grand.gameObject, grand.transform.parent);
-                    go.name = "MapButton_" + map.Id;
-                    var button = go.GetComponent<Button>();
-                    button.onClick = new Button.ButtonClickedEvent();
-                    var m = map;
-                    button.onClick.AddListener(() => Choose(__instance, m, WorldKind.Classic));
-                    foreach (var text in go.GetComponentsInChildren<TMP_Text>(true)) text.text = map.Title;
-                    if (!laidOut) ((RectTransform)go.transform).anchoredPosition = gRect.anchoredPosition + step * i;
-                    list.Add((map, button));
+                    chooser.Maps.Add(map);
+                    options.Add(new TMP_Dropdown.OptionData(map.Title));
                 }
-                if (!laidOut) FitInRow(cRect, gRect, list);
-                Buttons[__instance] = list;
-                Plugin.Log.LogInfo($"Map chooser: added {list.Count} map button(s) to the empty plot.");
+                dd.ClearOptions();
+                dd.AddOptions(options);
+                dd.SetValueWithoutNotify(0);
+                dd.onValueChanged.AddListener(i =>
+                {
+                    if (i <= 0) Choose(__instance, null, WorldKind.Classic);
+                    else Choose(__instance, chooser.Maps[i - 1], WorldKind.Classic);
+                });
+
+                Place((RectTransform)classic.transform, (RectTransform)grand.transform, (RectTransform)go.transform);
+                Choosers[__instance] = chooser;
+                Plugin.Log.LogInfo($"Map chooser: added a dropdown with {chooser.Maps.Count} map(s) to the empty plot (copied from '{source.name}').");
             }
             catch (System.Exception e)
             {
@@ -68,30 +84,56 @@ namespace PyramidsMaps.Maps
             }
         }
 
-        /// <summary>
-        /// Lays Pyramid, Grand and the map buttons out in the space the game's two buttons used: same overall
-        /// width, narrower buttons, even gaps. Labels shrink to fit.
-        /// </summary>
-        private static void FitInRow(RectTransform classic, RectTransform grand, List<(MapRegistry.MapInfo map, Button button)> extra)
+        /// <summary>One of the game's own dropdowns (settings menu first: those have the click sounds).</summary>
+        private static TMP_Dropdown FindTemplateDropdown()
         {
-            var rects = new List<RectTransform> { classic, grand };
-            foreach (var (_, b) in extra) rects.Add((RectTransform)b.transform);
+            TMP_Dropdown any = null;
+            foreach (var d in Resources.FindObjectsOfTypeAll<TMP_Dropdown>())
+            {
+                if (d == null || !d.gameObject.scene.IsValid() || d.template == null) continue;
+                if (d.GetComponent<UiSfx>() != null) return d;
+                if (any == null) any = d;
+            }
+            return any;
+        }
 
-            float w = classic.rect.width;
+        /// <summary>
+        /// Pyramid, Grand and the dropdown share the space the game's two buttons used: the buttons a little
+        /// narrower, the dropdown wider, even gaps. Button labels shrink to fit.
+        /// </summary>
+        private static void Place(RectTransform classic, RectTransform grand, RectTransform dropdown)
+        {
+            if (grand.parent != null && grand.parent.GetComponent<LayoutGroup>() != null)
+            {
+                // the game lays the row out itself: just size the dropdown like a wider button
+                var le = dropdown.GetComponent<LayoutElement>() ?? dropdown.gameObject.AddComponent<LayoutElement>();
+                le.preferredWidth = grand.rect.width * 1.5f;
+                le.preferredHeight = grand.rect.height;
+                return;
+            }
+
+            float w = classic.rect.width, h = classic.rect.height;
             float gap = Mathf.Max(0f, Mathf.Abs(grand.anchoredPosition.x - classic.anchoredPosition.x) - w);
             float left = Mathf.Min(classic.anchoredPosition.x, grand.anchoredPosition.x) - w * 0.5f;
             float total = Mathf.Abs(grand.anchoredPosition.x - classic.anchoredPosition.x) + w;
-            int n = rects.Count;
-            float nw = (total - gap * (n - 1)) / n;
             float y = classic.anchoredPosition.y;
+            // widths: button, button, dropdown = 1 : 1 : 1.5
+            float unit = (total - 2 * gap) / 3.5f;
+            float[] widths = { unit, unit, unit * 1.5f };
+            var rects = new[] { classic, grand, dropdown };
 
-            for (int i = 0; i < n; i++)
+            dropdown.anchorMin = classic.anchorMin;
+            dropdown.anchorMax = classic.anchorMax;
+            dropdown.pivot = classic.pivot;
+            float x = left;
+            for (int i = 0; i < rects.Length; i++)
             {
                 var r = rects[i];
-                r.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, nw);
-                float cx = left + nw * 0.5f + i * (nw + gap);
-                // anchoredPosition is the pivot; place the button's centre at cx
-                r.anchoredPosition = new Vector2(cx + (r.pivot.x - 0.5f) * nw, y);
+                r.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, widths[i]);
+                if (i == 2) r.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, h);
+                float cx = x + widths[i] * 0.5f;
+                r.anchoredPosition = new Vector2(cx + (r.pivot.x - 0.5f) * widths[i], y);
+                x += widths[i] + gap;
                 foreach (var text in r.GetComponentsInChildren<TMP_Text>(true))
                 {
                     text.enableAutoSizing = true;
@@ -109,17 +151,20 @@ namespace PyramidsMaps.Maps
             showcase.ChooseKind(kind);
         }
 
-        /// <summary>Tints and the description, after the game sets them for Pyramid / Grand.</summary>
+        /// <summary>Tints, the dropdown's shown entry and the description, after the game sets them for Pyramid / Grand.</summary>
         [HarmonyPatch("FillPlotKind")]
         [HarmonyPostfix]
         private static void AfterFillPlotKind(SlotShowcase __instance)
         {
-            if (!Buttons.TryGetValue(__instance, out var list)) return;
+            if (!Choosers.TryGetValue(__instance, out var chooser) || chooser.Dropdown == null) return;
             var chosen = MapRegistry.ForNewWorlds;
             if (chosen != null && WorldKinds.PendingNewWorld != WorldKind.Classic) { MapRegistry.ChooseForNewWorlds(null); chosen = null; }
+
+            int index = chosen != null ? chooser.Maps.IndexOf(chosen) + 1 : 0;
+            if (chooser.Dropdown.value != index) chooser.Dropdown.SetValueWithoutNotify(index);
             var off = OffTintRef(__instance);
-            foreach (var (map, button) in list)
-                if (button != null && button.image != null) button.image.color = map == chosen ? Color.white : off;
+            if (chooser.Dropdown.image != null) chooser.Dropdown.image.color = chosen != null ? Color.white : off;
+
             if (chosen == null) return;
             var classic = ClassicRef(__instance);
             if (classic != null && classic.image != null) classic.image.color = off;
