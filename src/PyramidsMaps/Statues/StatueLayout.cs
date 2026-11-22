@@ -5,14 +5,14 @@ using Pyramid.Data;
 using PyramidsMaps.Shapes;
 using UnityEngine;
 
-namespace PyramidsMaps.Sphinx
+namespace PyramidsMaps.Statues
 {
     /// <summary>
     /// Builds a PyramidLayout from the cat's blocks: one game layer per block layer, each split into rectangular
     /// sections (at most <see cref="Tile"/> cells a side), front sections first.
     /// </summary>
     [HarmonyPatch]
-    internal static class SphinxLayout
+    internal static class StatueLayout
     {
         /// <summary>Section size for the cat (the pyramid uses 12; her blocks are half the size).</summary>
         private const int Tile = 16;
@@ -23,12 +23,12 @@ namespace PyramidsMaps.Sphinx
         /// Layouts built for the cat: every cat-only patch checks this. Weak, so layouts the game drops (the menu
         /// rebuilds one per save card shown) can be collected.
         /// </summary>
-        private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<PyramidLayout, object> CatLayouts =
+        private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<PyramidLayout, object> StatueLayouts =
             new System.Runtime.CompilerServices.ConditionalWeakTable<PyramidLayout, object>();
 
         private static readonly object Mark = new object();
 
-        public static bool IsCat(PyramidLayout layout) => layout != null && CatLayouts.TryGetValue(layout, out _);
+        public static bool IsStatue(PyramidLayout layout) => layout != null && StatueLayouts.TryGetValue(layout, out _);
 
         private static readonly AccessTools.FieldRef<PyramidLayout, int> TotalCellsRef =
             AccessTools.FieldRefAccess<PyramidLayout, int>("<TotalCells>k__BackingField");
@@ -45,9 +45,10 @@ namespace PyramidsMaps.Sphinx
         [HarmonyPrefix]
         private static bool BuildWhole(PyramidLayout __instance)
         {
-            if (_building == null || _building != SphinxWorld.Definition) return true;
-            Build(__instance, SphinxWorld.Shape);
-            CatLayouts.Add(__instance, Mark);
+            var map = StatueWorld.MapOfDefinition(_building);
+            if (map == null) return true;
+            Build(__instance, StatueWorld.ShapeOf(map));
+            StatueLayouts.Add(__instance, Mark);
             return false;
         }
 
@@ -82,7 +83,7 @@ namespace PyramidsMaps.Sphinx
             }
             layout.Stages.Add(new PyramidStage(0, map.Size, 0, layout.Layers.Count, 0, cell));
             TotalCellsRef(layout) = cell;
-            Plugin.Log.LogInfo($"Cat layout: {cell:N0} cells, {layout.Layers.Count} layers, {layout.Sections.Count} sections.");
+            Plugin.Log.LogInfo($"Statue layout: {cell:N0} cells, {layout.Layers.Count} layers, {layout.Sections.Count} sections.");
         }
 
         /// <summary>

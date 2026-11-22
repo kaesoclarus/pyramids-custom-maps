@@ -5,20 +5,20 @@ using Pyramid.Build;
 using Pyramid.Player;
 using UnityEngine;
 
-namespace PyramidsMaps.Sphinx
+namespace PyramidsMaps.Statues
 {
     /// <summary>
     /// Per-layout lookups for the cat: each cell's coordinates and its six neighbours, so the "touches a laid
     /// block" check is a handful of array reads instead of searches.
     /// </summary>
-    internal sealed class CatCells
+    internal sealed class StatueCells
     {
-        private static readonly ConditionalWeakTable<PyramidLayout, CatCells> Table = new ConditionalWeakTable<PyramidLayout, CatCells>();
+        private static readonly ConditionalWeakTable<PyramidLayout, StatueCells> Table = new ConditionalWeakTable<PyramidLayout, StatueCells>();
 
         public readonly int[] Y;
         public readonly int[] Neighbours; // 6 per cell, −1 where there's no cat block
 
-        private CatCells(PyramidLayout layout)
+        private StatueCells(PyramidLayout layout)
         {
             int n = layout.TotalCells;
             Y = new int[n];
@@ -33,7 +33,7 @@ namespace PyramidsMaps.Sphinx
             }
         }
 
-        public static CatCells For(PyramidLayout layout) => Table.GetValue(layout, l => new CatCells(l));
+        public static StatueCells For(PyramidLayout layout) => Table.GetValue(layout, l => new StatueCells(l));
 
         public bool Touches(PyramidProgress p, int cell)
         {
@@ -61,7 +61,7 @@ namespace PyramidsMaps.Sphinx
     /// section is open, so while the aim runs it only sees the sections within reach of the player.
     /// </summary>
     [HarmonyPatch]
-    internal static class CatAimPerformance
+    internal static class StatueAimPerformance
     {
         [System.ThreadStatic] private static bool _filter;
         [System.ThreadStatic] private static Vector3 _feetLocal;
@@ -74,7 +74,7 @@ namespace PyramidsMaps.Sphinx
         private static void BeforeFindPlaceCell(PlayerActions __instance, float range)
         {
             if (_py == null) _py = Object.FindAnyObjectByType<PyramidState>();
-            if (_py == null || _py.Site == null || !SphinxLayout.IsCat(_py.Layout)) return;
+            if (_py == null || _py.Site == null || !StatueLayout.IsStatue(_py.Layout)) return;
             _feetLocal = _py.Site.transform.InverseTransformPoint(__instance.transform.position);
             _range = range + 2f;
             _filter = true;
@@ -88,7 +88,7 @@ namespace PyramidsMaps.Sphinx
         [HarmonyPostfix]
         private static void OpenSections(PyramidProgress __instance, ref IReadOnlyList<int> __result)
         {
-            if (!_filter || !SphinxLayout.IsCat(__instance.Layout)) return;
+            if (!_filter || !StatueLayout.IsStatue(__instance.Layout)) return;
             var layout = __instance.Layout;
             var cs = layout.CellSize;
             Near.Clear();

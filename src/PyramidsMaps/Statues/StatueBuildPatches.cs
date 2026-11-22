@@ -4,7 +4,7 @@ using Pyramid.Build;
 using Pyramid.World;
 using UnityEngine;
 
-namespace PyramidsMaps.Sphinx
+namespace PyramidsMaps.Statues
 {
     /// <summary>
     /// How the cat is built: every block is open from the start (not one layer at a time), but a block can only
@@ -12,7 +12,7 @@ namespace PyramidsMaps.Sphinx
     /// outward from their neighbours. Only affects layouts built for the cat.
     /// </summary>
     [HarmonyPatch]
-    internal static class CatBuildPatches
+    internal static class StatueBuildPatches
     {
         private static readonly AccessTools.FieldRef<PyramidProgress, List<int>> OpenRef =
             AccessTools.FieldRefAccess<PyramidProgress, List<int>>("_open");
@@ -24,7 +24,7 @@ namespace PyramidsMaps.Sphinx
         [HarmonyPrefix]
         private static bool RebuildOpen(PyramidProgress __instance)
         {
-            if (!SphinxLayout.IsCat(__instance.Layout)) return true;
+            if (!StatueLayout.IsStatue(__instance.Layout)) return true;
             var open = OpenRef(__instance);
             OpenDirtyRef(__instance) = false;
             open.Clear();
@@ -39,7 +39,7 @@ namespace PyramidsMaps.Sphinx
         [HarmonyPrefix]
         private static bool IsSectionOpen(PyramidProgress __instance, int s, ref bool __result)
         {
-            if (!SphinxLayout.IsCat(__instance.Layout)) return true;
+            if (!StatueLayout.IsStatue(__instance.Layout)) return true;
             __result = s >= 0 && s < __instance.Layout.Sections.Count && !__instance.IsSectionComplete(s);
             return false;
         }
@@ -49,7 +49,7 @@ namespace PyramidsMaps.Sphinx
         [HarmonyPostfix]
         private static void IsCellOpenAndEmpty(PyramidProgress __instance, int cell, ref bool __result)
         {
-            if (__result && SphinxLayout.IsCat(__instance.Layout) && !Touches(__instance, cell))
+            if (__result && StatueLayout.IsStatue(__instance.Layout) && !Touches(__instance, cell))
                 __result = false;
         }
 
@@ -63,10 +63,10 @@ namespace PyramidsMaps.Sphinx
         {
             if (__result) return;
             var p = __instance.Progress;
-            if (p != null && SphinxLayout.IsCat(p.Layout) && !Touches(p, cell)) __result = true;
+            if (p != null && StatueLayout.IsStatue(p.Layout) && !Touches(p, cell)) __result = true;
         }
 
-        public static bool Touches(PyramidProgress p, int cell) => CatCells.For(p.Layout).Touches(p, cell);
+        public static bool Touches(PyramidProgress p, int cell) => StatueCells.For(p.Layout).Touches(p, cell);
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ namespace PyramidsMaps.Sphinx
     /// pyramid). For the cat every layer stays in the exact per-section mode.
     /// </summary>
     [HarmonyPatch]
-    internal static class CatRenderPatches
+    internal static class StatueRenderPatches
     {
         [System.ThreadStatic] private static bool _inCatRebuild;
 
@@ -97,7 +97,7 @@ namespace PyramidsMaps.Sphinx
         private static void BeforeRebuild(PyramidRenderer __instance)
         {
             var state = StateRef(__instance);
-            _inCatRebuild = state != null && SphinxLayout.IsCat(state.Layout);
+            _inCatRebuild = state != null && StatueLayout.IsStatue(state.Layout);
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace PyramidsMaps.Sphinx
             var state = StateRef(__instance);
             var layout = state.Layout;
             var prog = state.Progress;
-            var cells = CatCells.For(layout);
+            var cells = StatueCells.For(layout);
             var ghosts = GhostsRef(__instance);
             var suppressed = SuppressedRef(__instance);
             ghosts.Clear();
@@ -150,13 +150,13 @@ namespace PyramidsMaps.Sphinx
     /// column built to its full height.
     /// </summary>
     [HarmonyPatch]
-    internal static class CatSurfacePatches
+    internal static class StatueSurfacePatches
     {
         [HarmonyPatch(typeof(PyramidPlacement), nameof(PyramidPlacement.SurfaceLayer))]
         [HarmonyPrefix]
         private static bool SurfaceLayer(PyramidState pyramid, int cx, int cz, ref int __result)
         {
-            if (pyramid == null || !SphinxLayout.IsCat(pyramid.Layout)) return true;
+            if (pyramid == null || !StatueLayout.IsStatue(pyramid.Layout)) return true;
             __result = TopFilled(pyramid, cx, cz);
             return false;
         }
@@ -165,7 +165,7 @@ namespace PyramidsMaps.Sphinx
         [HarmonyPrefix]
         private static bool TryGetTread(PyramidState pyramid, Vector3 point, ref int layer, ref float height, ref bool __result)
         {
-            if (pyramid == null || !SphinxLayout.IsCat(pyramid.Layout) || pyramid.Site == null) return true;
+            if (pyramid == null || !StatueLayout.IsStatue(pyramid.Layout) || pyramid.Site == null) return true;
             layer = -1;
             height = point.y;
             var layout = pyramid.Layout;
@@ -173,7 +173,7 @@ namespace PyramidsMaps.Sphinx
             var local = t.InverseTransformPoint(point);
             int cx = Mathf.RoundToInt(local.x / layout.CellSize.x), cz = Mathf.RoundToInt(local.z / layout.CellSize.z);
             int s = TopFilled(pyramid, cx, cz);
-            __result = s >= 0 && s == SphinxWorld.ColumnTop(cx, cz) - 1;
+            __result = s >= 0 && s == StatueWorld.ColumnTop(cx, cz) - 1;
             if (__result)
             {
                 layer = s;
@@ -186,8 +186,8 @@ namespace PyramidsMaps.Sphinx
         [HarmonyPrefix]
         private static bool IsTreadCell(PyramidState pyramid, int layer, int cx, int cz, ref bool __result)
         {
-            if (pyramid == null || !SphinxLayout.IsCat(pyramid.Layout)) return true;
-            __result = layer >= 0 && layer == SphinxWorld.ColumnTop(cx, cz) - 1 && TopFilled(pyramid, cx, cz) == layer;
+            if (pyramid == null || !StatueLayout.IsStatue(pyramid.Layout)) return true;
+            __result = layer >= 0 && layer == StatueWorld.ColumnTop(cx, cz) - 1 && TopFilled(pyramid, cx, cz) == layer;
             return false;
         }
 
@@ -195,9 +195,9 @@ namespace PyramidsMaps.Sphinx
         [HarmonyPrefix]
         private static bool IsWorkSurfaceColumn(PyramidState pyramid, int cx, int cz, ref bool __result)
         {
-            if (pyramid == null || !SphinxLayout.IsCat(pyramid.Layout)) return true;
+            if (pyramid == null || !StatueLayout.IsStatue(pyramid.Layout)) return true;
             int s = TopFilled(pyramid, cx, cz);
-            __result = s >= 0 && s < SphinxWorld.ColumnTop(cx, cz) - 1;
+            __result = s >= 0 && s < StatueWorld.ColumnTop(cx, cz) - 1;
             return false;
         }
 
@@ -206,7 +206,7 @@ namespace PyramidsMaps.Sphinx
         {
             var layout = pyramid.Layout;
             var progress = pyramid.Progress;
-            for (int y = SphinxWorld.ColumnTop(cx, cz) - 1; y >= 0; y--)
+            for (int y = StatueWorld.ColumnTop(cx, cz) - 1; y >= 0; y--)
             {
                 int i = layout.CellIndex(new Vector3Int(cx, y, cz));
                 if (i >= 0 && progress.IsFilled(i)) return y;
@@ -217,7 +217,7 @@ namespace PyramidsMaps.Sphinx
 
     /// <summary>Everything else that assumed a square pyramid.</summary>
     [HarmonyPatch]
-    internal static class CatWorldPatches
+    internal static class StatueWorldPatches
     {
         /// <summary>No building on the cat's footprint (the game keeps out a square around the whole site).</summary>
         [HarmonyPatch(typeof(BuildArea), nameof(BuildArea.OverlapsKeepOut))]
@@ -225,7 +225,7 @@ namespace PyramidsMaps.Sphinx
         private static bool OverlapsKeepOut(BuildArea __instance, Vector3 position, Vector3 size, float yaw, ref bool __result)
         {
             var pyramid = Traverse.Create(__instance).Field("pyramid").GetValue<PyramidState>();
-            if (pyramid == null || !SphinxLayout.IsCat(pyramid.Layout) || pyramid.Site == null) return true;
+            if (pyramid == null || !StatueLayout.IsStatue(pyramid.Layout) || pyramid.Site == null) return true;
 
             var t = pyramid.Site.transform;
             var cs = pyramid.Layout.CellSize;
@@ -238,7 +238,7 @@ namespace PyramidsMaps.Sphinx
             __result = false;
             for (float x = local.x - ex; x <= local.x + ex + 0.01f && !__result; x += 0.5f)
                 for (float z = local.z - ez; z <= local.z + ez + 0.01f && !__result; z += 0.5f)
-                    if (SphinxWorld.ColumnTop(Mathf.RoundToInt(x / cs.x), Mathf.RoundToInt(z / cs.z)) > 0) __result = true;
+                    if (StatueWorld.ColumnTop(Mathf.RoundToInt(x / cs.x), Mathf.RoundToInt(z / cs.z)) > 0) __result = true;
             return false;
         }
 
@@ -247,7 +247,7 @@ namespace PyramidsMaps.Sphinx
         [HarmonyPostfix]
         private static void IsOnSale(ShopService __instance, int index, ref bool __result)
         {
-            if (!__result || !SphinxWorld.Active) return;
+            if (!__result || !StatueWorld.Active) return;
             var item = __instance.Catalog != null ? __instance.Catalog.Get(index) : null;
             var prefab = item != null && item.prefab != null ? item.prefab.gameObject : null;
             if (prefab == null) return;

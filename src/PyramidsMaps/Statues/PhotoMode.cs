@@ -6,7 +6,7 @@ using Pyramid.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace PyramidsMaps.Sphinx
+namespace PyramidsMaps.Statues
 {
     /// <summary>
     /// For screenshots (e.g. a mod page):
@@ -15,7 +15,7 @@ namespace PyramidsMaps.Sphinx
     ///  F10  clean screenshot: hides the HUD for that frame and saves a PNG to
     ///       BepInEx\plugins\PyramidsMaps\screenshots.
     /// </summary>
-    internal sealed class CatPhoto : MonoBehaviour
+    internal sealed class PhotoMode : MonoBehaviour
     {
         private bool _free;
         private GameCamera _gameCam;

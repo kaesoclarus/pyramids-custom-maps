@@ -6,13 +6,13 @@ using Pyramid.World;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace PyramidsMaps.Sphinx
+namespace PyramidsMaps.Statues
 {
     /// <summary>
     /// Press F8 in a cat world: logs, for the open spots around your laid bricks, which of the game's checks
     /// accepts or rejects each one, and what the aim currently picks.
     /// </summary>
-    internal sealed class CatDiagnostics : MonoBehaviour
+    internal sealed class StatueDiagnostics : MonoBehaviour
     {
         private static readonly System.Action<PyramidRenderer> MarkDirty =
             AccessTools.MethodDelegate<System.Action<PyramidRenderer>>(AccessTools.Method(typeof(PyramidRenderer), "MarkDirty"));
@@ -34,7 +34,7 @@ namespace PyramidsMaps.Sphinx
             if (Plugin.DevTools.Value && kb.f9Key.wasPressedThisFrame)
             {
                 if (Time.unscaledTime - _lastF9 < 2f) { _lastF9 = -10f; DevFillAllButLast(); }
-                else { _lastF9 = Time.unscaledTime; Plugin.Log.LogWarning("DevTools: press F9 again within 2 s to fill the cat (all but the final brick)."); }
+                else { _lastF9 = Time.unscaledTime; Plugin.Log.LogWarning("DevTools: press F9 again within 2 s to fill the statue (all but the final brick)."); }
             }
 
             if (!kb.f8Key.wasPressedThisFrame) return;
@@ -47,7 +47,7 @@ namespace PyramidsMaps.Sphinx
         private static void DevFillAllButLast()
         {
             var py = FindAnyObjectByType<PyramidState>();
-            if (py == null || !SphinxLayout.IsCat(py.Layout)) { Plugin.Log.LogWarning("DevTools: not a cat world."); return; }
+            if (py == null || !StatueLayout.IsStatue(py.Layout)) { Plugin.Log.LogWarning("DevTools: not a statue world."); return; }
             if (!py.IsServerInitialized) { Plugin.Log.LogWarning("DevTools: only the host can fill."); return; }
             var cells = new System.Collections.Generic.List<int>();
             for (int i = 0; i < py.Layout.TotalCells; i++)
@@ -59,7 +59,7 @@ namespace PyramidsMaps.Sphinx
         private static string Describe()
         {
             var py = FindAnyObjectByType<PyramidState>();
-            if (py == null || !SphinxLayout.IsCat(py.Layout)) return "F8: not a cat world.";
+            if (py == null || !StatueLayout.IsStatue(py.Layout)) return "F8: not a statue world.";
 
             PlayerActions me = null;
             foreach (var a in FindObjectsByType<PlayerActions>())
@@ -72,7 +72,7 @@ namespace PyramidsMaps.Sphinx
             var layout = py.Layout;
             var prog = py.Progress;
             var sb = new StringBuilder();
-            sb.AppendLine($"F8 cat diagnostic: feet {feet} eye {eye} placeMaxRise {py.Tuning?.placeMaxRise} " +
+            sb.AppendLine($"F8 statue diagnostic: feet {feet} eye {eye} placeMaxRise {py.Tuning?.placeMaxRise} " +
                           $"placed {prog.TotalPlaced} open sections {prog.OpenSections.Count}");
 
             // what the aim would pick right now
@@ -96,7 +96,7 @@ namespace PyramidsMaps.Sphinx
                     shown++;
                     bool blockedN = PyramidOccupancy.IsBlocked(py, n, out string why);
                     sb.AppendLine($"  {Cell(layout, n)} next to {c}: taken={py.IsTaken(n)} sectionOpen={prog.IsSectionOpen(layout.SectionOfCell(n))} " +
-                                  $"openEmpty={prog.IsCellOpenAndEmpty(n)} touches={CatBuildPatches.Touches(prog, n)} canTake={py.CanTakeBrick(n)} " +
+                                  $"openEmpty={prog.IsCellOpenAndEmpty(n)} touches={StatueBuildPatches.Touches(prog, n)} canTake={py.CanTakeBrick(n)} " +
                                   $"blocked={blockedN} '{why}' sight={me.CanSeeCell(py, eye, n)} range: {py.DevDescribePlaceRange(feet, n, 6f)}");
                 }
             }

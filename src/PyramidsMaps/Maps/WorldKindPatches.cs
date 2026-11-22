@@ -4,7 +4,7 @@ using HarmonyLib;
 using Pyramid.Build;
 using Pyramid.Core;
 using Pyramid.Data;
-using PyramidsMaps.Sphinx;
+using PyramidsMaps.Statues;
 using UnityEngine;
 
 namespace PyramidsMaps.Maps
@@ -38,35 +38,37 @@ namespace PyramidsMaps.Maps
         {
             try
             {
-                string map = _stopping ? null : MapForThisSession(__instance, kind);
-                if (map == SphinxWorld.MapId)
+                var map = _stopping ? null : MapForThisSession(__instance, kind);
+                if (map != null)
                 {
                     var site = UnityEngine.Object.FindAnyObjectByType<PyramidSite>();
                     var classic = site != null ? site.ClassicDefinition : null;
                     int classicCells = classic != null ? new PyramidLayout(classic).TotalCells : 23426;
-                    SphinxWorld.Activate(classic, classicCells);
+                    StatueWorld.Activate(map, classic, classicCells);
                 }
                 else
                 {
-                    SphinxWorld.Deactivate();
+                    StatueWorld.Deactivate();
                 }
             }
             catch (Exception e)
             {
                 Plugin.Log.LogError($"Choosing the map failed, playing the normal world: {e}");
-                SphinxWorld.Deactivate();
+                StatueWorld.Deactivate();
             }
         }
 
-        // ---------- multiplayer: telling joining players it's a cat world ----------
+        // ---------- multiplayer: telling joining players which statue it is ----------
 
         /// <summary>
         /// The world kind reaches clients as one synced byte (0 = pyramid, 1 = Grand; the game reads anything but
-        /// 1 as a pyramid). The host sends 0x40 | shape version for a cat world: modded clients build the cat,
-        /// unmodded clients fall back to the pyramid.
+        /// 1 as a pyramid). For a statue world the host sends 0x40 | map index &lt;&lt; 4 | shape version: modded
+        /// clients build that statue, unmodded clients fall back to the pyramid. The cat is map 0, so her byte is
+        /// 0x40 | 5 as in 0.3.0 (which read the low 6 bits as her version); a 0.3.0 player joining another
+        /// statue's world sees a version mismatch and is told to update.
         /// </summary>
-        private const byte CatFlag = 0x40;
-        private static byte CatByte => (byte)(CatFlag | (Shapes.SphinxShape.Version & 0x3F));
+        private const byte StatueFlag = 0x40;
+        private static byte SyncByte(MapRegistry.MapInfo map) => (byte)(StatueFlag | ((map.SyncIndex & 0x3) << 4) | (map.ShapeVersion & 0xF));
 
         private static readonly AccessTools.FieldRef<PyramidState, FishNet.Object.Synchronizing.SyncVar<byte>> WorldKindVar =
             AccessTools.FieldRefAccess<PyramidState, FishNet.Object.Synchronizing.SyncVar<byte>>("_worldKind");
@@ -84,8 +86,8 @@ namespace PyramidsMaps.Maps
             {
                 if (!IsServer(__instance) || _stopping) return;
                 var v = WorldKindVar(__instance);
-                if (SphinxWorld.Active && v != null && v.Value != CatByte) v.Value = CatByte;   // syncs to clients
-                Plugin.Log.LogInfo($"[hook] ApplyWorldKind({kind}) on the host: cat={SphinxWorld.Active} synced={RawKind(__instance)} " +
+                if (StatueWorld.Active && v != null && v.Value != SyncByte(StatueWorld.Map)) v.Value = SyncByte(StatueWorld.Map);   // syncs to clients
+                Plugin.Log.LogInfo($"[hook] ApplyWorldKind({kind}) on the host: statue={StatueWorld.Map?.Id ?? "none"} synced={RawKind(__instance)} " +
                                    $"cells={__instance.Layout?.TotalCells} layers={__instance.Layout?.Layers.Count}");
             }
             catch (Exception e)
@@ -132,9 +134,9 @@ namespace PyramidsMaps.Maps
         [HarmonyPrefix]
         private static void BeforeLocalShowcase(PyramidState __instance, ref ulong[] bits)
         {
-            if (bits != null || !_inShowcase || !_showcaseIsNewPlot || !SphinxWorld.Active) return;
+            if (bits != null || !_inShowcase || !_showcaseIsNewPlot || !StatueWorld.Active) return;
             var layout = __instance.Layout;
-            if (!Sphinx.SphinxLayout.IsCat(layout)) return;
+            if (!Statues.StatueLayout.IsStatue(layout)) return;
             int n = layout.TotalCells;
             bits = new ulong[(n + 63) / 64];
             for (int i = 0; i < n; i++) bits[i >> 6] |= 1UL << (i & 63);
@@ -151,9 +153,9 @@ namespace PyramidsMaps.Maps
         [HarmonyPostfix]
         private static void AfterSiteApplyKind(PyramidSite __instance, ref bool __result)
         {
-            if (!SphinxWorld.Active || SphinxWorld.Definition == null) return;
-            if (SiteDefinition(__instance) == SphinxWorld.Definition) return;
-            SiteDefinition(__instance) = SphinxWorld.Definition;
+            if (!StatueWorld.Active || StatueWorld.Definition == null) return;
+            if (SiteDefinition(__instance) == StatueWorld.Definition) return;
+            SiteDefinition(__instance) = StatueWorld.Definition;
             SiteLayout(__instance) = null;
             Physics.SyncTransforms();
             __result = true; // makes PyramidState rebuild its progress and raise LayoutSwapped
@@ -163,30 +165,31 @@ namespace PyramidsMaps.Maps
         /// Which map the world being shown uses. Hosting: the slot's marker (new worlds get one from NewWorldMap).
         /// Main menu: the showcased slot's marker, and the empty plot previews NewWorldMap. Clients: stage 6.
         /// </summary>
-        private static string MapForThisSession(PyramidState state, WorldKind kind)
+        private static MapRegistry.MapInfo MapForThisSession(PyramidState state, WorldKind kind)
         {
             if (!IsServer(state))
             {
                 if (_inShowcase)
                 {
                     if (kind != WorldKind.Classic) return null;
-                    if (_showcaseIsNewPlot)
-                        return (Plugin.NewWorldMap.Value ?? "").Trim().ToLowerInvariant() == SphinxWorld.MapId ? SphinxWorld.MapId : null;
-                    return WorldMaps.Get(_showcaseSlot);
+                    if (_showcaseIsNewPlot) return MapRegistry.ForNewWorlds;
+                    return MapRegistry.Find(WorldMaps.Get(_showcaseSlot));
                 }
 
-                // a client in someone else's world: the host's synced byte says whether it's a cat
+                // a client in someone else's world: the host's synced byte says which statue, if any
                 byte raw = RawKind(state);
-                if ((raw & 0xC0) != CatFlag) return null;
-                int hostShape = raw & 0x3F;
-                if (hostShape != (Shapes.SphinxShape.Version & 0x3F))
+                if ((raw & 0xC0) != StatueFlag) return null;
+                var hostMap = MapRegistry.BySyncIndex((raw >> 4) & 0x3);
+                int hostShape = raw & 0xF;
+                if (hostMap == null || hostShape != (hostMap.ShapeVersion & 0xF))
                 {
-                    Plugin.Log.LogError($"The host's cat is shape version {hostShape}; this mod has {Shapes.SphinxShape.Version}. " +
+                    Plugin.Log.LogError($"The host's world is a statue this mod doesn't have (map {(raw >> 4) & 0x3}, shape version {hostShape}; " +
+                                        $"{(hostMap != null ? $"this mod's {hostMap.Id} is version {hostMap.ShapeVersion}" : "no such map here")}). " +
                                         "Both players need the same version of Pyramids Custom Maps.");
                     return null;
                 }
-                Plugin.Log.LogInfo("Joined a cat world: building the cat layout.");
-                return SphinxWorld.MapId;
+                Plugin.Log.LogInfo($"Joined a {hostMap.Id} world: building its layout.");
+                return hostMap;
             }
             string slot = WorldSave.SessionSlot;
             if (string.IsNullOrEmpty(slot)) return null;
@@ -194,34 +197,39 @@ namespace PyramidsMaps.Maps
             if (IsNewWorld())
             {
                 string wanted = (Plugin.NewWorldMap.Value ?? "").Trim().ToLowerInvariant();
-                if (wanted == SphinxWorld.MapId && kind == WorldKind.Classic)
+                var map = MapRegistry.Find(wanted);
+                if (map != null && kind == WorldKind.Classic)
                 {
-                    WorldMaps.Set(slot, SphinxWorld.MapId);
-                    return SphinxWorld.MapId;
+                    WorldMaps.Set(slot, map);
+                    return map;
                 }
-                if (wanted.Length > 0 && wanted != SphinxWorld.MapId)
-                    Plugin.Log.LogWarning($"NewWorldMap = '{wanted}' isn't a known map (known: {SphinxWorld.MapId}); starting a normal world.");
+                if (wanted.Length > 0 && map == null)
+                    Plugin.Log.LogWarning($"NewWorldMap = '{wanted}' isn't a known map (known: {MapRegistry.KnownIds}); starting a normal world.");
                 WorldMaps.Clear(slot);
                 return null;
             }
 
             string stored = WorldMaps.Get(slot);
-            if (stored == SphinxWorld.MapId && kind != WorldKind.Classic)
+            if (string.IsNullOrEmpty(stored)) return null;
+            var storedMap = MapRegistry.Find(stored);
+            if (storedMap == null)
             {
-                Plugin.Log.LogWarning($"Slot {slot} is a cat world but its save says {kind}; not applying the cat.");
+                Plugin.Log.LogError($"Slot {slot} is a '{stored}' world, a map this version of the mod doesn't have. Not applying it.");
                 return null;
             }
-            if (stored == SphinxWorld.MapId)
+            if (kind != WorldKind.Classic)
             {
-                string shape = WorldMaps.GetValue(slot, "shape");
-                if (shape != Shapes.SphinxShape.Version.ToString())
-                {
-                    Plugin.Log.LogError($"Slot {slot} was started with an older cat shape ({shape ?? "1"}; this mod has {Shapes.SphinxShape.Version}). " +
-                                        "Its saved bricks don't fit the new shape: start a new world. Not applying the cat.");
-                    return null;
-                }
+                Plugin.Log.LogWarning($"Slot {slot} is a {stored} world but its save says {kind}; not applying the statue.");
+                return null;
             }
-            return stored;
+            string shape = WorldMaps.GetValue(slot, "shape");
+            if (shape != storedMap.ShapeVersion.ToString())
+            {
+                Plugin.Log.LogError($"Slot {slot} was started with an older {stored} shape ({shape ?? "1"}; this mod has {storedMap.ShapeVersion}). " +
+                                    "Its saved bricks don't fit the new shape: start a new world. Not applying the statue.");
+                return null;
+            }
+            return storedMap;
         }
 
         /// <summary>True when the slot being hosted has no save yet (the same test WorldSave makes before loading).</summary>

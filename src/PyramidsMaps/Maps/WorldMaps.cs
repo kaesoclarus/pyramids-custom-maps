@@ -36,18 +36,18 @@ namespace PyramidsMaps.Maps
             return null;
         }
 
-        public static void Set(string slot, string mapId)
+        public static void Set(string slot, MapRegistry.MapInfo map)
         {
             Directory.CreateDirectory(Folder);
             File.WriteAllLines(PathOf(slot), new[]
             {
-                "map=" + mapId,
-                "shape=" + Shapes.SphinxShape.Version,
+                "map=" + map.Id,
+                "shape=" + map.ShapeVersion,
                 "created=" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                 "mod=" + Plugin.Version,
                 "game=" + Application.version,
             });
-            Plugin.Log.LogInfo($"Slot {slot} is now a '{mapId}' world.");
+            Plugin.Log.LogInfo($"Slot {slot} is now a '{map.Id}' world.");
         }
 
         public static void Clear(string slot)

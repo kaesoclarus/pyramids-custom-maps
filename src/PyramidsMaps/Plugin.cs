@@ -33,12 +33,12 @@ namespace PyramidsMaps
             PluginDir = Path.GetDirectoryName(Info.Location);
 
             NewWorldMap = Config.Bind("Maps", "NewWorldMap", "",
-                "Map for worlds you START from now on: \"sphinx\" or empty for the normal pyramid. " +
+                "Map for worlds you START from now on: a map id (\"sphinx\" is the Great Cat) or empty for the normal pyramid. " +
                 "Existing worlds keep the map they were started with.");
             ShowMarkers = Config.Bind("Maps", "ShowMarkers", true,
-                "Cat worlds: show small markers on the spots next to your bricks where you can build. F7 toggles in game.");
+                "Statue worlds (Great Cat and other custom maps): show small markers on the spots next to your bricks where you can build. F7 toggles in game.");
             DevTools = Config.Bind("Debug", "DevTools", false,
-                "Testing only, in a throwaway world: F9 twice (host, cat world) fills every block except the final one.");
+                "Testing only, in a throwaway world: F9 twice (host, statue world) fills every block except the final one.");
             _dumpScene = Config.Bind("Debug", "DumpSceneOnLoad", false,
                 "Write the scene hierarchy, map components and classic.json to the plugin's dump folder when the game scene loads.");
 
@@ -56,8 +56,8 @@ namespace PyramidsMaps
                 catch (Exception e) { failed++; Log.LogError($"Patch group {type.Name} failed to apply: {e.InnerException?.Message ?? e.Message}"); }
             }
             Log.LogInfo($"Patch groups applied: {ok}" + (failed > 0 ? $", FAILED: {failed}" : "") + ".");
-            gameObject.AddComponent<Sphinx.CatDiagnostics>();
-            gameObject.AddComponent<Sphinx.CatPhoto>();
+            gameObject.AddComponent<Statues.StatueDiagnostics>();
+            gameObject.AddComponent<Statues.PhotoMode>();
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 

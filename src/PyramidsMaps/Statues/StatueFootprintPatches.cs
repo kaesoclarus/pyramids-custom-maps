@@ -5,7 +5,7 @@ using Pyramid.Workers;
 using Pyramid.World;
 using UnityEngine;
 
-namespace PyramidsMaps.Sphinx
+namespace PyramidsMaps.Statues
 {
     /// <summary>
     /// The game treats everything inside the pyramid's square site as "on the pyramid". The cat's square is
@@ -13,19 +13,19 @@ namespace PyramidsMaps.Sphinx
     /// around her real outline (her bounding rectangle) instead of the square.
     /// </summary>
     [HarmonyPatch]
-    internal static class CatFootprintPatches
+    internal static class StatueFootprintPatches
     {
         /// <summary>Footprint columns within <paramref name="margin"/> of the point (site-local metres).</summary>
         [HarmonyPatch(typeof(PyramidPlacement), "InsideLocal")]
         [HarmonyPrefix]
         private static bool InsideLocal(PyramidLayout layout, Vector3 local, float margin, ref bool __result)
         {
-            if (!SphinxLayout.IsCat(layout)) return true;
+            if (!StatueLayout.IsStatue(layout)) return true;
             var cs = layout.CellSize;
             int cx = Mathf.RoundToInt(local.x / cs.x), cz = Mathf.RoundToInt(local.z / cs.z);
             if (margin <= 0f)
             {
-                __result = SphinxWorld.ColumnTop(cx, cz) > 0;
+                __result = StatueWorld.ColumnTop(cx, cz) > 0;
                 return false;
             }
             int r = Mathf.CeilToInt(margin / Mathf.Min(cs.x, cs.z));
@@ -33,7 +33,7 @@ namespace PyramidsMaps.Sphinx
             for (int dx = -r; dx <= r && !__result; dx++)
                 for (int dz = -r; dz <= r && !__result; dz++)
                 {
-                    if (SphinxWorld.ColumnTop(cx + dx, cz + dz) <= 0) continue;
+                    if (StatueWorld.ColumnTop(cx + dx, cz + dz) <= 0) continue;
                     // distance from the point to that column's square
                     float ex = Mathf.Max(0f, Mathf.Abs(local.x - (cx + dx) * cs.x) - 0.5f * cs.x);
                     float ez = Mathf.Max(0f, Mathf.Abs(local.z - (cz + dz) * cs.z) - 0.5f * cs.z);
@@ -47,7 +47,7 @@ namespace PyramidsMaps.Sphinx
         [HarmonyPrefix]
         private static bool FootprintOverlaps(PyramidState pyramid, Vector3 position, float yaw, Vector3 size, float margin, ref bool __result)
         {
-            if (pyramid == null || pyramid.Site == null || !SphinxLayout.IsCat(pyramid.Layout)) return true;
+            if (pyramid == null || pyramid.Site == null || !StatueLayout.IsStatue(pyramid.Layout)) return true;
             __result = Overlaps(pyramid, position, yaw, size, margin);
             return false;
         }
@@ -57,7 +57,7 @@ namespace PyramidsMaps.Sphinx
         [HarmonyPrefix]
         private static bool OutsideFootprint(PyramidState pyramid, Vector3 position, float yaw, Vector3 size, float clearance, ref Vector3 __result)
         {
-            if (pyramid == null || pyramid.Site == null || !SphinxLayout.IsCat(pyramid.Layout)) return true;
+            if (pyramid == null || pyramid.Site == null || !StatueLayout.IsStatue(pyramid.Layout)) return true;
             __result = position;
             if (!Overlaps(pyramid, position, yaw, size, clearance)) return false;
             var t = pyramid.Site.transform;
@@ -85,30 +85,30 @@ namespace PyramidsMaps.Sphinx
             float ez = s * size.x * 0.5f + c * size.z * 0.5f + margin;
             for (float x = local.x - ex; x <= local.x + ex + 0.01f; x += 0.5f)
                 for (float z = local.z - ez; z <= local.z + ez + 0.01f; z += 0.5f)
-                    if (SphinxWorld.ColumnTop(Mathf.RoundToInt(x / cs.x), Mathf.RoundToInt(z / cs.z)) > 0) return true;
+                    if (StatueWorld.ColumnTop(Mathf.RoundToInt(x / cs.x), Mathf.RoundToInt(z / cs.z)) > 0) return true;
             return false;
         }
 
         // ---------- Shabti routes ----------
 
-        private static bool _boxReady;
+        private static string _boxFor;
         private static Rect _box; // site-local metres: x/z extents of her footprint
 
         private static Rect Box(PyramidLayout layout)
         {
-            if (_boxReady) return _box;
-            var v = SphinxWorld.Shape;
+            if (_boxFor == StatueWorld.Map?.Id) return _box;
+            var v = StatueWorld.Shape;
             int minX = int.MaxValue, maxX = int.MinValue, minZ = int.MaxValue, maxZ = int.MinValue;
             for (int x = -v.Radius; x <= v.Radius; x++)
                 for (int z = -v.Radius; z <= v.Radius; z++)
-                    if (SphinxWorld.ColumnTop(x, z) > 0)
+                    if (StatueWorld.ColumnTop(x, z) > 0)
                     {
                         minX = Mathf.Min(minX, x); maxX = Mathf.Max(maxX, x);
                         minZ = Mathf.Min(minZ, z); maxZ = Mathf.Max(maxZ, z);
                     }
             var cs = layout.CellSize;
             _box = Rect.MinMaxRect((minX - 0.5f) * cs.x, (minZ - 0.5f) * cs.z, (maxX + 0.5f) * cs.x, (maxZ + 0.5f) * cs.z);
-            _boxReady = true;
+            _boxFor = StatueWorld.Map?.Id;
             return _box;
         }
 
@@ -117,7 +117,7 @@ namespace PyramidsMaps.Sphinx
         [HarmonyPrefix]
         private static bool Route(PyramidState py, Vector3 from, Vector3 to, float margin, List<Vector3> path)
         {
-            if (py == null || py.Site == null || !SphinxLayout.IsCat(py.Layout)) return true;
+            if (py == null || py.Site == null || !StatueLayout.IsStatue(py.Layout)) return true;
             var t = py.Site.transform;
             var box = Box(py.Layout);
             Vector2 a = Flat(t.InverseTransformPoint(from)), b = Flat(t.InverseTransformPoint(to));

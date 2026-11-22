@@ -1,10 +1,13 @@
+using System;
 using System.Collections.Generic;
+using PyramidsMaps.Shapes;
 
 namespace PyramidsMaps.Maps
 {
     /// <summary>
-    /// The custom maps a new world can be started with. Add a new map here (and its world logic) and it shows up
-    /// as a button on the main menu's empty plot, next to the game's own Pyramid and Grand Pyramid.
+    /// The custom maps a new world can be started with. Each one replaces the pyramid with a statue built brick
+    /// by brick. Add a map here (with its shape) and it shows up as a button on the main menu's empty plot, next
+    /// to the game's own Pyramid and Grand Pyramid.
     /// </summary>
     internal static class MapRegistry
     {
@@ -12,31 +15,59 @@ namespace PyramidsMaps.Maps
         {
             /// <summary>Stable id, stored in each world's marker file and in the NewWorldMap setting. Never change it.</summary>
             public string Id;
+            /// <summary>
+            /// Stable number 0–3, sent to joining players in the synced world-kind byte. Never change or reuse it.
+            /// </summary>
+            public int SyncIndex;
             /// <summary>Button label on the empty plot.</summary>
             public string Title;
             /// <summary>Description shown on the empty plot when it's chosen.</summary>
             public string Body;
+            /// <summary>The statue in running text, e.g. in "Put the Work Post up on the cat".</summary>
+            public string StatueName;
+            /// <summary>The shape's version (0–15): bump when the shape changes, so old worlds aren't loaded onto it.</summary>
+            public int ShapeVersion;
+            /// <summary>Block size in metres (width and depth, height).</summary>
+            public double CellW, CellH;
+            /// <summary>Builds the statue's blocks.</summary>
+            public Func<Voxels> Build;
+            /// <summary>Optional: called when a world of this map starts or ends (e.g. to add scenery).</summary>
+            public Action OnActivate, OnDeactivate;
         }
 
         public static readonly IReadOnlyList<MapInfo> All = new[]
         {
             new MapInfo
             {
-                Id = Sphinx.SphinxWorld.MapId,
+                Id = "sphinx",
+                SyncIndex = 0,
                 Title = "Great Cat",
                 Body = "A giant stone cat, crouched to pounce: 24,052 blocks you can lay in any order. (Pyramids Custom Maps mod)",
+                StatueName = "the cat",
+                ShapeVersion = SphinxShape.Version,
+                CellW = SphinxShape.CellW, CellH = SphinxShape.CellH,
+                Build = SphinxShape.Build,
             },
         };
 
         public static MapInfo Find(string id)
         {
             if (string.IsNullOrEmpty(id)) return null;
+            id = id.Trim().ToLowerInvariant();
             foreach (var m in All) if (m.Id == id) return m;
             return null;
         }
 
+        public static MapInfo BySyncIndex(int index)
+        {
+            foreach (var m in All) if (m.SyncIndex == index) return m;
+            return null;
+        }
+
+        public static string KnownIds => string.Join(", ", Array.ConvertAll(new List<MapInfo>(All).ToArray(), m => m.Id));
+
         /// <summary>The map new worlds will use (from the NewWorldMap setting), or null for the game's own.</summary>
-        public static MapInfo ForNewWorlds => Find((Plugin.NewWorldMap.Value ?? "").Trim().ToLowerInvariant());
+        public static MapInfo ForNewWorlds => Find(Plugin.NewWorldMap.Value);
 
         public static void ChooseForNewWorlds(MapInfo map) => Plugin.NewWorldMap.Value = map?.Id ?? "";
     }

@@ -4,7 +4,7 @@ using Pyramid.Globe;
 using PyramidsMaps.Maps;
 using UnityEngine;
 
-namespace PyramidsMaps.Sphinx
+namespace PyramidsMaps.Statues
 {
     /// <summary>
     /// Shabti builders on the cat. They plan on the game's "builder plane": a square grid at one level where
@@ -15,13 +15,13 @@ namespace PyramidsMaps.Sphinx
     /// A Work Post on the ground still builds the bottom layer, as on the pyramid.
     /// </summary>
     [HarmonyPatch]
-    internal static class CatShabtiPatches
+    internal static class StatueShabtiPatches
     {
         [HarmonyPatch(typeof(PyramidState), nameof(PyramidState.FillBuilderField))]
         [HarmonyPostfix]
         private static void FillBuilderField(PyramidState __instance, int level, BuilderField field, bool __result)
         {
-            if (!__result || field == null || level <= 0 || !SphinxLayout.IsCat(__instance.Layout)) return;
+            if (!__result || field == null || level <= 0 || !StatueLayout.IsStatue(__instance.Layout)) return;
             var layout = __instance.Layout;
             var prog = __instance.Progress;
             int y = layout.Layers[level].Y;
@@ -38,7 +38,7 @@ namespace PyramidsMaps.Sphinx
         [HarmonyPostfix]
         private static void BuilderPlaneWalkable(PyramidState __instance, int level, int x, int z, ref bool __result)
         {
-            if (!__result || level <= 0 || !SphinxLayout.IsCat(__instance.Layout)) return;
+            if (!__result || level <= 0 || !StatueLayout.IsStatue(__instance.Layout)) return;
             var layout = __instance.Layout;
             int below = layout.CellIndex(new Vector3Int(x, layout.Layers[level].Y - 1, z));
             if (below < 0 || !__instance.Progress.IsFilled(below)) __result = false;
@@ -49,7 +49,7 @@ namespace PyramidsMaps.Sphinx
         [HarmonyPrefix]
         private static bool BuilderLevelAt(PyramidState __instance, Vector3 world, float heightTolerance, float slackCells, ref int __result)
         {
-            if (!SphinxLayout.IsCat(__instance.Layout) || __instance.Site == null) return true;
+            if (!StatueLayout.IsStatue(__instance.Layout) || __instance.Site == null) return true;
             __result = -1;
             if (__instance.Progress.Finished) return false;
             var layout = __instance.Layout;
@@ -63,15 +63,15 @@ namespace PyramidsMaps.Sphinx
 
     /// <summary>A modded cat isn't a pyramid: keep it off the game's online world rankings.</summary>
     [HarmonyPatch]
-    internal static class CatRankingPatches
+    internal static class StatueRankingPatches
     {
         [HarmonyPatch(typeof(PyramidRecord), nameof(PyramidRecord.Rankable), MethodType.Getter)]
         [HarmonyPostfix]
         private static void Rankable(PyramidRecord __instance, ref bool __result)
         {
             if (!__result) return;
-            bool cat = WorldMaps.Get(__instance.slotId) == SphinxWorld.MapId ||
-                       (SphinxWorld.Active && !string.IsNullOrEmpty(__instance.slotId) && __instance.slotId == Pyramid.Core.WorldSave.SessionSlot);
+            bool cat = MapRegistry.Find(WorldMaps.Get(__instance.slotId)) != null ||
+                       (StatueWorld.Active && !string.IsNullOrEmpty(__instance.slotId) && __instance.slotId == Pyramid.Core.WorldSave.SessionSlot);
             if (cat) __result = false;
         }
     }

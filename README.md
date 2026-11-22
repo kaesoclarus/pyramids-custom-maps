@@ -62,8 +62,8 @@ dotnet build src/PyramidsMaps -c Release -p:GamePath="D:\SteamLibrary\steamapps\
 | Path | What it is |
 |---|---|
 | `src/PyramidsMaps` | The BepInEx plugin |
-| `src/PyramidsMaps/Shapes` | The cat, modelled as smooth solids and sampled into blocks; reachability checks |
-| `src/PyramidsMaps/Sphinx` | Cat worlds: layout, any-order building, rendering, Shabti, footprint, diagnostics |
+| `src/PyramidsMaps/Shapes` | The statues, modelled as smooth solids and sampled into blocks; reachability checks |
+| `src/PyramidsMaps/Statues` | Statue worlds (any map): layout, any-order building, rendering, Shabti, footprint, diagnostics, photo mode |
 | `src/PyramidsMaps/Maps` | Map selection: menu buttons (`MapRegistry`), per-world markers, world-kind sync for multiplayer |
 | `tools/ShapePreview` | Renders previews of the shape (ray-traced PNGs) and checks every block can be built by hand |
 | `tools/Decomp` | Decompiles the game's assembly locally, for reading its code (the output is not part of this repo) |
@@ -71,8 +71,8 @@ dotnet build src/PyramidsMaps -c Release -p:GamePath="D:\SteamLibrary\steamapps\
 
 ## Adding a map
 
-1. Write the map's world logic.
-2. Add one entry to `src/PyramidsMaps/Maps/MapRegistry.cs`.
+1. Model its statue in `src/PyramidsMaps/Shapes` (see `SobekShape.cs`), and preview it with `tools/ShapePreview --shape <name>`.
+2. Add one entry to `src/PyramidsMaps/Maps/MapRegistry.cs`, with a new sync index.
 
 It then gets a button on the main menu's empty plot.
 

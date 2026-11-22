@@ -5,7 +5,7 @@ using HarmonyLib;
 using Pyramid.Workers;
 using UnityEngine;
 
-namespace PyramidsMaps.Sphinx
+namespace PyramidsMaps.Statues
 {
     /// <summary>
     /// Shabti builders, part 2:
@@ -15,10 +15,10 @@ namespace PyramidsMaps.Sphinx
     ///    what to do instead.
     /// </summary>
     [HarmonyPatch]
-    internal static class CatShabtiFixes
+    internal static class StatueShabtiFixes
     {
-        public const string NeedPostUp = "Put the Work Post up on the cat, next to a brick crate";
-        public const string NeedPostUpBubble = "Post us up on the cat!";
+        public static string NeedPostUp => $"Put the Work Post up on {StatueWorld.Map?.StatueName ?? "the statue"}, next to a brick crate";
+        public static string NeedPostUpBubble => $"Post us up on {StatueWorld.Map?.StatueName ?? "the statue"}!";
 
         /// <summary>In PrepareField, Mathf.Abs(int) only feeds the "inside the square → snap to its edge" test.</summary>
         [HarmonyPatch(typeof(ShabtiShrine), "PrepareField")]
@@ -26,7 +26,7 @@ namespace PyramidsMaps.Sphinx
         private static IEnumerable<CodeInstruction> PrepareField(IEnumerable<CodeInstruction> code)
         {
             var abs = AccessTools.Method(typeof(Mathf), nameof(Mathf.Abs), new[] { typeof(int) });
-            var ours = AccessTools.Method(typeof(CatShabtiFixes), nameof(AbsUnlessCat));
+            var ours = AccessTools.Method(typeof(StatueShabtiFixes), nameof(AbsUnlessStatue));
             int n = 0;
             foreach (var ins in code)
             {
@@ -37,13 +37,13 @@ namespace PyramidsMaps.Sphinx
         }
 
         /// <summary>On the cat, never "inside the square": the walk starts where the Work Post is.</summary>
-        public static int AbsUnlessCat(int v) => SphinxWorld.Active ? int.MaxValue : Mathf.Abs(v);
+        public static int AbsUnlessStatue(int v) => StatueWorld.Active ? int.MaxValue : Mathf.Abs(v);
 
         [HarmonyPatch(typeof(ShabtiShrine), "NeedRampsLine")]
         [HarmonyPostfix]
         private static void NeedRampsLine(ref string __result)
         {
-            if (SphinxWorld.Active) __result = NeedPostUp;
+            if (StatueWorld.Active) __result = NeedPostUp;
         }
 
         /// <summary>The look card says "Needs Stone Ramps to climb" (a fixed string in DescribeLook).</summary>
@@ -51,7 +51,7 @@ namespace PyramidsMaps.Sphinx
         [HarmonyTranspiler]
         private static IEnumerable<CodeInstruction> DescribeLook(IEnumerable<CodeInstruction> code)
         {
-            var ours = AccessTools.Method(typeof(CatShabtiFixes), nameof(RampsLook));
+            var ours = AccessTools.Method(typeof(StatueShabtiFixes), nameof(RampsLook));
             foreach (var ins in code)
             {
                 if (ins.opcode == OpCodes.Ldstr && (ins.operand as string) == "Needs Stone Ramps to climb")
@@ -60,6 +60,6 @@ namespace PyramidsMaps.Sphinx
             }
         }
 
-        public static string RampsLook() => SphinxWorld.Active ? NeedPostUp : "Needs Stone Ramps to climb";
+        public static string RampsLook() => StatueWorld.Active ? NeedPostUp : "Needs Stone Ramps to climb";
     }
 }
