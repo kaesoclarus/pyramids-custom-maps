@@ -18,6 +18,11 @@ An unofficial BepInEx mod for **How They Built the Pyramids** (game version 0.43
 
 ![Sobek in his pool (render)](docs/sobek.png)
 
+| | |
+|---|---|
+| ![Sobek from the front, jaws open (render)](docs/nexus/images/sobek/02-front.png) | ![Sobek from the side (render)](docs/nexus/images/sobek/03-side.png) |
+| ![Sobek from behind, tail curled (render)](docs/nexus/images/sobek/04-behind.png) | ![Sobek from above, in his oval pool (render)](docs/nexus/images/sobek/05-above.png) |
+
 ## Playing
 
 1. Install [BepInEx 5.4.23.6 for Windows x64](https://github.com/BepInEx/BepInEx/releases) into the game folder.
