@@ -46,6 +46,7 @@ SOBEK
   and machines can stand in the shallows.
 - The hard part is his head: climb into the open mouth and build the upper jaw up and out.
 - The last brick is the tip of his raised snout, the highest point of the statue.
+- Sobek is new and hasn't had a full playthrough yet. If a spot can't be built, please report it (F8 report).
 
 KEYS
 - F7  build markers on/off

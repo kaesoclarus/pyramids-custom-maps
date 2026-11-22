@@ -6,7 +6,7 @@
 [size=4][b]The maps[/b][/size]
 [list]
 [*][b]The Great Cat[/b]: a stone cat, crouched and ready to pounce. 24,052 blocks (about as many as the pyramid) and 37.5 m tall. The last brick goes on the tip of her left ear.
-[*][b]Sobek[/b] [i](new in 0.4.0)[/i]: a giant crocodile lying in an oval pool, jaws open to the sky. 19,538 blocks, 21 m tall and about 130 m long. Climb into his open mouth to build the raised upper jaw; the last brick is the tip of his snout.
+[*][b]Sobek[/b] [i](new in 0.4.0)[/i]: a giant crocodile lying in an oval pool, jaws open to the sky. 19,538 blocks, 21 m tall and about 130 m long. Climb into his open mouth to build the raised upper jaw; the last brick is the tip of his snout. [i]Honest note: Sobek is new and hasn't had a full playthrough yet. If a spot can't be built or something looks off, please report it![/i]
 [/list]
 
 [size=4][b]Features[/b][/size]
