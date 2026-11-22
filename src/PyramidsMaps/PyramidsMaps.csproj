@@ -21,6 +21,7 @@
     <Reference Include="UnityEngine.CoreModule" HintPath="$(Managed)\UnityEngine.CoreModule.dll" Private="false" />
     <Reference Include="UnityEngine.PhysicsModule" HintPath="$(Managed)\UnityEngine.PhysicsModule.dll" Private="false" />
     <Reference Include="UnityEngine.TerrainModule" HintPath="$(Managed)\UnityEngine.TerrainModule.dll" Private="false" />
+    <Reference Include="UnityEngine.TerrainPhysicsModule" HintPath="$(Managed)\UnityEngine.TerrainPhysicsModule.dll" Private="false" />
     <Reference Include="Assembly-CSharp" HintPath="$(Managed)\Assembly-CSharp.dll" Private="false" />
     <Reference Include="FishNet.Runtime" HintPath="$(Managed)\FishNet.Runtime.dll" Private="false" />
     <Reference Include="Unity.InputSystem" HintPath="$(Managed)\Unity.InputSystem.dll" Private="false" />

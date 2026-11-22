@@ -58,6 +58,8 @@ namespace PyramidsMaps.Maps
                 ShapeVersion = SobekShape.Version,
                 CellW = SobekShape.CellW, CellH = SobekShape.CellH,
                 Build = SobekShape.Build,
+                OnActivate = Statues.SobekPool.Show,
+                OnDeactivate = Statues.SobekPool.Hide,
             },
         };
 
