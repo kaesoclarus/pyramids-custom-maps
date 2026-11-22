@@ -136,6 +136,19 @@ namespace PyramidsMaps.Maps
             },
             new MapInfo
             {
+                Id = "diamond",
+                // The last free index: the synced byte has room for 8 maps (0–7). A ninth needs a new layout.
+                SyncIndex = 7,
+                Title = "Diamond",
+                Body = "An upside-down pyramid with a pyramid standing on its plaza: a 127 m diamond balanced on its point. 44,251 blocks, any order. (Pyramids Custom Maps mod)",
+                StatueName = "the diamond",
+                ShapeVersion = InvertedShape.DiamondVersion,
+                CellW = InvertedShape.CellW, CellH = InvertedShape.CellH,
+                Build = InvertedShape.BuildDiamond,
+                GroundClearance = InvertedShape.GroundClearance,
+            },
+            new MapInfo
+            {
                 // A performance test, not a release: the game's own pyramid at about 4.5x the Grand Pyramid's blocks
                 // (base 141 = 282 m, 71 layers = 178 m, 477,191 blocks), moved south so it fits the terrain.
                 Id = "colossal-test",

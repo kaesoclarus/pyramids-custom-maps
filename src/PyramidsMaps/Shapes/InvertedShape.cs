@@ -36,6 +36,30 @@ namespace PyramidsMaps.Shapes
             return v;
         }
 
+        /// <summary>Bump when the diamond changes.</summary>
+        public const int DiamondVersion = 1;
+
+        public static Voxels BuildDiamond() => BuildDiamond(Base);
+
+        /// <summary>
+        /// The diamond: the upside-down pyramid with a pyramid standing on its plaza, sharing the widest layer
+        /// (an octahedron), balanced on one point with the other in the sky. The top point is the last brick.
+        /// Classic size: 44,251 blocks, 51 layers, 127.5 m tall.
+        /// </summary>
+        public static Voxels BuildDiamond(int baseSize)
+        {
+            int r = baseSize / 2, layers = 2 * r + 1;
+            var v = new Voxels(r, layers);
+            for (int y = 0; y < layers; y++)
+            {
+                int half = y <= r ? y : 2 * r - y;
+                for (int x = -half; x <= half; x++)
+                    for (int z = -half; z <= half; z++)
+                        v[x, y, z] = true;
+            }
+            return v;
+        }
+
         /// <summary>
         /// Ground counts as under the statue only where its underside is lower than this (metres): a 14 m square
         /// around the tip. Elsewhere the overhang is high enough for machines and Shabti routes underneath.
