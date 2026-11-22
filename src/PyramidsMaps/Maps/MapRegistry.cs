@@ -119,6 +119,23 @@ namespace PyramidsMaps.Maps
             },
             new MapInfo
             {
+                // The Grand Pyramid upside down: its 170 m plaza reaches a little past the normal play area
+                // (x ±85 against ±81, back edge z −129 against −124), so the play area widens and the walls come down.
+                Id = "inverted-grand",
+                SyncIndex = 6,
+                Title = "Upside-Down Grand",
+                Body = "The Grand Pyramid's own blocks, upside down on its tip: build up to a 170 m plaza 107 m in the air. 105,996 blocks, any order. (Pyramids Custom Maps mod)",
+                StatueName = "the pyramid",
+                ShapeVersion = InvertedShape.GrandVersion,
+                CellW = InvertedShape.CellW, CellH = InvertedShape.CellH,
+                Build = InvertedShape.BuildGrand,
+                GroundClearance = InvertedShape.GroundClearance,
+                PlayArea = (-92f, -136f, 92f, 46.4f),
+                OnApplied = Statues.MapEdges.Open,
+                OnDeactivate = Statues.MapEdges.Close,
+            },
+            new MapInfo
+            {
                 // A performance test, not a release: the game's own pyramid at about 4.5x the Grand Pyramid's blocks
                 // (base 141 = 282 m, 71 layers = 178 m, 477,191 blocks), moved south so it fits the terrain.
                 Id = "colossal-test",
