@@ -30,5 +30,37 @@ namespace PyramidsMaps.Maps
             float classic = WorldKinds.IsGrand ? __result / SledgeLift.GrandHeightScale : __result;
             __result = Mathf.RoundToInt(classic * layers / ClassicLayers);
         }
+
+        private static readonly AccessTools.FieldRef<SledgeLiftVisual, Transform[]> RailSegments =
+            AccessTools.FieldRefAccess<SledgeLiftVisual, Transform[]>("railSegments");
+
+        /// <summary>
+        /// The lift's track is a fixed set of rail pieces in its prefab, one per step, enough for the Grand
+        /// Pyramid. On a taller pyramid the cage climbs past the last piece, so copy more pieces from the last
+        /// one before the track is laid out; the game then places and scales them like its own.
+        /// </summary>
+        [HarmonyPatch(typeof(SledgeLiftVisual), nameof(SledgeLiftVisual.Layout))]
+        [HarmonyPrefix]
+        private static void EnoughRails(SledgeLiftVisual __instance, int levels)
+        {
+            ref Transform[] rails = ref RailSegments(__instance);
+            int need = levels - 1;   // segment i joins stop i+1 to i+2
+            if (rails == null || rails.Length == 0 || need <= rails.Length) return;
+            Transform model = null;
+            for (int i = rails.Length - 1; i >= 0 && model == null; i--) model = rails[i];
+            if (model == null) return;
+            int had = rails.Length;
+            var more = new Transform[need];
+            System.Array.Copy(rails, more, had);
+            for (int i = had; i < need; i++)
+            {
+                var copy = Object.Instantiate(model, model.parent, false);
+                copy.name = model.name + " (extra " + (i + 1) + ")";
+                copy.gameObject.SetActive(false);
+                more[i] = copy;
+            }
+            rails = more;
+            Plugin.Log.LogInfo($"Sledge lift: added {need - had} rail pieces (now {need}) for a {levels}-step track.");
+        }
     }
 }

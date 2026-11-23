@@ -26,6 +26,7 @@ An unofficial BepInEx mod for **How They Built the Pyramids** (game version 0.43
 | **Colossi** | The Colossi of Memnon, two seated pharaohs 38 m tall | 10,776 blocks |
 | **Sphinx Avenue** | Twelve sphinxes lining a road to a 37 m obelisk | 4,346 blocks |
 | **Colossal Pyramid** | The pyramid at about 4.5 times the Grand Pyramid, 178 m tall | 477,191 blocks |
+| **Million-Block Pyramid** (new in 0.6.0) | The pyramid with over a million blocks, about 9.5 times the Grand Pyramid: 227 m tall on a 362 m base | 1,004,731 blocks |
 
 **Download:** [Nexus Mods](https://www.nexusmods.com/howtheybuiltthepyramids/mods/3) or this repo's [Releases](https://github.com/kaesoclarus/pyramids-custom-maps/releases).
 
@@ -44,7 +45,7 @@ Renders of every finished map (each shown at its own scale; the Great Cat above 
 | ![Bent Pyramid](docs/maps/bent.png)<br>**Bent Pyramid** | ![Nubian Field](docs/maps/nubian.png)<br>**Nubian Field** |
 | ![Ziggurat](docs/maps/ziggurat.png)<br>**Ziggurat** | ![Giza](docs/maps/giza.png)<br>**Giza** |
 | ![Colossi](docs/maps/colossi.png)<br>**Colossi** | ![Sphinx Avenue](docs/maps/avenue.png)<br>**Sphinx Avenue** |
-| ![Colossal Pyramid](docs/maps/colossal.png)<br>**Colossal Pyramid** | |
+| ![Colossal Pyramid](docs/maps/colossal.png)<br>**Colossal Pyramid** | ![Million-Block Pyramid](docs/maps/million.png)<br>**Million-Block Pyramid** |
 
 ## Playing
 
@@ -61,10 +62,11 @@ Everyone who plays together needs the mod, at the same version. See [`release/RE
 - **Reach:** you can place a block one layer (1.25 m) above your feet.
 - **Markers:** small markers show where you can build next. **F7** turns them on and off.
 - **Shabti:** they build from a Work Post on the statue next to a brick crate, or from one on the ground beside its base.
-- **No pyramid aids:** stone ramps, scaffold platforms and the sledge lift are disabled on custom maps, except the Colossal Pyramid, which is the game's own pyramid made bigger. There the sledge lift's Height steps are scaled by 71/26 (as the game scales them by 43/26 in the Grand Pyramid), so its top level reaches the top layer (`Maps/LiftPatches.cs`).
+- **No pyramid aids:** stone ramps, scaffold platforms and the sledge lift are disabled on custom maps, except the Colossal and Million-Block Pyramids, which are the game's own pyramid made bigger. There the sledge lift's Height steps are scaled by layers/26 (71/26 and 91/26, as the game scales them by 43/26 in the Grand Pyramid), so its top level reaches the top layer, and its track gets extra rail pieces to match (`Maps/LiftPatches.cs`).
 - **Endings:** the highest block is the last brick: the cat's left ear, Sobek's snout, Horus's crown, Khufu's tip at Giza, the obelisk on Sphinx Avenue.
 - **Sobek's pool:** an oval pool, 0.6 m deep, dug around the build site. You can wade through it, and machines can stand in the shallows.
 - **Colossal Pyramid:** its site is moved south onto a cleared plain, and the play area is opened up around it.
+- **Million-Block Pyramid:** too big for the map, so the desert is extended south with a new stretch of dunes (`Statues/ColossalTest.cs`). Loading the world can freeze the game for several seconds; the host's own connection waits up to a minute for it (`Maps/JoinPatches.cs`).
 - **Big maps:** the first time you pick Horus or Upside-Down Grand on the menu in a session, the game may pause for a few seconds while it works out the shape.
 - **Rankings:** statue worlds stay off the game's online world rankings.
 

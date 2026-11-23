@@ -254,6 +254,24 @@ namespace PyramidsMaps.Maps
                 OnApplied = Statues.ColossalTest.Show,
                 OnDeactivate = Statues.ColossalTest.Hide,
             },
+            new MapInfo
+            {
+                // The game's own pyramid with over a million blocks: base 181 (362 m), 91 layers (227.5 m),
+                // 1,004,731 blocks, about 9.5x the Grand Pyramid. Too big for the map, so ColossalTest adds a
+                // terrain tile south of it; the north edge sits where the Colossal Pyramid's does (z 11).
+                Id = "million",
+                SyncCode = 15,
+                Title = "Million-Block Pyramid",
+                Body = "The pyramid with over a million blocks: 1,004,731 of them, 227 m tall on a 362 m base, about 9.5 times the Grand Pyramid. The desert is extended south to fit it. The longest build there is. (Pyramids Custom Maps mod)",
+                StatueName = "the pyramid",
+                ShapeVersion = 1,
+                PyramidBase = 181,
+                SiteZ = -170,
+                PlayArea = (-212f, -376f, 212f, 46.4f),
+
+                OnApplied = Statues.ColossalTest.Show,
+                OnDeactivate = Statues.ColossalTest.Hide,
+            },
         };
 
         /// <summary>The maps offered on the main menu: test maps only with DevTools on.</summary>

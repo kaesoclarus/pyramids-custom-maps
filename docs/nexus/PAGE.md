@@ -1,6 +1,10 @@
 # Nexus Mods page: what to fill in
 
-**Published:** https://www.nexusmods.com/howtheybuiltthepyramids/mods/3, now "Pyramids Custom Maps", version 0.5.1 (22 Nov 2026; 0.5.0, 0.4.0 and 0.3.0 archived).
+**Published:** https://www.nexusmods.com/howtheybuiltthepyramids/mods/3, now "Pyramids Custom Maps", version 0.6.0 (23 Nov 2026; 0.5.1, 0.5.0, 0.4.0 and 0.3.0 archived).
+
+## Updating to 0.6.0 (Million-Block Pyramid): 23 Nov 2026
+
+File `release/PyramidsCustomMaps-0.6.0.zip` as an update of 0.5.1 (archived), with "update mod version" ticked. File description: "All 16 maps (one plugin DLL) and a player readme. Extract into the game folder after installing BepInEx 5.4.23.6 (the BepInEx 5 Pack); extract over any earlier version to update." Changelog 0.6.0: "New map: the Million-Block Pyramid, 1,004,731 blocks, 227 m tall on a 362 m base, on a desert extended south to fit it. The sledge lift climbs it to the top, and on big pyramids the lift's track now grows with it. Huge worlds no longer fail to load when the game freezes for a few seconds." Summary: 16 maps, mentions the million-block pyramid. Description: paste the updated [`description.bbcode.txt`](description.bbcode.txt). Gallery: add [`../maps/million.png`](../maps/million.png).
 
 ## Updating to 0.5.1 (Colossal Pyramid lift): done 22 Nov 2026
 
