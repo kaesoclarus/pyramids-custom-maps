@@ -6,7 +6,7 @@
 
 ## Splitting into two mods (0.7.0): 23 Nov 2026
 
-- **#3 Statues:** renamed; summary "Build a giant statue instead of the pyramid: a stone cat, Sobek the crocodile, Anubis, Horus, all of Giza with the Sphinx, the Colossi of Memnon and an avenue of sphinxes. 7 maps, built in any order, with Shabti, build markers and the full ending. Add your own from MagicaVoxel. Requires BepInEx 5."; new description; file `release/PyramidsCustomMaps-Statues-0.7.0.zip` as an update of 0.6.0 (archived), changelog says the pyramid maps moved to #7. Gallery still has the pyramid renders.
+- **#3 Statues:** renamed; summary "Build a giant statue instead of the pyramid: a stone cat, Sobek the crocodile, Anubis, Horus, all of Giza with the Sphinx, the Colossi of Memnon and an avenue of sphinxes. 7 maps, built in any order, with Shabti, build markers and the full ending. Add your own from MagicaVoxel. Requires BepInEx 5."; new description; file `release/PyramidsCustomMaps-Statues-0.7.0.zip` as an update of 0.6.0 (archived), changelog says the pyramid maps moved to #7. Gallery: the in-game cat shot (thumbnail) and the 7 statue renders; the 9 pyramid renders were removed (they are on #7).
 - **#7 More Pyramids:** new page, category Miscellaneous, language English, AI tags as on #3 (AI-generated content and media) with the same note, requirement BepInEx 5 Pack (legacy mod requirements, same note as #3), permissions as on #3 (modification allowed with credit, the rest recommended), credits BepInEx and HarmonyX. Gallery: the 9 pyramid renders, Million-Block first (thumbnail). File `release/PyramidsCustomMaps-MorePyramids-0.7.0.zip`.
 
 
