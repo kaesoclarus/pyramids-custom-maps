@@ -1,6 +1,14 @@
 # Nexus Mods page: what to fill in
 
-**Published:** https://www.nexusmods.com/howtheybuiltthepyramids/mods/3, now "Pyramids Custom Maps", version 0.6.0 (23 Nov 2026; 0.5.1, 0.5.0, 0.4.0 and 0.3.0 archived).
+**Published:** two mods since 0.7.0 (23 Nov 2026).
+- Mod #3, https://www.nexusmods.com/howtheybuiltthepyramids/mods/3: "Pyramids Custom Maps - Statues" (Nexus allows no colon in names), version 0.7.0; 0.6.0 and older archived. Description: [`description.bbcode.txt`](description.bbcode.txt).
+- Mod #7, https://www.nexusmods.com/howtheybuiltthepyramids/mods/7: "Pyramids Custom Maps - More Pyramids", version 0.7.0, published 23 Nov 2026. Description: [`description-morepyramids.bbcode.txt`](description-morepyramids.bbcode.txt).
+
+## Splitting into two mods (0.7.0): 23 Nov 2026
+
+- **#3 Statues:** renamed; summary "Build a giant statue instead of the pyramid: a stone cat, Sobek the crocodile, Anubis, Horus, all of Giza with the Sphinx, the Colossi of Memnon and an avenue of sphinxes. 7 maps, built in any order, with Shabti, build markers and the full ending. Add your own from MagicaVoxel. Requires BepInEx 5."; new description; file `release/PyramidsCustomMaps-Statues-0.7.0.zip` as an update of 0.6.0 (archived), changelog says the pyramid maps moved to #7. Gallery still has the pyramid renders.
+- **#7 More Pyramids:** new page, category Miscellaneous, language English, AI tags as on #3 (AI-generated content and media) with the same note, requirement BepInEx 5 Pack (legacy mod requirements, same note as #3), permissions as on #3 (modification allowed with credit, the rest recommended), credits BepInEx and HarmonyX. Gallery: the 9 pyramid renders, Million-Block first (thumbnail). File `release/PyramidsCustomMaps-MorePyramids-0.7.0.zip`.
+
 
 ## Updating to 0.6.0 (Million-Block Pyramid): done 23 Nov 2026
 

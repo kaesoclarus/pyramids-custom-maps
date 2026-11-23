@@ -33,24 +33,42 @@ namespace PyramidsMaps.Maps
             {
                 Directory.CreateDirectory(Folder);
                 WriteReadme();
-                var files = Directory.GetFiles(Folder, "*.vox");
+            }
+            catch (Exception e)
+            {
+                Plugin.Log.LogError($"Player maps: couldn't set up {Folder}: {e.Message}");
+            }
+            LoadFrom(Folder, maps);
+            // With both mods installed, the one running also reads the other's maps folder.
+            if (Packs.OtherDir != null) LoadFrom(Path.Combine(Packs.OtherDir, "maps"), maps);
+            if (maps.Count > 0) CheckInBackground(maps);
+            return maps;
+        }
+
+        private static void LoadFrom(string folder, List<MapRegistry.MapInfo> maps)
+        {
+            int before = maps.Count;
+            try
+            {
+                if (!Directory.Exists(folder)) return;
+                var files = Directory.GetFiles(folder, "*.vox");
                 Array.Sort(files, StringComparer.OrdinalIgnoreCase);
                 foreach (var file in files)
                 {
-                    try { maps.Add(LoadOne(file)); }
+                    try
+                    {
+                        var map = LoadOne(file);
+                        if (maps.Exists(m => m.Id == map.Id)) Plugin.Log.LogInfo($"Player map {Path.GetFileName(file)}: already loaded from the other mod's folder.");
+                        else maps.Add(map);
+                    }
                     catch (Exception e) { Plugin.Log.LogError($"Player map {Path.GetFileName(file)}: can't use it: {e.Message}"); }
                 }
             }
             catch (Exception e)
             {
-                Plugin.Log.LogError($"Player maps: couldn't read {Folder}: {e.Message}");
+                Plugin.Log.LogError($"Player maps: couldn't read {folder}: {e.Message}");
             }
-            if (maps.Count > 0)
-            {
-                Plugin.Log.LogInfo($"Player maps: loaded {maps.Count} from {Folder}.");
-                CheckInBackground(maps);
-            }
-            return maps;
+            if (maps.Count > before) Plugin.Log.LogInfo($"Player maps: loaded {maps.Count - before} from {folder}.");
         }
 
         private static MapRegistry.MapInfo LoadOne(string file)

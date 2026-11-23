@@ -2,7 +2,18 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <AssemblyName>PyramidsMaps</AssemblyName>
+    <!-- Which mod to build: Statues (default; PyramidsMaps.dll) or Pyramids (More Pyramids; PyramidsMorePyramids.dll).
+         dotnet build -c Release -p:Pack=Pyramids. Both come from this same code; see Packs.cs. -->
+    <Pack Condition="'$(Pack)' == ''">Statues</Pack>
+    <AssemblyName Condition="'$(Pack)' == 'Pyramids'">PyramidsMorePyramids</AssemblyName>
+    <AssemblyName Condition="'$(Pack)' != 'Pyramids'">PyramidsMaps</AssemblyName>
+    <DefineConstants Condition="'$(Pack)' == 'Pyramids'">$(DefineConstants);PACK_PYRAMIDS</DefineConstants>
+    <PluginFolder>$(AssemblyName)</PluginFolder>
+    <OutputPath>bin\$(Configuration)\$(Pack)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\$(Pack)\</IntermediateOutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <!-- Keep in step with Plugin.Version. -->
+    <Version>0.7.0</Version>
     <RootNamespace>PyramidsMaps</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
@@ -34,8 +45,8 @@
 
   <!-- Copy the built plugin into the game's BepInEx\plugins folder. -->
   <Target Name="DeployToGame" AfterTargets="Build" Condition="'$(Deploy)' != 'false'">
-    <MakeDir Directories="$(GamePath)\BepInEx\plugins\PyramidsMaps" />
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GamePath)\BepInEx\plugins\PyramidsMaps" />
+    <MakeDir Directories="$(GamePath)\BepInEx\plugins\$(PluginFolder)" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GamePath)\BepInEx\plugins\$(PluginFolder)" />
   </Target>
 
 </Project>

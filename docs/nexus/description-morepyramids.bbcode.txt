@@ -1,0 +1,71 @@
+[size=5][b]Pyramids Custom Maps: More Pyramids[/b][/size]
+[i]Built the pyramid? Now build it upside down, stepped, bent, or with over a million blocks.[/i]
+
+[b]Pyramids Custom Maps: More Pyramids[/b] adds nine new pyramids to [i]How They Built the Pyramids[/i], built from the game's own pyramid blocks. Each one replaces the usual pyramid, and building it is the whole objective, from the first brick on the ground to the last brick at the very top, and then the ending.
+
+[size=4][b]The maps[/b][/size]
+[list]
+[*][b]Upside-Down[/b]: the classic pyramid balanced on its tip. Build up to the plaza 65 m in the air and crown it. 23,427 blocks.
+[*][b]Upside-Down Grand[/b]: the Grand Pyramid on its tip, with a 170 m plaza 107 m up. 105,996 blocks.
+[*][b]Diamond[/b]: an upside-down pyramid with a pyramid standing on its plaza, 127 m tall. 44,251 blocks.
+[*][b]Step Pyramid[/b]: Djoser's six tiers, 60 m on a 122 m base. 38,921 blocks.
+[*][b]Bent Pyramid[/b]: steep at the bottom, gentler above. 38,235 blocks.
+[*][b]Nubian Field[/b]: a dozen steep Nubian pyramids, like those at Meroe. 7,684 blocks.
+[*][b]Ziggurat[/b]: three terraces, a grand stairway and a shrine on top, 45 m high. 11,943 blocks.
+[*][b]Colossal Pyramid[/b]: the pyramid at about 4.5 times the Grand Pyramid. 477,191 blocks, 178 m tall, on a plain cleared south of the river. The sledge lift climbs all 71 layers.
+[*][b]Million-Block Pyramid[/b]: the pyramid with over a million blocks, about 9.5 times the Grand Pyramid. 1,004,731 blocks, 227 m tall on a 362 m base. It's too big for the map, so the desert is extended south with new dunes. The sledge lift climbs all 91 layers. The longest build there is.
+[/list]
+
+[size=4][b]Looking for statues?[/b][/size]
+The sister mod, [url=https://www.nexusmods.com/howtheybuiltthepyramids/mods/3]Pyramids Custom Maps: Statues[/url], has a giant stone cat, Sobek, Anubis, Horus, Giza, the Colossi of Memnon and Sphinx Avenue. Install both if you like: they work together. These pyramid maps came with Pyramids Custom Maps up to 0.6.0, and worlds you started there keep working.
+
+[size=4][b]Make your own map[/b][/size]
+Build a model in [url=https://ephtracy.github.io/]MagicaVoxel[/url], drop the .vox file in [i]BepInEx\plugins\PyramidsMorePyramids\maps[/i], and it appears in the menu. Each voxel is one block; an optional text file sets its title, description and block size ([i]blocks=pyramid[/i] for the game's pyramid blocks). When the game starts, the mod checks that every block can be built by hand and logs any that can't.
+
+[size=4][b]Features[/b][/size]
+[list]
+[*][b]Build in any order[/b]: every block is open from the start. A block must touch one you've already laid (or sit on the ground layer), so there are no floating bricks. Overhangs grow out from their neighbours.
+[*][b]Stack as you go[/b]: you can place a block about one layer above your feet, so you build up beside your work and climb onto it.
+[*][b]Build markers[/b]: small markers show the spots next to your bricks where you can build next. F7 turns them on and off.
+[*][b]Shabti builders[/b]: put a Work Post up on the build next to a brick crate and they build that level. A Work Post on the ground builds the bottom layer.
+[*][b]The full ending[/b] on every map. The highest block is the last brick: climb up together and place it.
+[*][b]Map chooser in the main menu[/b]: the empty plot gets a [b]Custom map[/b] dropdown next to Pyramid and Grand Pyramid. Your existing worlds are never changed.
+[*][b]Photo mode[/b]: F11 is a free camera without the HUD or hands, and F10 saves a clean screenshot.
+[/list]
+
+[size=4][b]Requirements[/b][/size]
+[list]
+[*]How They Built the Pyramids, [b]game version 0.43.0[/b]. Other versions may break the mod; it warns in the log.
+[*][url=https://www.nexusmods.com/howtheybuiltthepyramids/mods/4]BepInEx 5 Pack[/url] (BepInEx 5.4.23.6 for Windows x64).
+[/list]
+
+[size=4][b]Installation[/b][/size]
+[list=1]
+[*]In Steam, right-click [i]How They Built the Pyramids[/i] and choose [i]Manage > Browse local files[/i] to open the game folder.
+[*]Extract the [url=https://www.nexusmods.com/howtheybuiltthepyramids/mods/4]BepInEx 5 Pack[/url] zip into that folder ([i]winhttp.dll[/i] should end up next to [i]Pyramid.exe[/i]).
+[*]Extract this mod's zip into the same folder. It adds [i]BepInEx\plugins\PyramidsMorePyramids\PyramidsMorePyramids.dll[/i].
+[*]Start the game. On the main menu, scroll to the empty plot, pick a map from the [b]Custom map[/b] dropdown, and start a new world.
+[/list]
+To uninstall, delete the [i]BepInEx\plugins\PyramidsMorePyramids[/i] folder. Custom map worlds won't load correctly without the mod.
+
+[size=4][b]Multiplayer[/b][/size]
+Everyone who plays together needs the mod (More Pyramids or Statues), at the same version, and the same .vox file for player maps. The host's world tells joining players which map it is, and their game builds it too. [i]Honest note: multiplayer is built in but hasn't been tested with two players yet. Please report how it goes![/i]
+
+[size=4][b]Good to know[/b][/size]
+[list]
+[*]Stone ramps, scaffold platforms and the sledge lift aren't sold on most of these maps, since they only fit the game's pyramid. The Colossal and Million-Block Pyramids are the exception: they're the game's own pyramid, made bigger, and the sledge lift's top Height level climbs every layer.
+[*]Keep brick crates off spots that still need a block, or that spot stays blocked.
+[*]The first time you pick Upside-Down Grand in a session, the menu may pause for a few seconds while it works out the shape.
+[*]The Million-Block Pyramid is heavy: the game may freeze for several seconds the first time the menu shows it, and again while the world loads. Give it time. A finished one still runs at a playable frame rate and saves small.
+[*]Custom map worlds are kept off the game's online world rankings, so a modded map never competes with real pyramids.
+[*]Steam achievements still unlock on custom maps.
+[*][i]Honest note: every map has been checked by the mod's own build simulation and filled in game with a test tool, but they haven't been built entirely by hand yet. If a spot can't be built, please report it![/i]
+[/list]
+
+[size=4][b]Bug reports[/b][/size]
+Press [b]F8[/b] in game to write a placement and Shabti report to [i]BepInEx\LogOutput.log[/i]. Please attach that file and [i]%USERPROFILE%\AppData\LocalLow\PattezGames\How They Built the Pyramids\Player.log[/i].
+
+[size=4][b]Source[/b][/size]
+The mod is open source on GitHub: [url=https://github.com/kaesoclarus/pyramids-custom-maps]kaesoclarus/pyramids-custom-maps[/url].
+
+[i]This is an unofficial fan mod. It isn't made or supported by PattezGames, and it includes none of the game's code or assets.[/i]

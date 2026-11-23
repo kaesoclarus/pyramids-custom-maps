@@ -275,14 +275,16 @@ namespace PyramidsMaps.Maps
             if (IsNewWorld())
             {
                 string wanted = (Plugin.NewWorldMap.Value ?? "").Trim().ToLowerInvariant();
-                var map = MapRegistry.Find(wanted);
+                var map = MapRegistry.ForNewWorlds;
                 if (map != null && kind == WorldKind.Classic)
                 {
                     WorldMaps.Set(slot, map);
                     return map;
                 }
                 if (wanted.Length > 0 && map == null)
-                    Plugin.Log.LogWarning($"NewWorldMap = '{wanted}' isn't a known map (known: {MapRegistry.KnownIds}); starting a normal world.");
+                    Plugin.Log.LogWarning(MapRegistry.Find(wanted) != null
+                        ? $"NewWorldMap = '{wanted}' comes with the other Pyramids Custom Maps mod, which isn't installed; starting a normal world."
+                        : $"NewWorldMap = '{wanted}' isn't a known map (known: {MapRegistry.KnownIds}); starting a normal world.");
                 WorldMaps.Clear(slot);
                 return null;
             }

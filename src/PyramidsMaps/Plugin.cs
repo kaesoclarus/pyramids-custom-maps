@@ -12,9 +12,10 @@ namespace PyramidsMaps
     [BepInPlugin(Guid, Name, Version)]
     public class Plugin : BaseUnityPlugin
     {
-        public const string Guid = "pyramidsmaps.custommaps";
-        public const string Name = "Pyramids Custom Maps";
-        public const string Version = "0.6.0";
+        public const string Guid = Packs.Guid;
+        public const string Name = Packs.Name;
+        /// <summary>Keep in step with &lt;Version&gt; in the .csproj (the two mods compare assembly versions).</summary>
+        public const string Version = "0.7.0";
 
         /// <summary>Game build this mod was written against.</summary>
         public const string TestedGameVersion = "0.43.0";
@@ -31,6 +32,12 @@ namespace PyramidsMaps
         {
             Log = Logger;
             PluginDir = Path.GetDirectoryName(Info.Location);
+            if (!Packs.ShouldRun(Info.Location, out string packNote))
+            {
+                Log.LogInfo(packNote);
+                return;
+            }
+            if (packNote != null) Log.LogInfo(packNote);
 
             NewWorldMap = Config.Bind("Maps", "NewWorldMap", "",
                 "Map for worlds you START from now on: a map id (\"sphinx\" is the Great Cat) or empty for the normal pyramid. " +

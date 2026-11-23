@@ -56,6 +56,10 @@ namespace PyramidsMaps.Maps
             public double? GroundClearance;
 
             public bool IsStatue => Build != null;
+            /// <summary>Built with the game's 2 m pyramid blocks (the More Pyramids mod), not statue blocks.</summary>
+            public bool IsPyramidBlocks => PyramidBase > 0 || CellW >= 2;
+            /// <summary>A player-made map from a .vox file (sync codes 32–63).</summary>
+            public bool IsUserMap => SyncCode >= 32;
         }
 
         /// <summary>Every map: the built-in ones, then the player-made ones from the maps folder (loaded once).</summary>
@@ -274,11 +278,13 @@ namespace PyramidsMaps.Maps
             },
         };
 
-        /// <summary>The maps offered on the main menu: test maps only with DevTools on.</summary>
+        /// <summary>The maps offered on the main menu: the installed mod's (see <see cref="Packs"/>); test maps only with DevTools on.</summary>
         public static IEnumerable<MapInfo> Visible
         {
-            get { foreach (var m in All) if (!m.DevOnly || Plugin.DevTools.Value) yield return m; }
+            get { foreach (var m in All) if (IsOffered(m)) yield return m; }
         }
+
+        public static bool IsOffered(MapInfo m) => m != null && Packs.Offers(m) && (!m.DevOnly || Plugin.DevTools.Value);
 
         public static MapInfo Find(string id)
         {
@@ -309,7 +315,7 @@ namespace PyramidsMaps.Maps
         public static string KnownIds => string.Join(", ", Array.ConvertAll(new List<MapInfo>(All).ToArray(), m => m.Id));
 
         /// <summary>The map new worlds will use (from the NewWorldMap setting), or null for the game's own.</summary>
-        public static MapInfo ForNewWorlds => Find(Plugin.NewWorldMap.Value);
+        public static MapInfo ForNewWorlds { get { var m = Find(Plugin.NewWorldMap.Value); return IsOffered(m) ? m : null; } }
 
         public static void ChooseForNewWorlds(MapInfo map) => Plugin.NewWorldMap.Value = map?.Id ?? "";
     }
