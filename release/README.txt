@@ -1,4 +1,4 @@
-PYRAMIDS CUSTOM MAPS 0.5.1 — 15 maps, and your own
+PYRAMIDS CUSTOM MAPS 0.6.0 — 16 maps, and your own
 For How They Built the Pyramids, game version 0.43.0
 ==========================================================
 
@@ -12,7 +12,7 @@ STATUES (blocks half the size of a pyramid block, so their curves come out smoot
 - ANUBIS (new): a jackal keeping watch from his shrine, ears high. 11,588 blocks.
 - HORUS (new): a falcon with outstretched wings, wearing the double crown. 47,679 blocks, 100 m tall.
 
-PYRAMIDS AND MONUMENTS (all new in 0.5.0)
+PYRAMIDS AND MONUMENTS
 - UPSIDE-DOWN: the classic pyramid balanced on its tip; crown the plaza 65 m up. 23,427 blocks.
 - UPSIDE-DOWN GRAND: the Grand Pyramid on its tip; a 170 m plaza 107 m in the air. 105,996 blocks.
 - DIAMOND: an upside-down pyramid with a pyramid on its plaza, 127 m tall. 44,251 blocks.
@@ -24,6 +24,8 @@ PYRAMIDS AND MONUMENTS (all new in 0.5.0)
 - COLOSSI: the Colossi of Memnon, two seated pharaohs 38 m tall. 10,776 blocks.
 - SPHINX AVENUE: twelve sphinxes lining a road to a 37 m obelisk. 4,346 blocks.
 - COLOSSAL PYRAMID: the pyramid at about 4.5 times the Grand Pyramid, 178 m tall. 477,191 blocks.
+- MILLION-BLOCK PYRAMID (new in 0.6.0): the pyramid with over a million blocks, about 9.5 times the
+  Grand Pyramid, 227 m tall on a 362 m base. 1,004,731 blocks. The longest build there is.
 
 INSTALL (everyone who plays together needs this, same version)
 1. Download the BepInEx 5 Pack (BepInEx 5.4.23.6 for Windows x64) from Nexus:
@@ -31,7 +33,7 @@ INSTALL (everyone who plays together needs this, same version)
 2. Find the game folder: in Steam, right-click How They Built the Pyramids > Manage > Browse local files.
 3. Extract the BepInEx zip into that folder (winhttp.dll ends up next to Pyramid.exe).
 4. Extract THIS zip into the same folder (it adds BepInEx\plugins\PyramidsMaps\PyramidsMaps.dll).
-   Updating from 0.3.0 or 0.4.0: just let it replace the old file. Your worlds keep working.
+   Updating from an earlier version: just let it replace the old file. Your worlds keep working.
 5. Start the game once and quit: BepInEx creates its folders and the settings file.
 
 START A CUSTOM MAP WORLD (the host)
@@ -52,8 +54,9 @@ HOW BUILDING WORKS
   step up, and keep going.
 - Small markers show the spots next to your bricks where you can build. F7 turns them on/off.
 - Stone ramps, scaffold platforms and the sledge lift aren't sold on custom maps (they only fit the
-  game's pyramid), except on the Colossal Pyramid, which is the game's own pyramid made bigger.
-  There, the lift's top Height level climbs all 71 layers (like the Grand Pyramid, where it's 43).
+  game's pyramid), except on the Colossal and Million-Block Pyramids, which are the game's own
+  pyramid made bigger. There, the lift's top Height level climbs every layer (71 and 91; the Grand
+  Pyramid's is 43).
 - Shabti builders: put a Work Post up ON the build next to a brick crate; they build that level.
   A Work Post on the ground builds the bottom layer. Keep crates off spots that still need a block.
 - The highest block is the last brick: the cat's left ear, Sobek's snout, Khufu's tip at Giza,
@@ -68,6 +71,9 @@ A FEW MAPS IN DETAIL
   overhang is kept clear so machines can still work there.
 - THE COLOSSAL PYRAMID is moved south onto a cleared plain, and the play area is opened up around it.
   It's a very long build; a finished one still runs smoothly and saves small.
+- THE MILLION-BLOCK PYRAMID is too big for the map, so the desert is extended south with new dunes.
+  The game may freeze for several seconds the first time the menu shows it, and again while the
+  world loads: give it time. A finished one still runs at a playable frame rate and saves small.
 
 MAKE YOUR OWN MAP
 - Put a MagicaVoxel model (.vox) in BepInEx\plugins\PyramidsMaps\maps and restart the game: it appears
