@@ -1,10 +1,10 @@
 # Nexus Mods page: what to fill in
 
 **Published:** two mods since 0.7.0 (23 Nov 2026).
-- Mod #3, https://www.nexusmods.com/howtheybuiltthepyramids/mods/3: "Pyramids Custom Maps - Statues" (Nexus allows no colon in names), version 0.7.0; 0.6.0 and older archived. Description: [`description.bbcode.txt`](description.bbcode.txt).
-- Mod #7, https://www.nexusmods.com/howtheybuiltthepyramids/mods/7: "Pyramids Custom Maps - More Pyramids", version 0.7.0, published 23 Nov 2026. Description: [`description-morepyramids.bbcode.txt`](description-morepyramids.bbcode.txt).
+- Mod #3, https://www.nexusmods.com/howtheybuiltthepyramids/mods/3: "Pyramids Custom Maps - Statues" (Nexus allows no colon in names), version 0.7.1; 0.7.0 and older archived. Description: [`description.bbcode.txt`](description.bbcode.txt).
+- Mod #7, https://www.nexusmods.com/howtheybuiltthepyramids/mods/7: "Pyramids Custom Maps - More Pyramids", version 0.7.1 (0.7.0 archived), published 23 Nov 2026. Description: [`description-morepyramids.bbcode.txt`](description-morepyramids.bbcode.txt).
 
-## Updating both to 0.7.1: 24 Nov 2026
+## Updating both to 0.7.1: done 24 Nov 2026
 
 Files `release/PyramidsCustomMaps-Statues-0.7.1.zip` (on #3) and `release/PyramidsCustomMaps-MorePyramids-0.7.1.zip` (on #7), each as an update of its 0.7.0 file (archived), "update mod version" ticked. Changelog 0.7.1: "A walled-in empty spot (blocks on every side, above and below) now fills itself in, so a build can never get stuck; worlds already stuck get fixed when loaded. Blocks now have a bottom face, so overhangs look solid from below. Milestone and completion banners name the map instead of the Great Pyramid." Descriptions: one line added under Good to know.
 
