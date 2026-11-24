@@ -98,7 +98,11 @@ namespace PyramidsMaps.Statues
         {
             var state = StateRef(__instance);
             _inCatRebuild = state != null && StatueLayout.IsStatue(state.Layout);
+            if (_inCatRebuild) BlockBottoms.Cap(MeshesRef(__instance));
         }
+
+        private static readonly AccessTools.FieldRef<PyramidRenderer, Mesh[]> MeshesRef =
+            AccessTools.FieldRefAccess<PyramidRenderer, Mesh[]>("_meshes");
 
         /// <summary>
         /// Markers on the cat: only the spots you can build right now (open, empty, touching a laid block),

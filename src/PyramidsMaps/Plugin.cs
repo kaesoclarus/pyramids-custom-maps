@@ -15,7 +15,7 @@ namespace PyramidsMaps
         public const string Guid = Packs.Guid;
         public const string Name = Packs.Name;
         /// <summary>Keep in step with &lt;Version&gt; in the .csproj (the two mods compare assembly versions).</summary>
-        public const string Version = "0.7.0";
+        public const string Version = "0.7.1";
 
         /// <summary>Game build this mod was written against.</summary>
         public const string TestedGameVersion = "0.43.0";
@@ -66,6 +66,7 @@ namespace PyramidsMaps
             Maps.MapRegistry.CheckCodes();
             gameObject.AddComponent<Statues.StatueDiagnostics>();
             gameObject.AddComponent<Statues.PhotoMode>();
+            gameObject.AddComponent<Statues.SealedGaps>();
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 

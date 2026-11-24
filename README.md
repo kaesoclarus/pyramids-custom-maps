@@ -82,6 +82,9 @@ Everyone who plays together needs one of the mods, at the same version. The full
 - **Colossal Pyramid:** its site is moved south onto a cleared plain, and the play area is opened up around it.
 - **Million-Block Pyramid:** too big for the map, so the desert is extended south with a new stretch of dunes (`Statues/ColossalTest.cs`). Loading the world can freeze the game for several seconds; the host's own connection waits up to a minute for it (`Maps/JoinPatches.cs`).
 - **Big maps:** the first time you pick Horus or Upside-Down Grand on the menu in a session, the game may pause for a few seconds while it works out the shape.
+- **Walled-in spots:** an empty block left with no open side and no open top (only a way in from below, or none) can never be laid, so the host fills it in, checking the blocks next to every block laid and the whole world on load (`Statues/SealedGaps.cs`).
+- **Undersides:** the game's block models have no bottom face (its pyramid never shows one); custom maps add one, so overhangs look solid from below (`Statues/BlockBottoms.cs`).
+- **Banners:** milestone and completion banners name the map ("25% of the Diamond") instead of the Great Pyramid (`Maps/HudTextPatches.cs`).
 - **Rankings:** statue worlds stay off the game's online world rankings.
 
 ## Building from source
@@ -154,6 +157,7 @@ It then appears in the main menu's **Custom map** dropdown: in Statues if it use
 | Key | What it does |
 |---|---|
 | **F8** | Writes a placement and Shabti report to `BepInEx\LogOutput.log` |
+| **Ctrl+F6** | Host only, with `DevTools = true`: walls in an empty block on purpose to test the walled-in fill (with Shift, it stays empty until the world is loaded again). |
 | **F9** twice | Host only, with `DevTools = true` in the config: fills every block except the final one. Use it in throwaway worlds only. |
 | **F11** | Free camera for screenshots: arrow keys move, PageUp/PageDown up and down, Shift faster, mouse looks. Hides the HUD, the first-person hands and the build beacons. |
 | **F10** | Saves a clean screenshot (no HUD) to `BepInEx\plugins\PyramidsMaps\screenshots` |

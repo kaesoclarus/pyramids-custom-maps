@@ -27,6 +27,12 @@ namespace PyramidsMaps.Maps
             public string Body;
             /// <summary>The statue in running text, e.g. in "Put the Work Post up on the cat".</summary>
             public string StatueName;
+            /// <summary>
+            /// The map's full name in running text, where the game says "the Great Pyramid" (milestone banners: "25% of
+            /// the Million-Block Pyramid"). Unset: "the " + Title.
+            /// </summary>
+            public string NameInText;
+            public string Called => NameInText ?? "the " + Title;
             /// <summary>The shape's version (0–15): bump when the shape changes, so old worlds aren't loaded onto it.</summary>
             public int ShapeVersion;
             /// <summary>Block size in metres (width and depth, height).</summary>
@@ -92,6 +98,7 @@ namespace PyramidsMaps.Maps
                 Id = "sobek",
                 SyncCode = 1,
                 Title = "Sobek",
+                NameInText = "Sobek",
                 Body = "A giant crocodile lying in his pool, jaws open to the sky: 19,538 blocks you can lay in any order. (Pyramids Custom Maps mod)",
                 StatueName = "Sobek",
                 ShapeVersion = SobekShape.Version,
@@ -105,6 +112,7 @@ namespace PyramidsMaps.Maps
                 Id = "anubis",
                 SyncCode = 2,
                 Title = "Anubis",
+                NameInText = "Anubis",
                 Body = "A giant jackal keeping watch from his shrine, ears high: 11,588 blocks you can lay in any order. (Pyramids Custom Maps mod)",
                 StatueName = "Anubis",
                 ShapeVersion = AnubisShape.Version,
@@ -116,6 +124,7 @@ namespace PyramidsMaps.Maps
                 Id = "horus",
                 SyncCode = 3,
                 Title = "Horus",
+                NameInText = "Horus",
                 Body = "A giant falcon with outstretched wings, wearing the double crown: 47,679 blocks, 100 m tall, any order. (Pyramids Custom Maps mod)",
                 StatueName = "Horus",
                 ShapeVersion = HorusShape.Version,
@@ -127,6 +136,7 @@ namespace PyramidsMaps.Maps
                 Id = "inverted",
                 SyncCode = 5,
                 Title = "Upside-Down",
+                NameInText = "the Upside-Down Pyramid",
                 Body = "The classic pyramid's own blocks, upside down on its tip: build up to a plaza 65 m in the air and crown it. 23,427 blocks, any order. (Pyramids Custom Maps mod)",
                 StatueName = "the pyramid",
                 ShapeVersion = InvertedShape.Version,
@@ -141,6 +151,7 @@ namespace PyramidsMaps.Maps
                 Id = "inverted-grand",
                 SyncCode = 6,
                 Title = "Upside-Down Grand",
+                NameInText = "the Upside-Down Grand Pyramid",
                 Body = "The Grand Pyramid's own blocks, upside down on its tip: build up to a 170 m plaza 107 m in the air. 105,996 blocks, any order. (Pyramids Custom Maps mod)",
                 StatueName = "the pyramid",
                 ShapeVersion = InvertedShape.GrandVersion,
@@ -212,6 +223,7 @@ namespace PyramidsMaps.Maps
                 Id = "giza",
                 SyncCode = 12,
                 Title = "Giza",
+                NameInText = "Giza",
                 Body = "The Giza plateau: Khufu, Khafre and Menkaure, and the Great Sphinx keeping watch. Build them in any order; Khufu's tip is the last brick. 63,213 blocks. (Pyramids Custom Maps mod)",
                 StatueName = "the monuments",
                 ShapeVersion = GizaShape.Version,

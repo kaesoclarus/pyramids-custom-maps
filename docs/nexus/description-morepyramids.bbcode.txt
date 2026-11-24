@@ -55,6 +55,7 @@ Everyone who plays together needs the mod (More Pyramids or Statues), at the sam
 [list]
 [*]Stone ramps, scaffold platforms and the sledge lift aren't sold on most of these maps, since they only fit the game's pyramid. The Colossal and Million-Block Pyramids are the exception: they're the game's own pyramid, made bigger, and the sledge lift's top Height level climbs every layer.
 [*]Keep brick crates off spots that still need a block, or that spot stays blocked.
+[*]An empty spot that gets walled in (blocks on every side, above and below) fills itself in, so a build can never get stuck.
 [*]The first time you pick Upside-Down Grand in a session, the menu may pause for a few seconds while it works out the shape.
 [*]The Million-Block Pyramid is heavy: the game may freeze for several seconds the first time the menu shows it, and again while the world loads. Give it time. A finished one still runs at a playable frame rate and saves small.
 [*]Custom map worlds are kept off the game's online world rankings, so a modded map never competes with real pyramids.

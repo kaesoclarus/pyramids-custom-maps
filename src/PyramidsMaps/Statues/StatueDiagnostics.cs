@@ -40,7 +40,12 @@ namespace PyramidsMaps.Statues
             }
 
             // F6 (DevTools, main menu): next custom map in the empty plot
-            if (Plugin.DevTools.Value && kb.f6Key.wasPressedThisFrame) PyramidsMaps.Maps.MenuMapChooser.ChooseNext();
+            // Ctrl+F6 (DevTools, host, statue world): wall in an empty block on purpose, to test SealedGaps
+            // (Shift too: leave it unfilled until the world is loaded again)
+            bool ctrl = kb.leftCtrlKey.isPressed || kb.rightCtrlKey.isPressed;
+            if (Plugin.DevTools.Value && kb.f6Key.wasPressedThisFrame && ctrl)
+                SealedGaps.DevMakeGap(kb.leftShiftKey.isPressed || kb.rightShiftKey.isPressed);
+            else if (Plugin.DevTools.Value && kb.f6Key.wasPressedThisFrame) PyramidsMaps.Maps.MenuMapChooser.ChooseNext();
 
             // F7: markers on/off (remembered in the config)
             if (kb.f7Key.wasPressedThisFrame)
@@ -75,6 +80,68 @@ namespace PyramidsMaps.Statues
             if (!kb.f8Key.wasPressedThisFrame) return;
             try { Plugin.Log.LogInfo(Describe()); }
             catch (System.Exception e) { Plugin.Log.LogError($"F8 diagnostic failed: {e}"); }
+            try { Plugin.Log.LogInfo(DescribeBlockMeshes()); }
+            catch (System.Exception e) { Plugin.Log.LogError($"F8 block-mesh report failed: {e}"); }
+            try { Plugin.Log.LogInfo(DescribeLayers()); }
+            catch (System.Exception e) { Plugin.Log.LogError($"F8 layer report failed: {e}"); }
+        }
+
+        private static readonly AccessTools.FieldRef<PyramidRenderer, byte[]> LayerModeRef =
+            AccessTools.FieldRefAccess<PyramidRenderer, byte[]>("_layerMode");
+        private static readonly AccessTools.FieldRef<PyramidRenderer, System.Collections.IDictionary> ActiveLayersRef =
+            AccessTools.FieldRefAccess<PyramidRenderer, System.Collections.IDictionary>("_activeLayers");
+
+        /// <summary>Per layer: blocks, filled, the renderer's mode and what it draws (count and bounds).</summary>
+        private static string DescribeLayers()
+        {
+            var py = FindAnyObjectByType<PyramidState>();
+            var r = FindAnyObjectByType<PyramidRenderer>();
+            if (py == null || r == null) return "F8 layers: no pyramid or renderer.";
+            var layout = py.Layout; var prog = py.Progress;
+            var modes = LayerModeRef(r); var active = ActiveLayersRef(r);
+            var sb = new System.Text.StringBuilder($"Layers ({layout.Layers.Count}, height {layout.HeightMetres:0.0} m, footprint ±{layout.FootprintHalf:0.0} m): layer y cells filled mode drawn bounds");
+            for (int l = 0; l < layout.Layers.Count; l++)
+            {
+                var L = layout.Layers[l];
+                string drawn = "-";
+                if (active != null && active.Contains(l))
+                {
+                    var chunk = active[l];
+                    var t = chunk.GetType();
+                    object count = AccessTools.Property(t, "Count")?.GetValue(chunk) ?? AccessTools.Field(t, "Count")?.GetValue(chunk);
+                    object bounds = AccessTools.Field(t, "Bounds")?.GetValue(chunk) ?? AccessTools.Property(t, "Bounds")?.GetValue(chunk);
+                    drawn = $"{count} {bounds}";
+                }
+                sb.Append($"\n  {l} y{L.Y} {L.CellCount} {prog.LayerFilled(l)} m{(modes != null && l < modes.Length ? modes[l] : -1)} {drawn}");
+            }
+            return sb.ToString();
+        }
+
+        private static readonly AccessTools.FieldRef<PyramidRenderer, Mesh[]> RendererMeshes =
+            AccessTools.FieldRefAccess<PyramidRenderer, Mesh[]>("_meshes");
+
+        /// <summary>Each block model's face area by direction (top, bottom, sides), to see which faces it has.</summary>
+        private static string DescribeBlockMeshes()
+        {
+            var sb = new System.Text.StringBuilder("Block meshes (face area, m² in model units: up / down / sides):");
+            foreach (var r in FindObjectsByType<PyramidRenderer>())
+                foreach (var m in RendererMeshes(r) ?? new Mesh[0])
+                {
+                    if (m == null) continue;
+                    if (!m.isReadable) { sb.Append($"\n  {m.name}: not readable"); continue; }
+                    var v = m.vertices; var t = m.triangles;
+                    float up = 0, down = 0, side = 0;
+                    for (int i = 0; i < t.Length; i += 3)
+                    {
+                        var n = Vector3.Cross(v[t[i + 1]] - v[t[i]], v[t[i + 2]] - v[t[i]]);
+                        float area = n.magnitude * 0.5f;
+                        if (area <= 0) continue;
+                        float ny = n.y / (2 * area);
+                        if (ny > 0.7f) up += area; else if (ny < -0.7f) down += area; else side += area;
+                    }
+                    sb.Append($"\n  {m.name}: {up:0.00} / {down:0.00} / {side:0.00}  (bounds {m.bounds.size})");
+                }
+            return sb.ToString();
         }
 
         private float _lastF9 = -10f;

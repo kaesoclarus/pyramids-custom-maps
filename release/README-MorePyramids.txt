@@ -1,4 +1,4 @@
-PYRAMIDS CUSTOM MAPS: MORE PYRAMIDS 0.7.0 — 9 pyramids, and your own
+PYRAMIDS CUSTOM MAPS: MORE PYRAMIDS 0.7.1 — 9 pyramids, and your own
 For How They Built the Pyramids, game version 0.43.0
 ==========================================================
 
@@ -55,6 +55,8 @@ HOW BUILDING WORKS
   Pyramid's is 43).
 - Shabti builders: put a Work Post up ON the build next to a brick crate; they build that level.
   A Work Post on the ground builds the bottom layer. Keep crates off spots that still need a block.
+- An empty spot that gets walled in (blocks on every side, above and below, so nothing is left to
+  place it against) fills itself in, so the build can always be finished.
 - The highest block is the last brick. Climb up together and crown it.
 - Custom map worlds stay off the game's online world rankings.
 

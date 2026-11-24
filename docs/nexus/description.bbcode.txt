@@ -56,6 +56,7 @@ Everyone who plays together needs the mod (Statues or More Pyramids), at the sam
 [list]
 [*]Stone ramps, scaffold platforms and the sledge lift aren't sold on these maps, since they only fit the game's pyramid.
 [*]Keep brick crates off spots that still need a block, or that spot stays blocked.
+[*]An empty spot that gets walled in (blocks on every side, above and below) fills itself in, so a build can never get stuck.
 [*]The first time you pick Horus in a session, the menu may pause for a few seconds while it works out the shape.
 [*]Custom map worlds are kept off the game's online world rankings, so a modded map never competes with real pyramids.
 [*]Steam achievements still unlock on custom maps.

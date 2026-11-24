@@ -13,7 +13,7 @@
     <IntermediateOutputPath>obj\$(Configuration)\$(Pack)\</IntermediateOutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <!-- Keep in step with Plugin.Version. -->
-    <Version>0.7.0</Version>
+    <Version>0.7.1</Version>
     <RootNamespace>PyramidsMaps</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>

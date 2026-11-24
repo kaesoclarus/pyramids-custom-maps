@@ -4,6 +4,10 @@
 - Mod #3, https://www.nexusmods.com/howtheybuiltthepyramids/mods/3: "Pyramids Custom Maps - Statues" (Nexus allows no colon in names), version 0.7.0; 0.6.0 and older archived. Description: [`description.bbcode.txt`](description.bbcode.txt).
 - Mod #7, https://www.nexusmods.com/howtheybuiltthepyramids/mods/7: "Pyramids Custom Maps - More Pyramids", version 0.7.0, published 23 Nov 2026. Description: [`description-morepyramids.bbcode.txt`](description-morepyramids.bbcode.txt).
 
+## Updating both to 0.7.1: 24 Nov 2026
+
+Files `release/PyramidsCustomMaps-Statues-0.7.1.zip` (on #3) and `release/PyramidsCustomMaps-MorePyramids-0.7.1.zip` (on #7), each as an update of its 0.7.0 file (archived), "update mod version" ticked. Changelog 0.7.1: "A walled-in empty spot (blocks on every side, above and below) now fills itself in, so a build can never get stuck; worlds already stuck get fixed when loaded. Blocks now have a bottom face, so overhangs look solid from below. Milestone and completion banners name the map instead of the Great Pyramid." Descriptions: one line added under Good to know.
+
 ## Splitting into two mods (0.7.0): 23 Nov 2026
 
 - **#3 Statues:** renamed; summary "Build a giant statue instead of the pyramid: a stone cat, Sobek the crocodile, Anubis, Horus, all of Giza with the Sphinx, the Colossi of Memnon and an avenue of sphinxes. 7 maps, built in any order, with Shabti, build markers and the full ending. Add your own from MagicaVoxel. Requires BepInEx 5."; new description; file `release/PyramidsCustomMaps-Statues-0.7.0.zip` as an update of 0.6.0 (archived), changelog says the pyramid maps moved to #7. Gallery: the in-game cat shot (thumbnail) and the 7 statue renders; the 9 pyramid renders were removed (they are on #7).

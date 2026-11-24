@@ -1,4 +1,4 @@
-PYRAMIDS CUSTOM MAPS: STATUES 0.7.0 — 7 maps, and your own
+PYRAMIDS CUSTOM MAPS: STATUES 0.7.1 — 7 maps, and your own
 For How They Built the Pyramids, game version 0.43.0
 ==========================================================
 
@@ -51,6 +51,8 @@ HOW BUILDING WORKS
   game's pyramid).
 - Shabti builders: put a Work Post up ON the statue next to a brick crate; they build that level.
   A Work Post on the ground builds the bottom layer. Keep crates off spots that still need a block.
+- An empty spot that gets walled in (blocks on every side, above and below, so nothing is left to
+  place it against) fills itself in, so the build can always be finished.
 - The highest block is the last brick: the cat's left ear, Sobek's snout, Khufu's tip at Giza,
   the obelisk on Sphinx Avenue, and so on. Climb up together and crown it.
 - Custom map worlds stay off the game's online world rankings.
